@@ -3,17 +3,20 @@ import { MemberService } from './member.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadedFile } from '@nestjs/common/decorators';
+import { UploadedFile, UseGuards } from '@nestjs/common/decorators';
 import { FileTypeValidator, MaxFileSizeValidator, ParseFilePipe } from '@nestjs/common/pipes';
 import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('member')
 export class MemberController {
-  constructor(private readonly memberService: MemberService) { }
+  constructor (private readonly memberService: MemberService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/add')
   create(@Body() createMemberDto: CreateMemberDto) {
+
     return this.memberService.create(createMemberDto);
   }
 
@@ -39,7 +42,7 @@ export class MemberController {
 
   @Post('/imageupload')
   @UseInterceptors(FileInterceptor('image', {
-    dest: '/images'
+
   }))
   uploadPics(@UploadedFile(new ParseFilePipe({
     validators: [
@@ -70,7 +73,7 @@ export class MemberController {
         extensions: ['xls', 'xlsx', 'csv']
       }),
       new FileHeaderValidator({
-        headers:['firstName','lastName','email','mobileNo']
+        headers: ['firstName', 'lastName', 'email', 'mobileNo']
       })
     ]
   })) file: Express.Multer.File) {

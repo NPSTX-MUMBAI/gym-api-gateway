@@ -8,11 +8,12 @@ import { NotFoundException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class MemberService {
-  constructor(private neo: Neo4jService) {
+  constructor (private neo: Neo4jService) {
 
   }
   async create(dto: CreateMemberDto) {
     try {
+      console.log('dto=>', dto);
       const encryptedPassword = bcrypt.hashSync(dto.password, 10);
       const roles = ['MEMBER'];
 

@@ -32,5 +32,6 @@ AURA_INSTANCENAME=unacademy-db
     OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule],
   controllers: [AppController],
   providers: [AppService],
+  
 })
 export class AppModule { }

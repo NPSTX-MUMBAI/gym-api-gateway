@@ -23,6 +23,12 @@ export class AuthController {
     return await this.authSvc.signup(body);
   }
 
+  @Post("/validateuser")
+  async signIn(@Body() body: LoginDTO) {
+    return await this.authSvc.validateUser(body.email, body.password);
+  }
+
+
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
