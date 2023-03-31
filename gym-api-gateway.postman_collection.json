@@ -1,0 +1,541 @@
+{
+	"info": {
+		"_postman_id": "fdd7575e-af10-415c-bb09-f4b00e65be1d",
+		"name": "gym-api-gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23626895"
+	},
+	"item": [
+		{
+			"name": "gym",
+			"item": [
+				{
+					"name": "create gym",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0TmFtZSI6ImNoYW5kYW4iLCJsYXN0TmFtZSI6InN1dHJhZGhhciIsInBhc3N3b3JkIjoiJDJiJDEwJE1rWUNXUlowOXNLSHAvTG0vNG9SbHVqYWhwcVlKTkg2U3hFQkdESmxWeTdwQWoxUFdhaDEuIiwicm9sZXMiOlsiT1dORVIiXSwibW9iaWxlTm8iOiI4MDgwODExMTQ1IiwiZW1haWwiOiJjaGFuZGFuQGdtYWlsLmNvbSJ9LCJpYXQiOjE2Nzk5OTM5MDgsImV4cCI6MTY3OTk5OTkwOH0.T9RA_1uMLIqsUsA-z93bzKIjh9ISm78qkY_aSk06108",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gymName\":\"Talwalkar Gym\",\r\n    \"email\":\"talwalkar@gmail.com\",\r\n    \"panNo\":\"BGTPS4570D\",\r\n    \"gstNo\":\"GST0W928837NN\",\r\n    \"aadhar\":\"189027001897\",\r\n    \"createdBy\":\"chandan@gmail.com\",\r\n    \"address\":{\r\n        \"line1\":\"line1\",\r\n        \"line2\":\"line2\",\r\n        \"city\":\"mumbai\",\r\n        \"locality\":\"new passport office\",\r\n        \"state\":\"maharashtra\",\r\n        \"country\":\"india\",\r\n        \"pinCode\":\"401107\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/gym/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"gym",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update gym",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gymName\":\"Talwalkar Gym (Mira Road)\",\r\n    \"email\":\"talwalkar@gmail.com\",\r\n    \"panNo\":\"BGTPS4570D\",\r\n    \"gstNo\":\"GST0W928837NN\",\r\n    \"aadhar\":\"189027001897\",\r\n    \"createdBy\":\"chandan@gmail.com\",\r\n    \"address\":{\r\n        \"line1\":\"line1\",\r\n        \"line2\":\"line2\",\r\n        \"city\":\"mumbai\",\r\n        \"locality\":\"new passport office\",\r\n        \"state\":\"maharashtra\",\r\n        \"country\":\"india\",\r\n        \"pinCode\":\"401107\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}gym/47b9c331-ca73-471d-a749-8c0cf4815e07",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"47b9c331-ca73-471d-a749-8c0cf4815e07"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update gym address",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gymName\":\"Talwalkar Gym (Majiwada)\",\r\n    \"email\":\"talwalkar@gmail.com\",\r\n    \"panNo\":\"BGTPS4570D\",\r\n    \"gstNo\":\"GST0W928837NN\",\r\n    \"aadhar\":\"189027001897\",\r\n    \"createdBy\":\"chandan@gmail.com\",\r\n    \"address\":{\r\n        \"line1\":\"new line1\",\r\n        \"line2\":\"new line2\",\r\n        \"city\":\"thane\",\r\n        \"locality\":\"wagle estate\",\r\n        \"state\":\"MH\",\r\n        \"country\":\"INDIA\",\r\n        \"pinCode\":\"400680\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}gym/update/address/47b9c331-ca73-471d-a749-8c0cf4815e07",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"update",
+								"address",
+								"47b9c331-ca73-471d-a749-8c0cf4815e07"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete gym",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}gym/47b9c331-ca73-471d-a749-8c0cf4815e07",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"47b9c331-ca73-471d-a749-8c0cf4815e07"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get gym by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}gym/47b9c331-ca73-471d-a749-8c0cf4815e07",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"47b9c331-ca73-471d-a749-8c0cf4815e07"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get gym address by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}gym/findaddress/47b9c331-ca73-471d-a749-8c0cf4815e07",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"findaddress",
+								"47b9c331-ca73-471d-a749-8c0cf4815e07"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all gym for current user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}gym/email/chandan@gmail.com",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"email",
+								"chandan@gmail.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all gym",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0TmFtZSI6ImNoYW5kYW4iLCJsYXN0TmFtZSI6InN1dHJhZGhhciIsInBhc3N3b3JkIjoiJDJiJDEwJE1rWUNXUlowOXNLSHAvTG0vNG9SbHVqYWhwcVlKTkg2U3hFQkdESmxWeTdwQWoxUFdhaDEuIiwicm9sZXMiOlsiT1dORVIiXSwibW9iaWxlTm8iOiI4MDgwODExMTQ1IiwiZW1haWwiOiJjaGFuZGFuQGdtYWlsLmNvbSJ9LCJpYXQiOjE2ODAwMDA2MDQsImV4cCI6MTY4MDAwNjYwNH0.TjW5qSaxEYMjIHpgGHYwfIR0xyn4cKS3-Npt7eFhmmQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}gym/all",
+							"host": [
+								"{{baseUrl}}gym"
+							],
+							"path": [
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all active gym",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get all inactive gym",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get gym services",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0TmFtZSI6ImNoYW5kYW4iLCJsYXN0TmFtZSI6InN1dHJhZGhhciIsInBhc3N3b3JkIjoiJDJiJDEwJE1rWUNXUlowOXNLSHAvTG0vNG9SbHVqYWhwcVlKTkg2U3hFQkdESmxWeTdwQWoxUFdhaDEuIiwicm9sZXMiOlsiT1dORVIiXSwibW9iaWxlTm8iOiI4MDgwODExMTQ1IiwiZW1haWwiOiJjaGFuZGFuQGdtYWlsLmNvbSJ9LCJpYXQiOjE2ODAwMDA2MDQsImV4cCI6MTY4MDAwNjYwNH0.TjW5qSaxEYMjIHpgGHYwfIR0xyn4cKS3-Npt7eFhmmQ",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"chandan@gmail.com\",\r\n    \"password\":\"Passw0rd\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}auth/login",
+							"host": [
+								"{{baseUrl}}auth"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"chandan\",\r\n    \"lastName\":\"sutradhar\",\r\n    \"email\":\"chandan@gmail.com\",\r\n    \"password\":\"Passw0rd\",\r\n    \"mobileNo\":\"8080811145\",\r\n    \"roles\":[\"OWNER\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}auth/signup",
+							"host": [
+								"{{baseUrl}}auth"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}auth/profile",
+							"host": [
+								"{{baseUrl}}auth"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "member",
+			"item": [
+				{
+					"name": "add new member",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"ranjan\",\r\n    \"lastName\":\"sutradhar\",\r\n    \"email\":\"ranjansutradhar2@gmail.com\",\r\n    \"password\":\"Passw0rd\",\r\n    \"mobileNo\":\"8080811145\",\r\n    \"gymId\":\"47b9c331-ca73-471d-a749-8c0cf4815e07\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}member/add",
+							"host": [
+								"{{baseUrl}}member"
+							],
+							"path": [
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update member",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"firstName\":\"ranjan\",\r\n    \"lastName\":\"sutradhar\",\r\n    \"email\":\"ranjansutradhar2@gmail.com\",\r\n    \"password\":\"Passw0rd\",\r\n    \"mobileNo\":\"8080811145\"\r\n   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}member/4960642e-49f3-4917-b1d4-015cdb4b60db",
+							"host": [
+								"{{baseUrl}}member"
+							],
+							"path": [
+								"4960642e-49f3-4917-b1d4-015cdb4b60db"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete member",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}member/4960642e-49f3-4917-b1d4-015cdb4b60db",
+							"host": [
+								"{{baseUrl}}member"
+							],
+							"path": [
+								"4960642e-49f3-4917-b1d4-015cdb4b60db"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "subscribe to package",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "change membership",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "add body parameters",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get all body parameters",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "add diet",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get all members",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}member/all",
+							"host": [
+								"{{baseUrl}}member"
+							],
+							"path": [
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get active members",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get member attendence",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "mark attendence",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all member attendence",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get memebr by Id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0TmFtZSI6ImNoYW5kYW4iLCJsYXN0TmFtZSI6InN1dHJhZGhhciIsInBhc3N3b3JkIjoiJDJiJDEwJGd4T2xzMmtKL2c2QncxdGJYS1BiTGVBWGQuWVdiVk9La3psZmZ6eTVZekZLLnc1eVNxamwuIiwicm9sZSI6Ik9XTkVSIiwibW9iaWxlTm8iOiI4MDgwODExMTQ1IiwiZW1haWwiOiJjaGFuZGFuQGdtYWlsLmNvbSJ9LCJpYXQiOjE2Nzk5MDM1NDIsImV4cCI6MTY3OTkwOTU0Mn0.RMQD1IoR6XQ5wNjTR8qru-qZ33rAEslfSQYJsjS0sv4",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/",
+			"type": "string"
+		}
+	]
+}

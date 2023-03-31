@@ -30,13 +30,29 @@ export class GymController {
     return await this.gymService.findOne(id);
   }
 
-  @Patch(':id')
+  @Get('/email/:email')
+  async findAllGymForCurrentUser(@Param('email') email: string) {
+    return await this.gymService.findAllGymForCurrentUser(email);
+  }
+
+  @Get('/findaddress/:id')
+  async findGymAddress(@Param('id') email: string) {
+    return await this.gymService.getGymAddress(email);
+  }
+
+
+  @Patch('/update/:id')
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.update(id, updateGymDto);
   }
 
+  @Patch('/update/address/:id')
+  async updateAddress(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
+    return await this.gymService.updateAddress(id, updateGymDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.gymService.remove(+id);
+    return this.gymService.remove(id);
   }
 }

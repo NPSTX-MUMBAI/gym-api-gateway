@@ -70,6 +70,29 @@ export class GymService {
     })
   }
 
+  async findAllGymForCurrentUser(email: string) {
+    try {
+      console.log(email);
+
+      const res = await this.neo.read(`MATCH (u:User)-[:OWNS]->(g:Gym) where u.email=$email return g;`, { email: email });
+      const gyms: Gym[] = [];
+      res.map(r => gyms.push(r.g));
+      return gyms;
+    } catch (error) {
+      throw new HttpException('error encountered', error);
+    }
+  }
+
+  async getGymAddress(id:string) {
+    try {
+      const res = await this.neo.read(`MATCH (g:Gym) where g.id=$id return g;`, { id:id });
+      const gyms: Gym[] = [];
+      res.map(r => gyms.push(r.g));
+      return gyms;
+    } catch (error) {
+      throw new HttpException('error encountered', error);
+    }
+  }
   async findOne(id: string) {
     try {
       const res = await this.neo.read(`MATCH (g:Gym) WHERE g.id=$id return g`, { id: id });
@@ -94,13 +117,43 @@ export class GymService {
       return g
       `)
       return "gym updated successfully";
-
     } catch (error) {
       throw new HttpException("error updating gym", error)
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gym`;
+  async updateAddress(id: string, dto: UpdateGymDto) {
+    try {
+      const res = await this.neo.write(`MATCH (g:Gym {id:"${id}"})-[r:LOCATED_IN]->(a:Address)
+      SET
+      a.line1="${dto.address.line1}",
+      a.line2="${dto.address.line2}",
+      a.locality="${dto.address.locality}",
+      a.city="${dto.address.city}",
+      a.state="${dto.address.state}",
+      a.country="${dto.address.country}",
+      a.pinCode="${dto.address.pinCode}"
+      return a
+      `)
+      console.log(res);
+      return "gym address updated successfully";
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("error updating gym", error)
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const res = await this.neo.write(`MATCH (g:Gym) WHERE g.id=$id
+      SET g.deleted=true
+      return g
+      `,{id:id})
+      console.log(res);
+      return "gym deleted successfully";
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("error deleteing gym", error)
+    }
   }
 }

@@ -11,7 +11,7 @@ import { LocalStrategy } from "./strategy/local.strategy";
     PassportModule,
     JwtModule.register({
       secret: 'Teng!n@404',
-      signOptions: { expiresIn: '6000s' }
+      signOptions: { expiresIn: '600000s' }
     }),
 
   ],
