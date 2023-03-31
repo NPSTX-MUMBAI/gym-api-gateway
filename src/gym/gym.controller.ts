@@ -8,18 +8,17 @@ import { HasRoles } from 'src/auth/has-role.decorator';
 
 @Controller('gym')
 export class GymController {
-  constructor(private readonly gymService: GymService) { }
+  constructor (private readonly gymService: GymService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @HasRoles(USER_ROLE.ADMIN)
+  // @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(USER_ROLE.ADMIN)
   @Post('/create')
-  async create(@Body() createGymDto: CreateGymDto) {
-    console.log('inside create gym controller=>', createGymDto)
+  async create(@Body() createGymDto: any) {
     return await this.gymService.create(createGymDto);
   }
 
-  @HasRoles(USER_ROLE.ADMIN)
-  @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(USER_ROLE.ADMIN)
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/all')
   async findAll() {
     return await this.gymService.findAll();

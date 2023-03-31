@@ -1,6 +1,7 @@
 export interface Gym {
     id: string;
     gymName: string;
+    mobileNo: number;
     email: string;
     panNo: string;
     gstNo: string;

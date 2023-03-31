@@ -6,10 +6,13 @@ import { Gym } from './entities/gym.entity';
 
 @Injectable()
 export class GymService {
-  constructor(private neo: Neo4jService) {
+  constructor (private neo: Neo4jService) {
 
   }
-  async create(dto: CreateGymDto) {
+  async create(dto: any) {
+
+    console.log(dto, 'my gym details');
+
     try {
       //step1: first check if the gym exists 
       const gymExists = await this.neo.read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE g.gymName="${dto.gymName}" AND g.email="${dto.email}" 
@@ -35,7 +38,7 @@ export class GymService {
           const r = await this.neo.write(`MATCH (u:User{email:"${dto.createdBy}"}) 
         MATCH(g:Gym {id:"${id}"}) CREATE (u)-[o:OWNS]->(g) return o`);
           console.log("gym created successfully", r);
-          return "gym created successfully"
+          return { msg: "gym created successfully", data: res, r }
 
         } else {
           return "failed to create gym due to invalid request"
@@ -50,16 +53,21 @@ export class GymService {
   }
 
   async findAll() {
-    try {
-      const res = await this.neo.read(`MATCH (g:Gym) return g`);
-      const gyms: Gym[] = [];
-      res.map(r => {
-        gyms.push(r.g)
-      });
-      return gyms;
-    } catch (error) {
-      throw new HttpException('error encountered', error);
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await this.neo.read(`MATCH (g:Gym)-[r:LOCATED_IN]->(a:Address) return g,a`);
+        const gyms: Gym[] = [];
+        res.map(r => {
+          gyms.push({...r.g,address:r.a})
+        });
+        console.log(res);
+        
+        resolve(gyms)
+        return gyms;
+      } catch (error) {
+        throw new HttpException('error encountered', error);
+      }
+    })
   }
 
   async findOne(id: string) {
