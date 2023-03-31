@@ -56,7 +56,7 @@ export class MemberController {
 
     ]
   })) file: Express.Multer.File) {
-    console.log(file);
+    console.log(file, 'my file');
     return "image uploaded successfully"
   }
 
