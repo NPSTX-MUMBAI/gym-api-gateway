@@ -1,17 +1,10 @@
-import { isNotEmpty, IsNotEmpty } from "class-validator";
-
 export class CreateMemberDto {
-    id?: string;
-    @IsNotEmpty()
+    memberId?: string;
     firstName: string;
-    @IsNotEmpty()
     lastName: string;
-    @IsNotEmpty()
     email: string;
     mobileNo: string;
-    @IsNotEmpty()
-    password: string;
+    password: string;   
     roles: string[];
-    @IsNotEmpty()
     gymId: string;
 }

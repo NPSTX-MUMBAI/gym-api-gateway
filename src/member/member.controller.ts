@@ -3,20 +3,17 @@ import { MemberService } from './member.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadedFile, UseGuards } from '@nestjs/common/decorators';
+import { UploadedFile } from '@nestjs/common/decorators';
 import { FileTypeValidator, MaxFileSizeValidator, ParseFilePipe } from '@nestjs/common/pipes';
 import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('member')
 export class MemberController {
-  constructor (private readonly memberService: MemberService) {}
+  constructor(private readonly memberService: MemberService) { }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('/add')
   create(@Body() createMemberDto: CreateMemberDto) {
-
     return this.memberService.create(createMemberDto);
   }
 
@@ -40,25 +37,25 @@ export class MemberController {
     return await this.memberService.remove(id);
   }
 
-  @Post('/imageupload')
-  @UseInterceptors(FileInterceptor('image', {
+  // @Post('/imageupload')
+  // @UseInterceptors(FileInterceptor('image', {
+  //   dest: '/images'
+  // }))
+  // uploadPics(@UploadedFile(new ParseFilePipe({
+  //   validators: [
+  //     new FileTypeValidator({
+  //       fileType: 'image/png'
+  //     }),
+  //     new MaxFileSizeValidator({
+  //       maxSize: 2000000
+  //     }),
 
-  }))
-  uploadPics(@UploadedFile(new ParseFilePipe({
-    validators: [
-      new FileTypeValidator({
-        fileType: 'image/png'
-      }),
-      new MaxFileSizeValidator({
-        maxSize: 2000000
-      }),
 
-
-    ]
-  })) file: Express.Multer.File) {
-    console.log(file, 'my file');
-    return "image uploaded successfully"
-  }
+  //   ]
+  // })) file: Express.Multer.File) {
+  //   console.log(file);
+  //   return "image uploaded successfully"
+  // }
 
   @Post('/bulkupload')
   @UseInterceptors(FileInterceptor('file', {
@@ -73,7 +70,7 @@ export class MemberController {
         extensions: ['xls', 'xlsx', 'csv']
       }),
       new FileHeaderValidator({
-        headers: ['firstName', 'lastName', 'email', 'mobileNo']
+        headers:['firstName','lastName','email','mobileNo']
       })
     ]
   })) file: Express.Multer.File) {
