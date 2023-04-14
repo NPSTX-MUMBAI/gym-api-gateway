@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Get,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dtos/login.dto';
@@ -6,9 +13,7 @@ import { SignUpDTO } from './dtos/signup.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authSvc: AuthService) {
-
-  }
+  constructor(private readonly authSvc: AuthService) {}
 
   @UseGuards(AuthGuard('local'))
   @Post('/login')
@@ -23,12 +28,10 @@ export class AuthController {
     return await this.authSvc.signup(body);
   }
 
-  @Post("/validateuser")
+  @Post('/validateuser')
   async signIn(@Body() body: LoginDTO) {
     return await this.authSvc.validateUser(body.email, body.password);
   }
-
-
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
@@ -36,12 +39,8 @@ export class AuthController {
     return req.user;
   }
 
-  resetPassword() {
+  resetPassword() {}
 
-  }
-
-  logout() {
-
-  }
-
+  logout() {}
 }
+//Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
