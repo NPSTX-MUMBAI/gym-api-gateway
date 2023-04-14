@@ -50,7 +50,6 @@ export class MemberController {
   //       maxSize: 2000000
   //     }),
 
-
   //   ]
   // })) file: Express.Multer.File) {
   //   console.log(file);

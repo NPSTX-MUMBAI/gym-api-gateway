@@ -10,11 +10,6 @@ import { HasRoles } from 'src/auth/has-role.decorator';
 export class GymController {
   constructor(private readonly gymService: GymService) { }
 
-
-  
-
-
-
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
   @Post('/create')
@@ -30,7 +25,6 @@ export class GymController {
   async findAll() {
     return await this.gymService.findAll();
   }
-
   
   @Get(':id')           //Find ID
   async findOne(@Param('id') id: string) {
@@ -47,7 +41,6 @@ export class GymController {
   async findGymAddress(@Param('id') email: string) {
     return await this.gymService.getGymAddress(email);
   }
-
 
   @Patch('/update/:id')
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {

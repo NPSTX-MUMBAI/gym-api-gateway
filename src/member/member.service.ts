@@ -52,9 +52,6 @@ export class MemberService {
       console.log("GymID->",dto.gymId);
       console.log("MemberID->",dto.memberId);
 
-     
-      
-
     return { data: query, msg:"ok"}
     } catch (error) {
       return new HttpException(error, 503);

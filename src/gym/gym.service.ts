@@ -50,7 +50,6 @@ export class GymService {
 
   // }
 
-
   async create(dto: CreateGymDto) {
     try {
       //step1: first check if the gym exists 
@@ -74,7 +73,6 @@ export class GymService {
           id = r.g.gymId;
           console.log("ID->",id);
 
-
         })
         if (res) {
           const r = await this.neo.write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"}) 
@@ -91,9 +89,7 @@ export class GymService {
       console.log(error);
       throw new HttpException(error, 501);
     }
-
   }
-
 
   // async findAll() {
   //   try {
