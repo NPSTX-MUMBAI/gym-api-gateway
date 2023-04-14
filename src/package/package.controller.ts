@@ -52,11 +52,9 @@ export class PackageController {
     return this.packageService.remove(+id);
   }
 
-  @Get('/generate/default/service')
-  async generateDefaultservice(dto: ServiceDTO) {
+  @Post('/generate/default/service')
+  async generateDefaultservice(dto:ServiceDTO){
     console.log('inside generate default service');
     return await this.packageService.createDefaultservice(dto);
-
-    // return this.packageService.testPService();
   }
 }
