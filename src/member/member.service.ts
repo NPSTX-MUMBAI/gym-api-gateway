@@ -8,9 +8,7 @@ import { NotFoundException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class MemberService {
-  constructor (private neo: Neo4jService) {
-
-  }
+  constructor(private neo: Neo4jService) {}
   async create(dto: CreateMemberDto) {
     try {
       console.log('dto=>', dto);
@@ -20,38 +18,41 @@ export class MemberService {
       const query = `CREATE (u:User {firstName:"${dto.firstName}",lastName:"${dto.lastName}",email:"${dto.email}",
             mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}"
         }) SET u.roles = $roles, u.id=apoc.create.uuid() return u
-        ` ;
+        `;
       const params = { roles: roles };
       const res = await this.neo.write(query, params);
       let member: User;
       if (res.length > 0) {
-        res.map(r => {
-          console.log("memebr=>", r.u);
+        res.map((r) => {
+          console.log('memebr=>', r.u);
           member = r.u;
-        })
+        });
 
-        let c = await this.neo.write(`MATCH (g:Gym),(u:User) WHERE g.id="${dto.gymId}" AND u.id="${member.id}" CREATE (g)-[r:HAS_MEMBER]->(u) return u`);
+        const c = await this.neo.write(
+          `MATCH (g:Gym),(u:User) WHERE g.id="${dto.gymId}" AND u.id="${member.id}" CREATE (g)-[r:HAS_MEMBER]->(u) return u`,
+        );
         console.log(c);
-        return "member created successfully";
+        return 'member created successfully';
       } else {
-        throw new BadRequestException("failed to create member in the database");
+        throw new BadRequestException(
+          'failed to create member in the database',
+        );
       }
-
     } catch (error) {
       return new HttpException(error, 503);
     }
   }
 
   async findAll() {
-
     try {
-      const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
+      const res = await this.neo.read(
+        `MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `,
+      );
 
-      res.map(r => {
+      res.map((r) => {
         console.log(r);
-      })
+      });
       return res;
-
     } catch (error) {
       throw new NotFoundException();
     }
@@ -70,20 +71,21 @@ export class MemberService {
       u.lastName="${dto.lastName}",
       u.mobileNo="${dto.mobileNo}"
       return u
-      `)
-      return "member updated successfully";
+      `);
+      return 'member updated successfully';
     } catch (error) {
-      throw new HttpException("error updating member", error)
+      throw new HttpException('error updating member', error);
     }
   }
 
   async remove(id: string) {
     try {
-      const res = await this.neo.write(`MATCH (u:User {id:"${id}"}) DETACH DELETE u`);
-      return "member deleted successfully";
-
+      const res = await this.neo.write(
+        `MATCH (u:User {id:"${id}"}) DETACH DELETE u`,
+      );
+      return 'member deleted successfully';
     } catch (error) {
-      throw new HttpException("error", error)
+      throw new HttpException('error', error);
     }
   }
 }

@@ -18,7 +18,8 @@ AURA_INSTANCENAME=unacademy-db
 
  */
 @Module({
-  imports: [AuthModule,
+  imports: [
+    AuthModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
       host: '29959c44.databases.neo4j.io',
@@ -29,9 +30,14 @@ AURA_INSTANCENAME=unacademy-db
         disableLosslessIntegers: true,
       },
     }),
-    OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule],
+    OwnerModule,
+    MemberModule,
+    PackageModule,
+    CollectionModule,
+    ReportsModule,
+    GymModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
-  
 })
-export class AppModule { }
+export class AppModule {}
