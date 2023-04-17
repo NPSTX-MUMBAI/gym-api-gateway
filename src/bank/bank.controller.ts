@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { SignUpDTO } from 'src/auth/dtos/signup.dto';
 import { BankService } from './bank.service';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
@@ -7,12 +8,13 @@ import { UpdateBankDto } from './dto/update-bank.dto';
 export class BankController {
   constructor(private readonly bankService: BankService) {}
 
-  @Post()
-  create(@Body() createBankDto: CreateBankDto) {
+  @Post('add')
+  create(@Body() createBankDto: CreateBankDto,userDto:SignUpDTO) {
+    // return this.bankService.create(createBankDto);
     return this.bankService.create(createBankDto);
   }
 
-  @Get()
+  @Get('list')
   findAll() {
     return this.bankService.findAll();
   }
