@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
@@ -18,15 +26,20 @@ export class PackageController {
   // findAll() {
   //   return this.packageService.findAll();
   // }
-  
+
+  @Post('findallPackages')
+  findallpackage(@Body() dto: CreatePackageDto) {
+    return this.packageService.findallpackage(dto);
+  }
+
   @Get('allPackages')
   findAll() {
     return this.packageService.findAll();
   }
 
-  @Get(':id')
+  @Post(':id')
   findOne(@Param('id') id: string) {
-    return this.packageService.findOne(+id);
+    return this.packageService.findpackagebyId(id);
   }
 
   @Patch(':id')
@@ -39,14 +52,11 @@ export class PackageController {
     return this.packageService.remove(+id);
   }
 
-  @Post('/generate/default/service')
-  async generateDefaultservice(dto:ServiceDTO){
+  @Get('/generate/default/service')
+  async generateDefaultservice(dto: ServiceDTO) {
     console.log('inside generate default service');
     return await this.packageService.createDefaultservice(dto);
+
+    // return this.packageService.testPService();
   }
-  }
-
-
-
-
-
+}
