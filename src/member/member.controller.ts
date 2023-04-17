@@ -37,10 +37,10 @@ export class MemberController {
     return await this.memberService.remove(id);
   }
 
-  @Post('/imageupload')
-  @UseInterceptors(FileInterceptor('image', {
-    dest: '/images'
-  }))
+  // @Post('/imageupload')
+  // @UseInterceptors(FileInterceptor('image', {
+  //   dest: '/images'
+  // }))
   uploadPics(@UploadedFile(new ParseFilePipe({
     validators: [
       new FileTypeValidator({
