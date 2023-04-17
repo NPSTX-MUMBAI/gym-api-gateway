@@ -134,23 +134,47 @@ export class PackageService {
       console.log('inside package service');
       const defaultSvcs: ServiceDTO[] = [
         {
-          id: crypto.randomUUID(),
-          isDefault: true,
-          name: 'cardio',
-          imgUrl: '../assets/cardio1.jpg',
-        },
-        {
-          id: crypto.randomUUID(),
-          isDefault: true,
-          name: 'personal training',
-          imgUrl: '../assets/Trainer1.jpg',
-        },
-        {
-          id: crypto.randomUUID(),
-          isDefault: true,
-          name: 'sauna',
-          imgUrl: '../assets/sauna.jpg',
-        },
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'cardio',
+                imgUrl:'../assets/cardio1.jpg'
+              },
+              {
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'Personal Training',
+                imgUrl:'../assets/Trainer1.jpg'
+              },
+              {
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'Sauna',
+                imgUrl:'../assets/sauna.jpg'
+              },
+              {
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'Lockers',
+                imgUrl:'../assets/lockers.jpg'
+              },
+              {
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'Swimming',
+                imgUrl:'../assets/swimpool1.jpg'
+              },
+              {
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'Strength Training',
+                imgUrl:'../assets/Strengthtraining.jpg'
+              },
+              {
+                id:crypto.randomUUID(),
+                isDefault:true,
+                name:'Yoga',
+                imgUrl:'../assets/Yoga1.jpg'
+              },
       ];
 
       defaultSvcs.forEach(async (svc) => {
