@@ -10,6 +10,7 @@ import { CreatePackageDto } from './dto/create-package.dto';
 import { ServiceDTO } from './dto/service.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import * as crypto from 'crypto';
+import { log } from 'console';
 
 @Injectable()
 export class PackageService {
@@ -34,8 +35,9 @@ export class PackageService {
         g.gymId='${dto.createdBy}' AND p.id='${packageId}  
         CREATE (g) - [r:HAS_PACKAGE] -> (p) RETURN type(r)`;
         await this.neo.write(q);
+        console.log(q);
 
-        return true;
+        return { data: q, msg: 'Package Created successfully' };
       }
     } catch (error) {
       console.log(error);
@@ -124,6 +126,28 @@ export class PackageService {
       CREATE (p) - [r:HAS_SERVICE] -> (s) RETURN type(r)`);
     } catch (error) {
       return new NotFoundException('Package Not Found!');
+    }
+  }
+
+  async createService(dto: ServiceDTO) {
+    try {
+      const crypto = require('crypto');
+      const id = crypto.randomUUID();
+
+      const query = await this.neo.write(`
+      CREATE (s:Service {name:"${dto.name}",
+      imgUrl:"${dto.imgUrl}", 
+      rate:"${dto.rate}"}) 
+      return s
+      union
+      merge(g:gym {packageId: "${dto.packageId}"})-[r:HAS_SERVICE]->(s:service{serviceId:"${id}"}) return s`);
+
+      console.log('GymID->', dto.packageId);
+      console.log('MemberID->', dto.id);
+
+      return { data: query, msg: 'ok' };
+    } catch (error) {
+      return new HttpException(error, 503);
     }
   }
 

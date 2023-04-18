@@ -21,6 +21,11 @@ export class PackageController {
     return this.packageService.create(createPackageDto);
   }
 
+  @Post('/addservice')
+  createService(@Body() serviceDto: ServiceDTO) {
+    return this.packageService.createService(serviceDto);
+  }
+
   //1
   // @Get('')
   // findAll() {
