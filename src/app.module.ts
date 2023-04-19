@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { AuthModule } from './auth/auth.module';
 import { OwnerModule } from './owner/owner.module';
 import { MemberModule } from './member/member.module';
@@ -12,6 +13,7 @@ import { GymModule } from './gym/gym.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
+import { BankModule } from './bank/bank.module';
 
 /**
  * NEO4J_URI=neo4j+s://29959c44.databases.neo4j.io
@@ -37,7 +39,7 @@ AURA_INSTANCENAME=unacademy-db
         disableLosslessIntegers: true,
       },
     }),
-    OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule],
+    OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_GUARD,
