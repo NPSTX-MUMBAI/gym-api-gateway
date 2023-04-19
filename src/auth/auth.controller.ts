@@ -20,13 +20,6 @@ export class AuthController {
   constructor(private readonly authSvc: AuthService) { }
 
 
-  @Get('all')
-  getAll(email: string) {
-    this.authSvc.getAllUsers(email);
-    this.authSvc.getAllGyms();
-
-  }
-
   @SkipThrottle(true)
   @UseGuards(AuthGuard('local'))
   @Post('/login')

@@ -79,22 +79,6 @@ export class AuthService {
     }
   }
 
-  // async getUser(email: string) {
-  //     const res = await this.neo.read(`MATCH (u:User) where u.email=$email return u;`, { email: email });
-  //     console.log(res);
-  //     if (res.length > 0) {
-  //         let u: User;
-  //         console.log(res);
-  //         res.map(row => {
-  //             console.log('row=>', row);
-  //             u = row.u as User;
-  //         })
-  //         return u;
-  //     } else {
-  //         return null;
-  //     }
-  // }
-
   async getUser(email: string) {
     const res = await this.neo.read(
       `MATCH (u:User) where u.email=$email return u;`,
@@ -125,10 +109,10 @@ export class AuthService {
     console.log('Total Gym Users -> ', gymUserCount);
   }
 
-  async getAllGyms() {
-    const gymCount = (await this.neo.read(`MATCH (n:Gym) RETURN n`)).length;
-    console.log('Available Gyms -> ', gymCount);
-  }
+  // async getAllGyms() {
+  //   const gymCount = (await this.neo.read(`MATCH (n:Gym) RETURN n`)).length;
+  //   console.log('Available Gyms -> ', gymCount);
+  // }
 
   
 }
