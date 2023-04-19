@@ -17,8 +17,8 @@ export class PackageController {
   constructor(private readonly packageService: PackageService) {}
 
   @Post('/add')
-  create(@Body() createPackageDto: CreatePackageDto) {
-    return this.packageService.create(createPackageDto);
+  async create(@Body() createPackageDto: CreatePackageDto) {
+    return await this.packageService.create(createPackageDto);
   }
 
   @Post('/addservice')
@@ -33,7 +33,7 @@ export class PackageController {
   // }
 
   @Post('findallPackages')
-  findallpackage(@Body() dto: CreatePackageDto) {
+  findAllpackage(@Body() dto: CreatePackageDto) {
     return this.packageService.findallpackage(dto);
   }
 

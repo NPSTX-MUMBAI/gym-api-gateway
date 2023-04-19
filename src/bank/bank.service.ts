@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { Neo4jService } from '@brakebein/nest-neo4j';
@@ -14,21 +14,30 @@ export class BankService {
     return new Promise(async (resolve) => {
       try {
         await this.neo.write(
-          `merge (b:bank {accountHolderName: "${Dto.accountHolderName}",
+          `merge (b:Bank {accountHolderName: "${Dto.accountHolderName}",
 accountType: "${Dto.accountType}",
 accountNo: "${Dto.accountNo}",
 ifsc: "${Dto.ifsc}",
-mid: "${Dto.mid}",
-bankName: "${Dto.bankbankName}",
+vpa: "${Dto.vpa}",
+bankName: "${Dto.name}",
 branchName: "${Dto.branchName}",
 bankId:"${bankId}"})
 return b`,
         );
-        await this.neo.write(
-          `MATCH (g:Gym),(p:bank) WHERE
-        g.gymId="${Dto.gymId}" AND p.bankId="${bankId}"
-        CREATE (g) - [r:HAS_BANK_ACCOUNT] -> (p) RETURN g,p`,
-        );
+        const res = await this.neo
+          .write(`MATCH (g:Gym),(p:Bank) WHERE g.gymId="${
+          Dto.gymId
+        }" AND p.bankId="${bankId}"
+        CREATE (g) - [r:HAS_ACCOUNT {createdOn:"${Date.now()}"}] -> (p) RETURN g,p,r`);
+
+        if (res.length > 0) {
+          res.map((r) => {
+            console.log(r);
+            resolve({ status: true, msg: 'SUCCESS', statusCode: 201 });
+          });
+        } else {
+          throw new BadRequestException();
+        }
         resolve({ status: true, msg: 'SUCCESS', statusCode: 201 });
       } catch (error) {
         resolve({ status: false, msg: 'FAILED to generate response' });
@@ -36,7 +45,7 @@ return b`,
     });
   }
 
-  async edit(Dto: UpdateBankDto) {
+  async update(Dto: UpdateBankDto) {
     try {
       const query = await this.neo
         .write(`MATCH (n:bank {bankId: "${Dto.bankId}"})

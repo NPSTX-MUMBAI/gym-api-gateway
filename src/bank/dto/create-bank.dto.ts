@@ -1,12 +1,11 @@
 export class CreateBankDto {
-  id?: string;
   accountType: string;
   accountNo: string;
   ifsc: string;
-  mid: string;
+  vpa?: string;
   gymId?: string;
   bankId?: string;
   accountHolderName: string;
-  bankbankName: string;
+  name: string;
   branchName: string;
 }

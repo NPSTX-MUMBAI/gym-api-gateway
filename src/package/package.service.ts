@@ -1,5 +1,6 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import {
+  BadGatewayException,
   Get,
   HttpException,
   Injectable,
@@ -15,32 +16,41 @@ import { log } from 'console';
 @Injectable()
 export class PackageService {
   constructor(private neo: Neo4jService) {}
+
   async create(dto: CreatePackageDto) {
     try {
+      console.log(dto);
+      const packageId = crypto.randomUUID();
+
       const query = `CREATE (p:Package { name:"${dto.name}",
-      createdOn:"${Date.now().toString()}",
       description:"${dto.description}",
       imgUrl:"${dto.imgUrl}",
       validFrom:"${dto.validFrom}",
       validTo:"${dto.validTo}",
       amount:"${dto.amount}",
-      id:"${crypto.randomUUID()}"}) return p`;
+      id:"${packageId}"}) return p`;
 
       const res = await this.neo.write(query);
       if (res && res.length > 0) {
-        let packageId = '';
-        res.map((row) => (packageId = row.p.id));
-        console.log(packageId);
+        console.log('packageId=>', packageId);
         const q = `MATCH (g:Gym),(p:Package) WHERE 
-        g.gymId='${dto.createdBy}' AND p.id='${packageId}  
-        CREATE (g) - [r:HAS_PACKAGE] -> (p) RETURN type(r)`;
-        await this.neo.write(q);
+        g.gymId="${dto.gymId}" AND p.id="${packageId}"  
+        CREATE (g)-[r:HAS_PACKAGE {createdOn:"${Date.now()}"}]-> (p) RETURN r`;
+
         console.log(q);
 
-        return { data: q, msg: 'Package Created successfully' };
+        await this.neo.write(q);
+
+        //handle case when package is created but failes to create relaationship..
+        //role back the package creation?
+        console.log(q);
+
+        return { status: true, msg: 'Package Created successfully', data: q };
       }
     } catch (error) {
       console.log(error);
+
+      throw new BadGatewayException(error);
     }
   }
 

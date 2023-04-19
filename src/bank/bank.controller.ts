@@ -22,6 +22,6 @@ export class BankController {
 
   @Patch('/edit')
   edit(@Body() createBankDto: CreateBankDto) {
-    return this.bankService.edit(createBankDto);
+    return this.bankService.update(createBankDto);
   }
 }

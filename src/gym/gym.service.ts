@@ -12,6 +12,7 @@ import { Gym } from './entities/gym.entity';
 
 @Injectable()
 export class GymService {
+  myGymId: any;
   constructor(private neo: Neo4jService) {}
   // async create(dto: CreateGymDto) {
   //   try {
@@ -78,12 +79,12 @@ export class GymService {
         MERGE (g)-[r:LOCATED_IN]->(a) return a,g
      `);
         res.map((r) => {
-          id = r.g.gymId;
+          this.myGymId = r.g.gymId;
           console.log('ID->', id);
         });
         if (res) {
           const r = await this.neo
-            .write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"}) 
+            .write(`MATCH (u:User{userId:"${dto.userId}"}),(g:Gym {gymId:"${this.myGymId}"}) 
           merge (u)-[o:OWNS]->(g) return o`);
           console.log('gym created successfully', r);
           return 'gym created successfully';
@@ -117,7 +118,7 @@ export class GymService {
       );
       const gyms: Gym[] = [];
       res.map((r) => {
-        gyms.push({ ...r['g'], ...r['a'] });
+        gyms.push({ ...r['g'], address: r['a'] });
       });
       return gyms;
     } catch (error) {
@@ -125,13 +126,13 @@ export class GymService {
     }
   }
 
-  async findAllGymForCurrentUser(email: string) {
+  async findAllGymForCurrentUser(userId: string) {
     try {
-      console.log(email);
+      console.log(userId);
 
       const res = await this.neo.read(
-        `MATCH (u:User)-[:OWNS]->(g:Gym) where u.email=$email return g;`,
-        { email: email },
+        `MATCH (u:User {userId: "${userId}"})-[:OWNS]->(g:Gym) return g;`,
+        { userId: userId },
       );
       const gyms: Gym[] = [];
       res.map((r) => gyms.push(r.g));

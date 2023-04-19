@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { GymService } from './gym.service';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
@@ -8,39 +17,38 @@ import { HasRoles } from 'src/auth/has-role.decorator';
 
 @Controller('gym')
 export class GymController {
-  constructor(private readonly gymService: GymService) { }
-
-
-  
-
-
+  constructor(private readonly gymService: GymService) {}
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
   @Post('/create')
   async create(@Body() createGymDto: CreateGymDto) {
-    console.log('inside create gym controller=>', createGymDto)
+    console.log('inside create gym controller=>', createGymDto);
     return await this.gymService.create(createGymDto);
   }
 
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
 
-  @Get('/all')     
+  @Get('/all')
   async findAll() {
     return await this.gymService.findAll();
   }
 
-  
-  @Get(':id')           //Find ID
+  @Get(':id') //Find ID
   async findOne(@Param('id') id: string) {
     console.log(id);
     return await this.gymService.findOne(id);
   }
 
-  @Get('/email/:email')
-  async findAllGymForCurrentUser(@Param('email') email: string) {
-    return await this.gymService.findAllGymForCurrentUser(email);
+  // @Get('/email/:email')
+  // async findAllGymForCurrentUser(@Param('email') email: string) {
+  //   return await this.gymService.findAllGymForCurrentUser(email);
+  // }
+
+  @Get('/user/:userId')
+  async findAllGymForCurrentUser(@Param('userId') userId: string) {
+    return await this.gymService.findAllGymForCurrentUser(userId);
   }
 
   @Get('/findaddress/:id')
@@ -48,14 +56,16 @@ export class GymController {
     return await this.gymService.getGymAddress(email);
   }
 
-
   @Patch('/update/:id')
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.update(id, updateGymDto);
   }
 
   @Patch('/update/address/:id')
-  async updateAddress(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
+  async updateAddress(
+    @Param('id') id: string,
+    @Body() updateGymDto: UpdateGymDto,
+  ) {
     return await this.gymService.updateAddress(id, updateGymDto);
   }
 
