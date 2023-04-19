@@ -11,6 +11,7 @@ import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { ServiceDTO } from './dto/service.dto';
+import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 
 @Controller('package')
 export class PackageController {
@@ -46,6 +47,18 @@ export class PackageController {
   findOne(@Param('id') id: string) {
     return this.packageService.findpackagebyId(id);
   }
+
+
+  // @Get(':id')   //Running
+  // findOne(@Param('id') id: string) {
+  //   return this.packageService.findpackagebyId(id);
+  // }
+
+  @Get('packagenames')
+  getPackageNamesWithId() {
+    this.packageService.getPackageNames();
+  }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePackageDto: UpdatePackageDto) {

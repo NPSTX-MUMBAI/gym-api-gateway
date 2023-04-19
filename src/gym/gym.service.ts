@@ -6,6 +6,8 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { SignUpDTO } from 'src/auth/dtos/signup.dto';
+import { CreateBankDto } from 'src/bank/dto/create-bank.dto';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { Gym } from './entities/gym.entity';
@@ -13,7 +15,7 @@ import { Gym } from './entities/gym.entity';
 @Injectable()
 export class GymService {
   myGymId: any;
-  constructor(private neo: Neo4jService) {}
+  constructor(private neo: Neo4jService) { }
   // async create(dto: CreateGymDto) {
   //   try {
   //     //step1: first check if the gym exists
@@ -68,6 +70,7 @@ export class GymService {
           'gym exists with the same name for the same user',
         );
       } else {
+
         let id: string;
         const res = await this.neo
           .write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,gymName:"${dto.gymName}",

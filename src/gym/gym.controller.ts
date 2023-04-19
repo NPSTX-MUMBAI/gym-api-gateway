@@ -22,7 +22,7 @@ export class GymController {
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
-  @Post('/create')
+  @Post('/create')    //Running
   async create(@Body() createGymDto: CreateGymDto) {
     console.log('inside create gym controller=>', createGymDto);
     return await this.gymService.create(createGymDto);
@@ -52,7 +52,7 @@ export class GymController {
     return await this.gymService.findAllGymForCurrentUser(userId);
   }
 
-  @Get('/findaddress/:id')
+  @Get('/findaddress/:id')  
   async findGymAddress(@Param('id') email: string) {
     return await this.gymService.getGymAddress(email);
   }

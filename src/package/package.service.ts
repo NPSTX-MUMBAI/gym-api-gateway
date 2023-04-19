@@ -178,4 +178,53 @@ export class PackageService {
   remove(id: number) {
     return `This action removes a #${id} package`;
   }
+
+  // getServiceByPackageID() {
+  //   try {
+  //     //Trying for Platinum Package
+  //     const r1 = this.neo
+  //       .read(
+  //         `
+  //     MATCH (s:Service {id: "ef73a980-c02d-4d9a-a9e3-45e4b67ad1fb"})
+  //     <-[r:HAS_SERVICE]-(p:Package {name: "Platinum Package"}) 
+  //     return s,p
+  //     `,
+  //       )
+  //       .then((res) => {
+  //         console.log('Result-', res);
+  //       });
+  //     console.log('Reading...', r1);
+  //   } catch (err) {
+  //     console.log('Package Not Found By ServiceID!', err);
+  //   }
+  // }
+
+  packageNames :string[];
+  getPackageNames() {
+    try {
+
+     let pid =  this.neo.read('MATCH (p:Package) return p.name,p.id')
+     .then((res:any) => {
+       console.log(res);
+       if(res) {
+         
+         res.find((r)=>{
+           console.log("Package Names",r);
+           this.packageNames = r;
+           console.log("Package Names",this.packageNames);
+           
+
+        })
+          
+
+        
+       }
+
+     })
+      
+
+    } catch (err) {
+      console.log('', err);
+    }
+  }
 }

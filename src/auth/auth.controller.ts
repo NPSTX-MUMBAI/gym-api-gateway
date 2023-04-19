@@ -36,12 +36,6 @@ export class AuthController {
     //return req.user;
   }
 
-  @Get('uuid')
-  getUUID() {
-    return this.authSvc.getUUID();
-  }
-
-
   @Post('/signup')  //1  Wharting
   async signup(@Body() body: SignUpDTO) {
     return await this.authSvc.signup(body);
@@ -52,17 +46,13 @@ export class AuthController {
     return await this.authSvc.validateUser(body.email, body.password);
   }
 
-
-
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   getProfile(@Request() req) {
     return req.user;
   }
 
-
-
-  resetPassword() { }
+  resetPassword() {}
 
   logout() { }
 }

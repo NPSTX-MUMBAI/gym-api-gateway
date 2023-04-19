@@ -130,13 +130,5 @@ export class AuthService {
     console.log('Available Gyms -> ', gymCount);
   }
 
-  async getUUID() {
-    const crypto = require('crypto');
-
-    const gymuuid1 = crypto.randomUUID();
-
-    console.log('Gym UUID -> ', gymuuid1);
-
-    return gymuuid1;
-  }
+  
 }
