@@ -23,21 +23,19 @@ export class PackageService {
       console.log(dto);
       const packageId = crypto.randomUUID();
 
-      const query = `CREATE (p:Package { name:"${dto.name}",
-      createdOn:"${new Date().toLocaleDateString()}",
-      createTime:"${new Date().toLocaleTimeString()}",
+      const query = `CREATE (p:Package { 
+      name:"${dto.name}",
       description:"${dto.description}",
       imgUrl:"${dto.imgUrl}",
       validFrom:"${dto.validFrom}",
       validTo:"${dto.validTo}",
-      amount:"${dto.amount}",
       id:"${packageId}"}) return p`;
 
       const res = await this.neo.write(query);
       if (res && res.length > 0) {
         console.log('packageId=>', packageId);
         const q = `MATCH (g:Gym),(p:Package) WHERE 
-        g.gymId="${dto.gymId}" AND p.id="${packageId}"  
+        g.id="${dto.gymId}" AND p.id="${packageId}"  
         CREATE (g)-[r:HAS_PACKAGE {createdOn:"${Date.now()}"}]-> (p) RETURN r`;
 
         console.log(q);

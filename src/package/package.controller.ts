@@ -15,9 +15,9 @@ import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 
 @Controller('package')
 export class PackageController {
-  constructor(private readonly packageService: PackageService) {}
+  constructor(private readonly packageService: PackageService) { }
 
-  @Post('/add')
+  @Post('/create')
   async create(@Body() createPackageDto: CreatePackageDto) {
     return await this.packageService.create(createPackageDto);
   }
