@@ -32,7 +32,7 @@ export class MemberService {
 
         const name: number = 10;
         const nameArray: number[] = [];
-
+          console.log(dto.services)
         dto.services.map(async (s) => {
 
           try {
