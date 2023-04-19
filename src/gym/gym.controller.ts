@@ -5,21 +5,24 @@ import { UpdateGymDto } from './dto/update-gym.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { HasRoles } from 'src/auth/has-role.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('gym')
 export class GymController {
   constructor(private readonly gymService: GymService) { }
 
+  @HasRoles(USER_ROLE.OWNER)
   @UseGuards(AuthGuard('jwt'))
-  @HasRoles(USER_ROLE.ADMIN)
   @Post('/create')
   async create(@Body() createGymDto: CreateGymDto) {
     console.log('inside create gym controller=>', createGymDto)
     return await this.gymService.create(createGymDto);
   }
 
-  @HasRoles(USER_ROLE.ADMIN)
+
+
   @UseGuards(AuthGuard('jwt'))
+  @HasRoles(USER_ROLE.OWNER)
   @Get('/all')
   async findAll() {
     return await this.gymService.findAll();

@@ -1,5 +1,6 @@
 import { Body, Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { SkipThrottle } from '@nestjs/throttler/dist/throttler.decorator';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dtos/login.dto';
 import { SignUpDTO } from './dtos/signup.dto';
@@ -10,6 +11,7 @@ export class AuthController {
 
   }
 
+  @SkipThrottle(true)
   @UseGuards(AuthGuard('local'))
   @Post('/login')
   async login(@Body() body: LoginDTO, @Request() req) {
