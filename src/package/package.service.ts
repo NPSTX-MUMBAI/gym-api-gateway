@@ -1,6 +1,7 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import {
   BadGatewayException,
+  BadRequestException,
   Get,
   HttpException,
   Injectable,
@@ -15,7 +16,7 @@ import { log } from 'console';
 
 @Injectable()
 export class PackageService {
-  constructor(private neo: Neo4jService) {}
+  constructor(private neo: Neo4jService) { }
 
   async create(dto: CreatePackageDto) {
     try {
@@ -129,15 +130,6 @@ export class PackageService {
     }
   }
 
-  testPService() {
-    try {
-      const q = this.neo.read(`MATCH (p:Package),(s:Service) 
-      WHERE p.id='1e67270f-8dcb-4a39-9c89-7730f5442050' AND s.id='38a2ca02-9e37-449a-9192-80ce4f2b1348' 
-      CREATE (p) - [r:HAS_SERVICE] -> (s) RETURN type(r)`);
-    } catch (error) {
-      return new NotFoundException('Package Not Found!');
-    }
-  }
 
   async createService(dto: ServiceDTO) {
     try {
@@ -146,22 +138,22 @@ export class PackageService {
 
       const query = await this.neo.write(`
       CREATE (s:Service {name:"${dto.name}",
-      imgUrl:"${dto.imgUrl}", 
-      rate:"${dto.rate}"}) 
+      imgUrl:"${dto.imgUrl}, id:"${id}, isDefault:"${dto.isDefault}"}
       return s
       union
-      merge(g:gym {packageId: "${dto.packageId}"})-[r:HAS_SERVICE]->(s:service{serviceId:"${id}"}) return s`);
+      merge(p:Package {id: "${dto.packageId}"})-[r:HAS_SERVICE {createdOn:"${Date.now()}", rate:"${dto.rate}"}]->(s:Service{id:"${id}"}) return s`);
+      if (query.length > 0) {
+        return { data: query, msg: 'ok' };
+      } else {
+        throw new BadRequestException();
+      }
 
-      console.log('GymID->', dto.packageId);
-      console.log('MemberID->', dto.id);
-
-      return { data: query, msg: 'ok' };
     } catch (error) {
       return new HttpException(error, 503);
     }
   }
 
-  createCustomService() {}
+  createCustomService() { }
 
   findAll() {
     return `This action returns all package`;
@@ -199,29 +191,29 @@ export class PackageService {
   //   }
   // }
 
-  packageNames :string[];
+  packageNames: string[];
   getPackageNames() {
     try {
 
-     let pid =  this.neo.read('MATCH (p:Package) return p.name,p.id')
-     .then((res:any) => {
-       console.log(res);
-       if(res) {
-         
-         res.find((r)=>{
-           console.log("Package Names",r);
-           this.packageNames = r;
-           console.log("Package Names",this.packageNames);
-           
+      let pid = this.neo.read('MATCH (p:Package) return p.name,p.id')
+        .then((res: any) => {
+          console.log(res);
+          if (res) {
+
+            res.find((r) => {
+              console.log("Package Names", r);
+              this.packageNames = r;
+              console.log("Package Names", this.packageNames);
+
+
+            })
+
+
+
+          }
 
         })
-          
 
-        
-       }
-
-     })
-      
 
     } catch (err) {
       console.log('', err);
