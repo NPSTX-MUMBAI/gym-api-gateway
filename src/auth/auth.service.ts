@@ -64,9 +64,7 @@ export class AuthService {
   async signup(dto: SignUpDTO) {
     try {
       const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-      const userId = uuidv4();
-
-      console.log('Auth UUID - ', userId);
+      
 
       const query = `CREATE (u:User {userId:apoc.create.uuid(),fullName:"${dto.fullName}",email:"${dto.email}",
             mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}"

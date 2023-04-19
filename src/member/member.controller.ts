@@ -24,9 +24,9 @@ import { log } from 'console';
 
 @Controller('member')
 export class MemberController {
-  constructor(private readonly memberService: MemberService) {}
+  constructor(private readonly memberService: MemberService) { }
 
-  @Post('/add')
+  @Post('/create')
   async create(@Body() createMemberDto: CreateMemberDto) {
     return await this.memberService.create(createMemberDto);
   }

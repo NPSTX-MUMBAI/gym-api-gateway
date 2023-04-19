@@ -9,65 +9,54 @@ import { mergeScan } from 'rxjs';
 import { Gym } from 'src/gym/entities/gym.entity';
 import { Member } from './entities/member.entity';
 import * as crypto from 'crypto';
+import { AuthService } from 'src/auth/auth.service';
+import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 
 @Injectable()
 export class MemberService {
-  constructor(private neo: Neo4jService) {}
-  // async create(dto: CreateMemberDto) {
-  //   try {
-  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-  //     const query= await this.neo.write(`merge (m:member {firstName:"${dto.firstName}",
-  //     lastName:"${dto.lastName}",
-  //     email:"${dto.email}",
-  //     mobileNo:"${dto.mobileNo}",
-  //     password:"${dto.password}"
-  //   ,memberId:"${dto.memberId}" })
-  //    return m
-  //    union
-  //    merge(g:gym {gymId: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
+  constructor(private neo: Neo4jService, private authSvc: AuthService) { }
 
-  //   return { data: query, msg:"ok"}
-  //   } catch (error) {
-  //     return new HttpException(error, 503);
-  //   }
-  // }
 
   async create(dto: CreateMemberDto) {
+
     try {
-      //step to check if the member exists
 
-      const memberQuery = await this.neo
-        .read(`MATCH (g:Gym)-[:HAS_MEMBER]->(m:Member) where g.gymId="${dto.gymId}" 
-      and m.email="${dto.email}" and m.mobileNo="${dto.mobileNo}" and m.firstName="${dto.firstName}" return m`);
+      const res = await this.authSvc.signup({ userId: "", fullName: dto.fullName, email: dto.email, password: dto.password, mobileNo: dto.mobileNo, roles: [USER_ROLE.MEMBER], })
+      console.log(res)
 
-      if (memberQuery.length > 0) {
-        memberQuery.map((row) => console.log(row));
-        throw new BadRequestException('user already exists');
+      const r = await this.neo.write(`match(g: Gym), (u: User)
+      where g.id = '${dto.gymId}'and u.email = '${dto.email}'
+      merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) return u as user`);
+      console.log(r);
+      if (r.length > 0) {
+
+        const name: number = 10;
+        const nameArray: number[] = [];
+
+        dto.services.map(async (s) => {
+
+          try {
+
+            const query = await this.neo.write(`match(u:User), (s: Service) 
+          where u.email = '${dto.email}' and s.id = '${s.serviceId}'
+          merge(u) - [r: HAS_SERVICE {createdOn:"${Date.now()}", rate:"${s.rate}", 
+          rateType:"${s.rateType}"}] -> (s) return u as user`);
+            console.log(query);
+          } catch (error) {
+            console.log(error);
+          }
+        });
+
+        return "member created successfully"
+        //return "member created successfully"
+
+      } else {
+        throw new HttpException("could not create member and it's relation", 402);
       }
-
-      const memberId = crypto.randomUUID();
-
-      const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-
-      const query = await this.neo.write(`
-      MERGE (m:Member {firstName:"${dto.firstName}",
-      lastName:"${dto.lastName}", 
-      email:"${dto.email}",
-      mobileNo:"${dto.mobileNo}",
-      password:"${dto.password}",
-      memberId:"${memberId}"}) 
-      return m
-      union
-      match (g:Gym),(m:Member)
-      where g.gymId='${dto.gymId}'and m.email='${dto.email}'
-      merge(g)-[r:HAS_MEMBER]->(m) return m`);
-
-      console.log('GymID->', dto.gymId);
-      console.log('MemberID->', dto.memberId);
-
-      return { data: query, msg: 'ok' };
     } catch (error) {
-      return new HttpException(error, 503);
+      console.log(error);
+      throw new HttpException("error encountered", 402);
+
     }
   }
 
@@ -112,8 +101,7 @@ export class MemberService {
       const res = await this.neo.write(`MATCH (u:User) where u.id="${id}" 
       SET
       u.email="${dto.email}",
-      u.firstName="${dto.firstName}",
-      u.lastName="${dto.lastName}",
+      u.fullName="${dto.fullName}",
       u.mobileNo="${dto.mobileNo}"
       return u
       `);
