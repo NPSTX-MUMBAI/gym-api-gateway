@@ -26,12 +26,6 @@ export class AuthController {
     
   }
 
-  @Get('uuid')
-  getUUID() {
-    return this.authSvc.getUUID();
-  }
-
-
   @UseGuards(AuthGuard('local') )
   @Post('/login')   //3
   async login(@Body() body: LoginDTO, @Request() req) {
@@ -50,15 +44,11 @@ export class AuthController {
     return await this.authSvc.validateUser(body.email, body.password);
   }
 
-  
-
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   getProfile(@Request() req) {
     return req.user;
   }
-
-
 
   resetPassword() {}
 

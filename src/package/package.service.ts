@@ -1,5 +1,6 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import {
+  ConflictException,
   Get,
   HttpException,
   Injectable,
@@ -10,38 +11,39 @@ import { CreatePackageDto } from './dto/create-package.dto';
 import { ServiceDTO } from './dto/service.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import * as crypto from 'crypto';
+import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 
 @Injectable()
 export class PackageService {
+  constructor(private neo: Neo4jService) {}
 
-  constructor(private neo:Neo4jService){}
-  
   async create(dto: CreatePackageDto) {
     try {
-      const cq =`CREATE (p:Package { name:"${dto.name}",
-      createdOn:"${Date.now().toString()}",
+      const cq = `CREATE (p:Package { name:"${dto.name}",
+      createdOn:"${new Date().toLocaleDateString()}",
+      createdTime:"${new Date().toLocaleTimeString()}",
       description:"${dto.description}",
       imgUrl:"${dto.imgUrl}",
       validFrom:"${dto.validFrom}",
       validTo:"${dto.validTo}",
       amount:"${dto.amount}",
-      id:"${crypto.randomUUID()}"}) return p`;
+      packageId:"${crypto.randomUUID()}"}) return p`;
 
-    const res= await this.neo.write(cq);
-      if(res && res.length>0){
-        let packageId="";
-        res.map((row)=>packageId=row.p.id)
+      const res = await this.neo.write(cq);
+      if (res && res.length > 0) {
+        let packageId = '';
+        res.map((row) => (packageId = row.p.id));
         console.log(packageId);
 
-        const qr =`MATCH (g:Gym),(p:Package) WHERE 
+        const qr = `MATCH (g:Gym),(p:Package) WHERE 
         g.gymId='${dto.createdBy}' AND p.id='${packageId}  
-        CREATE (g) - [r:HAS_PACKAGE] -> (p) RETURN type(r)`
+        CREATE (g) - [r:HAS_PACKAGE] -> (p) RETURN type(r)`;
 
-        await this.neo.write(qr) 
-      return true; 
+        await this.neo.write(qr);
+        return true;
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -51,55 +53,70 @@ export class PackageService {
   //     let defaultSvcs:ServiceDTO[]=[
   //       {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+
   //       isDefault:true,
   //       name:'cardio',
   //       imgUrl:'../assets/cardio1.jpg'
   //     },
   //     {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+  //
   //       isDefault:true,
   //       name:'Personal Training',
   //       imgUrl:'../assets/Trainer1.jpg'
   //     },
   //     {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+
   //       isDefault:true,
   //       name:'Sauna',
   //       imgUrl:'../assets/sauna.jpg'
   //     },
   //     {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+  //
   //       isDefault:true,
   //       name:'Lockers',
   //       imgUrl:'../assets/lockers.jpg'
   //     },
   //     {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+
   //       isDefault:true,
   //       name:'Swimming',
   //       imgUrl:'../assets/swimpool1.jpg'
   //     },
   //     {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+
   //       isDefault:true,
   //       name:'Strength Training',
   //       imgUrl:'../assets/Strengthtraining.jpg'
   //     },
   //     {
   //       id:crypto.randomUUID(),
+  // createdOn:new Date().toLocaleDateString(),
+
   //       isDefault:true,
   //       name:'Yoga',
   //       imgUrl:'../assets/Yoga1.jpg'
   //     },
   //   ];
-          
+
   //   defaultSvcs.forEach(async (svc)=>{
-  //     const cq =`CREATE (s:Service { id:"${svc.id}", 
-  //     name:"${svc.name}", 
+  //     const cq =`CREATE (s:Service { id:"${svc.id}",
+  //     name:"${svc.name}",
   //     imgUrl:"${svc.imgUrl}",
+  //     createdOn:"${svc.createdOn}"
   //     isDefault:"${svc.isDefault}"}) return s`
   //     console.log(cq);
-     
+
   //     const res = await this.neo.write(cq);
 
   //     // res.map((row)=>packageId=row.p.id)
@@ -110,11 +127,11 @@ export class PackageService {
   //       res.map((row) => serviceId = row.s.id);
   //       console.log("IDMapping-",res);
   //       console.log("SID-",serviceId);
-        
-  //       const mcq = `MATCH(p:Package),(s:Service) WHERE p.name='Diwali Package' 
-  //       AND s.name='sauna' CREATE (p) - [r:HAS_SERVICE] -> (u) 
+
+  //       const mcq = `MATCH(p:Package),(s:Service) WHERE p.name='Diwali Package'
+  //       AND s.name='sauna' CREATE (p) - [r:HAS_SERVICE] -> (u)
   //       RETURN type(r)`
-        
+
   //       await this.neo.write(mcq);
 
   //     }
@@ -134,53 +151,62 @@ export class PackageService {
       console.log('inside package service');
       const defaultSvcs: ServiceDTO[] = [
         {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'cardio',
-                imgUrl:'../assets/cardio1.jpg'
-              },
-              {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'Personal Training',
-                imgUrl:'../assets/Trainer1.jpg'
-              },
-              {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'Sauna',
-                imgUrl:'../assets/sauna.jpg'
-              },
-              {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'Lockers',
-                imgUrl:'../assets/lockers.jpg'
-              },
-              {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'Swimming',
-                imgUrl:'../assets/swimpool1.jpg'
-              },
-              {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'Strength Training',
-                imgUrl:'../assets/Strengthtraining.jpg'
-              },
-              {
-                id:crypto.randomUUID(),
-                isDefault:true,
-                name:'Yoga',
-                imgUrl:'../assets/Yoga1.jpg'
-              },
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,  
+          name: 'Lockers',
+          imgUrl: '../assets/lockers.jpg',
+        },
+        {
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,
+          name: 'Yoga',
+          imgUrl: '../assets/Yoga1.jpg',
+        },
+        {
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,  
+          name: 'Cardio',
+          imgUrl: '../assets/lockers.jpg',
+        },
+        {
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,  
+          name: 'Personal Training',
+          imgUrl: '../assets/lockers.jpg',
+        },
+        {
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,  
+          name: 'Strength Training',
+          imgUrl: '../assets/lockers.jpg',
+        },
+        {
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,  
+          name: 'Swimming',
+          imgUrl: '../assets/lockers.jpg',
+        },
+        {
+          svcId: crypto.randomUUID(),
+          createdOn: new Date().toLocaleDateString(),
+          isDefault: true,  
+          name: 'Sauna',
+          imgUrl: '../assets/lockers.jpg',
+        },
+
       ];
 
       defaultSvcs.forEach(async (svc) => {
-        const query = `CREATE (s:Service { id:"${svc.id}", 
+        const query = `CREATE (s:Service { svcId:"${svc.svcId}", 
       name:"${svc.name}", 
       imgUrl:"${svc.imgUrl}",
+      createdOn:"${svc.createdOn}",
       isDefault:"${svc.isDefault}"}) return s`;
         console.log(query);
         const res = await this.neo.write(query);
@@ -195,29 +221,31 @@ export class PackageService {
     }
   }
 
-  async findallpackage(Dto: CreatePackageDto) {
-    try {
-      const query = await this.neo.read(
-        `match (g:Gym {gymId: "${Dto.gymId}"})-[r:HAS_PACKAGE]->(t:Package) return t as packages`,
-      );
-      // const all = query.push((e) => e.get('packages'));
-      if (query.length > 0) {
-        return { data: query, msg: 'Got ALl Packages', status: true };
-      } else {
-        return { msg: 'error', status: false };
-      }
-    } catch (error) {
-      return 'erorr';
-    }
-  }
+  // async findallpackage(Dto: CreatePackageDto) {
+  //   try {
+  //     const query = await this.neo.read(
+  //       `match (g:Gym {gymId: "${Dto.gymId}"})-[r:HAS_PACKAGE]->(t:Package) return t as packages`,
+  //     );
 
+  //     // const all = query.push((e) => e.get('packages'));
+  //     if (query.length > 0) {
+  //       return { data: query, msg: 'Got ALl Packages', status: true };
+  //     } else {
+  //       return { msg: 'error', status: false };
+  //     }
+  //   } catch (error) {
+  //     return 'erorr';
+  //   }
+  // }
+
+  //Running
   async findpackagebyId(id: string) {
     console.log(id);
     try {
       const query = await this.neo.read(
         `match (t:Package {id: '${id}'}) return t as packages`,
       );
-      // const all = query.push((e) => e.get('packages'));
+      // const all = query.push((e) => e.get( 'packages'));
       if (query.length > 0) {
         return { data: query, msg: 'Got Package By Id', status: true };
       } else {
@@ -228,22 +256,25 @@ export class PackageService {
     }
   }
 
-  testPService() {
+  
+
+
+  packagelist: CreatePackageDto[] = [];
+
+  //Running
+  async findAll() {
     try {
-      const q = this.neo.read(`MATCH (p:Package),(s:Service) 
-      WHERE p.id='1e67270f-8dcb-4a39-9c89-7730f5442050' AND s.id='38a2ca02-9e37-449a-9192-80ce4f2b1348' 
-      CREATE (p) - [r:HAS_SERVICE] -> (s) RETURN type(r)`);
+      const packages = await this.neo.read(`MATCH (p:Package) RETURN p`);
+
+      packages.map((r) => {
+        this.packagelist.push(r.p);
+      });
+      return this.packagelist;
     } catch (error) {
-      return new NotFoundException('Package Not Found!');
+      throw new HttpException('', error);
     }
   }
 
-  createCustomService() {}
-
-  findAll() {
-    
-  }
-  
   findOne(id: number) {
     return `This action returns a #${id} package`;
   }
@@ -254,5 +285,54 @@ export class PackageService {
 
   remove(id: number) {
     return `This action removes a #${id} package`;
+  }
+
+  // getServiceByPackageID() {
+  //   try {
+  //     //Trying for Platinum Package
+  //     const r1 = this.neo
+  //       .read(
+  //         `
+  //     MATCH (s:Service {id: "ef73a980-c02d-4d9a-a9e3-45e4b67ad1fb"})
+  //     <-[r:HAS_SERVICE]-(p:Package {name: "Platinum Package"}) 
+  //     return s,p
+  //     `,
+  //       )
+  //       .then((res) => {
+  //         console.log('Result-', res);
+  //       });
+  //     console.log('Reading...', r1);
+  //   } catch (err) {
+  //     console.log('Package Not Found By ServiceID!', err);
+  //   }
+  // }
+
+  packageNames :string[];
+  getPackageNames() {
+    try {
+
+     let pid =  this.neo.read('MATCH (p:Package) return p.name,p.id')
+     .then((res:any) => {
+       console.log(res);
+       if(res) {
+         
+         res.find((r)=>{
+           console.log("Package Names",r);
+           this.packageNames = r;
+           console.log("Package Names",this.packageNames);
+           
+
+        })
+          
+
+        
+       }
+
+     })
+      
+
+    } catch (err) {
+      console.log('', err);
+    }
   }
 }

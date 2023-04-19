@@ -20,7 +20,7 @@ export class AuthService {
         console.log(email , password);
 
         const user = await this.getUser(email);
-
+        
         console.log('user=>', user);
         if (!user) return null;
         const passwordValid = await bcrypt.compare(password, user.password)
@@ -33,16 +33,12 @@ export class AuthService {
         return null;
     }
 
-
     async login(user: User) {
         const payload = { user: user };
         return {    
             access_token: this.jwtService.sign(payload),
         };
     }
-
-  
-
   
     // async signup(dto: SignUpDTO) {
     //     try {
@@ -67,8 +63,6 @@ export class AuthService {
 
             console.log("Auth UUID - ",userId);
             
-
-            
             const query = `CREATE (u:User {id:"${userId}",fullName:"${dto.fullName}",email:"${dto.email}",
             mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}"
         }) SET u.roles = $roles`;
@@ -79,10 +73,6 @@ export class AuthService {
             return new HttpException(error, 503);
         }
     }
-
-    
-
-
 
     // async getUser(email: string) {
     //     const res = await this.neo.read(`MATCH (u:User) where u.email=$email return u;`, { email: email });
@@ -116,7 +106,6 @@ export class AuthService {
         }
     }
 
-
     async getAllUsers(email:string) {
         const res = await this.neo.read(`MATCH (n:User) RETURN n `, { email: email });
         console.log(res);
@@ -129,25 +118,7 @@ export class AuthService {
     async getAllGyms() {
         let gymCount = (await this.neo.read(`MATCH (n:Gym) RETURN n`)).length;
         console.log("Available Gyms -> ",gymCount);
-        
-
-    
-        
     }
 
-    async getUUID() {
-
-        const crypto = require('crypto');
-        
-        const gymuuid1 = crypto.randomUUID();
-        
-        console.log("Gym UUID -> ",gymuuid1);
-
-        return gymuuid1;
-
-        
-
-    }
-
-
+  
 }

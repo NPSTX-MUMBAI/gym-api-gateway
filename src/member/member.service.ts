@@ -34,9 +34,6 @@ export class MemberService {
   async create(dto: CreateMemberDto) {
     try {
 
-      const crypto = require('crypto');
-      const memberId = crypto.randomUUID(); 
-
       const encryptedPassword = bcrypt.hashSync(dto.password, 10);
       const query= await this.neo.write(`
       CREATE (m:Member {firstName:"${dto.firstName}",

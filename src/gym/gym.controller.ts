@@ -12,7 +12,7 @@ export class GymController {
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
-  @Post('/create')
+  @Post('/create')    //Running
   async create(@Body() createGymDto: CreateGymDto) {
     console.log('inside create gym controller=>', createGymDto)
     return await this.gymService.create(createGymDto);
@@ -21,23 +21,23 @@ export class GymController {
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
 
-  @Get('/all')     
+  @Get('/all')     //Running
   async findAll() {
     return await this.gymService.findAll();
   }
   
-  @Get(':id')           //Find ID
+  @Get(':id')           //Running
   async findOne(@Param('id') id: string) {
     console.log(id);
     return await this.gymService.findOne(id);
   }
 
-  @Get('/email/:email')
+  @Get('/email/:email')   //Not Running
   async findAllGymForCurrentUser(@Param('email') email: string) {
-    return await this.gymService.findAllGymForCurrentUser(email);
+    return await this.gymService.findAllGymForCurrentUser(email)
   }
 
-  @Get('/findaddress/:id')
+  @Get('/findaddress/:id')  
   async findGymAddress(@Param('id') email: string) {
     return await this.gymService.getGymAddress(email);
   }

@@ -11,6 +11,7 @@ import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { ServiceDTO } from './dto/service.dto';
+import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 
 @Controller('package')
 export class PackageController {
@@ -27,20 +28,46 @@ export class PackageController {
   //   return this.packageService.findAll();
   // }
 
-  @Post('findallPackages')
-  findallpackage(@Body() dto: CreatePackageDto) {
-    return this.packageService.findallpackage(dto);
+  // @Post('findallPackages')
+  // findallpackage(@Body() dto: CreatePackageDto) {
+  //   return this.packageService.findallpackage(dto);
+  // }
+
+  // @Get('findallPackages')
+  // findallpackage(@Body() dto: CreatePackageDto) {
+  //   return this.packageService.findallpackage(dto);
+  // }
+
+  @Get('allPackages')  
+  findAll(@Param('id') dto:ServiceDTO) {
+    return this.packageService.findAll();   //Runnning
+    // return this.packageService.getServiceByPackageId(dto);
+    // return this.packageService.getPackageList(dto);
   }
 
-  @Get('allPackages')
-  findAll() {
-    return this.packageService.findAll();
+  // @Post('findDup')
+  // getServiceByPID() {
+  //   // this.packageService.getServiceByPackageID();
+    
+  //  return this.packageService.testIds();
+  // }
+  
+  @Post('getid')
+  getFindIDS() {
+    return this.packageService.getPackageNames();
   }
 
-  @Post(':id')
+
+  @Get(':id')   //Running
   findOne(@Param('id') id: string) {
     return this.packageService.findpackagebyId(id);
   }
+
+  @Get('packagenames')
+  getPackageNamesWithId() {
+    this.packageService.getPackageNames();
+  }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePackageDto: UpdatePackageDto) {
@@ -52,7 +79,7 @@ export class PackageController {
     return this.packageService.remove(+id);
   }
 
-  @Post('/generate/default/service')
+  @Post('/generate/default/service')    //Running
   async generateDefaultservice(dto:ServiceDTO){
     console.log('inside generate default service');
     return await this.packageService.createDefaultservice(dto);

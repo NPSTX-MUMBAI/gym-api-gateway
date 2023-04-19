@@ -56,10 +56,6 @@ export class GymService {
 
   // }
 
-  async create1(dto:CreateBankDto) {
-    
-
-  }
 
   async create(dto: CreateGymDto) {
     try {
@@ -75,11 +71,12 @@ export class GymService {
           'gym exists with the same name for the same user',
         );
       } else {
-        
+      
         let id: string;
         const res = await this.neo.write(`CREATE 
         (g:Gym { gymId: apoc.create.uuid() ,
           gymName:"${dto.gymName}",
+          
       email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
       MERGE (a:Address {line1:"${dto.address.line1}", 
         line2:"${dto.address.line2}", locality:"${dto.address.locality}", 
@@ -95,7 +92,7 @@ export class GymService {
           const r = await this.neo
             .write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"}) 
           merge (u)-[o:OWNS]->(g) return o`);
-          console.log('gym created successfully', r);
+        console.log('gym created successfully', r);
           return 'gym created successfully';
         } else {
           return 'failed to create gym due to invalid request';
@@ -106,6 +103,8 @@ export class GymService {
       throw new HttpException(error, 501);
     }
   }
+
+
 
   // async findAll() {
   //   try {
@@ -143,6 +142,7 @@ export class GymService {
       );
       const gyms: Gym[] = [];
       res.map((r) => gyms.push(r.g));
+      
       return gyms;
     } catch (error) {
       throw new HttpException('error encountered', error);

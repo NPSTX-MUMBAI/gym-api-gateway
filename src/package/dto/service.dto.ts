@@ -1,6 +1,14 @@
 export class ServiceDTO{
-    id: string;
     name:string;
     imgUrl?: string;
+    createdOn:string;
     isDefault:boolean;
+    
+
+    svcId: string;
+    userid?:string;
+    gymid?:string;
+    packageId?:string;
+    
+
 }
