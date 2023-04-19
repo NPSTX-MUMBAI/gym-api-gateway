@@ -21,7 +21,7 @@ export class PackageService {
     try {
       const cq = `CREATE (p:Package { name:"${dto.name}",
       createdOn:"${new Date().toLocaleDateString()}",
-      createdTime:"${new Date().toLocaleTimeString()}",
+      createTime:"${new Date().toLocaleTimeString()}",
       description:"${dto.description}",
       imgUrl:"${dto.imgUrl}",
       validFrom:"${dto.validFrom}",

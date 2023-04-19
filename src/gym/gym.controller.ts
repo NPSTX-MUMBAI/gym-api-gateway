@@ -15,6 +15,7 @@ export class GymController {
   @Post('/create')    //Running
   async create(@Body() createGymDto: CreateGymDto) {
     console.log('inside create gym controller=>', createGymDto)
+
     return await this.gymService.create(createGymDto);
   }
 
