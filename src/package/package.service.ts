@@ -24,6 +24,8 @@ export class PackageService {
       const packageId = crypto.randomUUID();
 
       const query = `CREATE (p:Package { name:"${dto.name}",
+      createdOn:"${new Date().toLocaleDateString()}",
+      createTime:"${new Date().toLocaleTimeString()}",
       description:"${dto.description}",
       imgUrl:"${dto.imgUrl}",
       validFrom:"${dto.validFrom}",
