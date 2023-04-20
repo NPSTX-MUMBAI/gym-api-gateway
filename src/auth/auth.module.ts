@@ -13,12 +13,12 @@ import { LocalStrategy } from "./strategy/local.strategy";
       secret: 'Teng!n@404',
       signOptions: { expiresIn: '600000s' }
     }),
-    
+
 
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-
+  exports: [AuthService]
 })
 export class AuthModule {
 

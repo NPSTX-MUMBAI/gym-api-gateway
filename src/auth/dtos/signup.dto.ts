@@ -1,10 +1,10 @@
 import { IsNumber, IsOptional } from "class-validator";
 
 export class SignUpDTO {
-userid:string;
+    userId: string;
     fullName: string;
     email: string;
-    mobileNo: number;
+    mobileNo: string;
     password: string;
     roles: USER_ROLE[];
 

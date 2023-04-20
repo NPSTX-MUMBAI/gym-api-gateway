@@ -1,4 +1,5 @@
 import { FileValidator } from "@nestjs/common";
+import * as FileType from 'file-type';
 
 export type FileExtensionValidationOptions = {
     extensions: string[];
@@ -14,12 +15,13 @@ export class FileExtensionValidator extends FileValidator<FileExtensionValidatio
 
     }
 
-    isValid(file?: any): boolean | Promise<boolean> {
-        console.log(file);
-        const fileName: string = file.originalname;
-        const tmp = fileName.split('.');
-        console.log(this.recievedInputs);
-        return this.recievedInputs.extensions.includes(tmp[1]);
+    async isValid(file?: any): Promise<boolean> {
+        const fileType = await FileType.fromFile(file.path);
+        if (fileType.mime == 'application/vnd.oasis.opendocument.spreadsheet' || fileType.ext == "xlsx") {
+            return true
+        } else {
+            return false;
+        }
     }
 
     buildErrorMessage(file: any): string {

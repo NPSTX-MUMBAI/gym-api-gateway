@@ -10,30 +10,19 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { SkipThrottle } from '@nestjs/throttler/dist/throttler.decorator';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dtos/login.dto';
 import { SignUpDTO } from './dtos/signup.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authSvc: AuthService) {}
+  constructor(private readonly authSvc: AuthService) { }
 
 
-  @Get('all')
-  getAll(email:string) {
-    this.authSvc.getAllUsers(email);
-    this.authSvc.getAllGyms();
-    
-  }
-
-  @Get('uuid')
-  getUUID() {
-    return this.authSvc.getUUID();
-  }
-
-
-  @UseGuards(AuthGuard('local') )
-  @Post('/login')   //3
+  @SkipThrottle(true)
+  @UseGuards(AuthGuard('local'))
+  @Post('/login')
   async login(@Body() body: LoginDTO, @Request() req) {
     // console.log("Req-",req);
     return await this.authSvc.login(req.user);
@@ -50,17 +39,13 @@ export class AuthController {
     return await this.authSvc.validateUser(body.email, body.password);
   }
 
-  
-
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   getProfile(@Request() req) {
     return req.user;
   }
 
-
-
   resetPassword() {}
 
-  logout() {}
+  logout() { }
 }

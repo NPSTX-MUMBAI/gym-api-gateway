@@ -6,17 +6,20 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { SignUpDTO } from 'src/auth/dtos/signup.dto';
+import { CreateBankDto } from 'src/bank/dto/create-bank.dto';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { Gym } from './entities/gym.entity';
 
 @Injectable()
 export class GymService {
-  constructor(private neo: Neo4jService) {}
+
+  constructor(private neo: Neo4jService) { }
   // async create(dto: CreateGymDto) {
   //   try {
   //     //step1: first check if the gym exists
-  //     const gymExists = await this.neo.read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE g.gymName="${dto.gymName}" AND g.email="${dto.email}"
+  //     const gymExists = await this.neo.read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
   //     AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
   //     console.log("gym=>", gymExists);
@@ -24,7 +27,7 @@ export class GymService {
   //       throw new ConflictException("gym exists with the same name for the same user");
   //     } else {
   //       let id: string;
-  //       const res = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,gymName:"${dto.gymName}",
+  //       const res = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
   //     email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
   //     MERGE (a:Address {line1:"${dto.address.line1}",
   //       line2:"${dto.address.line2}", locality:"${dto.address.locality}",
@@ -55,10 +58,11 @@ export class GymService {
   // }
 
   async create(dto: CreateGymDto) {
+
     try {
       //step1: first check if the gym exists
       const gymExists = await this.neo
-        .read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE g.gymName="${dto.gymName}" AND g.email="${dto.email}" 
+        .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}" 
       AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
       console.log('gym=>', gymExists);
@@ -67,9 +71,10 @@ export class GymService {
           'gym exists with the same name for the same user',
         );
       } else {
+
         let id: string;
         const res = await this.neo
-          .write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,gymName:"${dto.gymName}",
+          .write(`CREATE (g:Gym { id: apoc.create.uuid() ,name:"${dto.name}",
       email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
       MERGE (a:Address {line1:"${dto.address.line1}", 
         line2:"${dto.address.line2}", locality:"${dto.address.locality}", 
@@ -77,14 +82,12 @@ export class GymService {
         country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"}) 
         MERGE (g)-[r:LOCATED_IN]->(a) return a,g
      `);
-        res.map((r) => {
-          id = r.g.gymId;
-          console.log('ID->', id);
-        });
+        res.map((r) => id = r.g.id);
+        console.log('ID->', id);
         if (res) {
           const r = await this.neo
-            .write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"}) 
-          merge (u)-[o:OWNS]->(g) return o`);
+            .write(`MATCH (u:User{userId:"${dto.userId}"}),(g:Gym {id:"${id}"}) 
+          merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
           console.log('gym created successfully', r);
           return 'gym created successfully';
         } else {
@@ -117,7 +120,7 @@ export class GymService {
       );
       const gyms: Gym[] = [];
       res.map((r) => {
-        gyms.push({ ...r['g'], address:r['a'] });
+        gyms.push({ ...r['g'], address: r['a'] });
       });
       return gyms;
     } catch (error) {
@@ -125,13 +128,13 @@ export class GymService {
     }
   }
 
-  async findAllGymForCurrentUser(email: string) {
+  async findAllGymForCurrentUser(userId: string) {
     try {
-      console.log(email);
+      console.log(userId);
 
       const res = await this.neo.read(
-        `MATCH (u:User)-[:OWNS]->(g:Gym) where u.email=$email return g;`,
-        { email: email },
+        `MATCH (u:User {userId: "${userId}"})-[:OWNS]->(g:Gym) return g;`,
+        { userId: userId },
       );
       const gyms: Gym[] = [];
       res.map((r) => gyms.push(r.g));
@@ -157,7 +160,7 @@ export class GymService {
   async findOne(id: string) {
     try {
       const res = await this.neo.read(
-        `MATCH (g:Gym) WHERE g.gymId=$id return g`,
+        `MATCH (g:Gym) WHERE g.id=$id return g`,
         { id: id },
       );
       let gym: Gym;
@@ -178,7 +181,7 @@ export class GymService {
     try {
       const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
       SET
-      g.gymName="${dto.gymName}",
+      g.name="${dto.name}",
       g.email="${dto.email}",
       g.panNo="${dto.panNo}",
       g.aadhar="${dto.aadhar}"
