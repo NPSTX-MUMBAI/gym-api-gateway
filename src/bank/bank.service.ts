@@ -19,7 +19,7 @@ accountType: "${Dto.accountType}",
 accountNo: "${Dto.accountNo}",
 ifsc: "${Dto.ifsc}",
 mid: "${Dto.mid}",
-bankName: "${Dto.bankbankName}",
+bankName: "${Dto.bankName}",
 branchName: "${Dto.branchName}",
 bankId:"${bankId}"})
 return b`,

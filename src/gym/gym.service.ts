@@ -117,7 +117,7 @@ export class GymService {
       );
       const gyms: Gym[] = [];
       res.map((r) => {
-        gyms.push({ ...r['g'], ...r['a'] });
+        gyms.push({ ...r['g'], address:r['a'] });
       });
       return gyms;
     } catch (error) {
@@ -182,6 +182,7 @@ export class GymService {
       g.email="${dto.email}",
       g.panNo="${dto.panNo}",
       g.aadhar="${dto.aadhar}"
+      
       return g
       `);
       return 'gym updated successfully';
