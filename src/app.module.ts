@@ -11,6 +11,7 @@ import { ReportsModule } from './reports/reports.module';
 import { Neo4jModule } from '@brakebein/nest-neo4j';
 import { GymModule } from './gym/gym.module';
 import { BankModule } from './bank/bank.module';
+import { ServicesModule } from './services/services.module';
 
 /**
  * NEO4J_URI=neo4j+s://29959c44.databases.neo4j.io
@@ -31,8 +32,8 @@ AURA_INSTANCENAME=unacademy-db
         disableLosslessIntegers: true,
       },
     }),
-    OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule],
+    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,],
 })
 export class AppModule { }

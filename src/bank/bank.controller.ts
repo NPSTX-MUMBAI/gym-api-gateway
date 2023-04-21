@@ -1,3 +1,4 @@
+
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SignUpDTO } from 'src/auth/dtos/signup.dto';
 import { BankService } from './bank.service';
@@ -14,15 +15,28 @@ export class BankController {
     return this.bankService.create(createBankDto);
   }
 
-  @Get('list')
+  @Get('list')    //Running
   findAll() {
     return this.bankService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bankService.findOne(+id);
+  @Get('bankIDs')   //Running
+  getBankIds() {
+    return this.bankService.findBankId();
   }
+
+  @Get('banknames') //Runnning
+  getBanknames() {
+   return this.bankService.getBanknames();
+  }
+  
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.bankService.findOne(+id);
+  // }
+
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
