@@ -59,8 +59,7 @@ export class ServicesController {
     // }
 
     
-  // @Get('/generate/default/service')
-  @Get('/service')
+  @Get('/generate/default/service') //Running
 
   async generateDefaultservice() {
     console.log('inside generate default service');

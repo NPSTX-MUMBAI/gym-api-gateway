@@ -162,25 +162,39 @@ export class GymService {
       throw new HttpException('error encountered', error);
     }
   }
-  async findOne(id: string) {
-    try {
-      const res = await this.neo.read(
-        `MATCH (g:Gym) WHERE g.gymId=$id return g`,
-        { id: id },
-      );
-      let gym: Gym;
-      console.log(res);
-      if (res && res.length > 0) {
-        res.map((r) => (gym = r.g));
-        return gym;
-      } else {
-        return null;
-        //throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' });
-      }
-    } catch (error) {
-      throw new HttpException('error encountered', error);
-    }
+  // async findOne(id: string) {
+  //   try {
+  //     const res = await this.neo.read(
+  //       `MATCH (g:Gym) WHERE g.gymId=$id return g`,
+  //       { id: id },
+  //     );
+  //     let gym: Gym;
+  //     console.log(res);
+  //     if (res && res.length > 0) {
+  //       res.map((r) => 
+  //       (gym = r.g));
+  //       console.log("GymIDwise details - ",gym);
+        
+  //       return gym;
+  //     } else {
+  //       return null;
+  //       //throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' });
+  //     }
+      
+  //   } catch (error) {
+  //     throw new HttpException('error encountered', error);
+  //   }
+  // }
+
+  async findById(id:String) {
+    const gymDetails = await this.neo.read(`
+    MATCH (g:Gym{id:"${id}"}) RETURN g as gym;
+    `)
+    console.log("In Gym -",gymDetails);
+    
+    return gymDetails;
   }
+
 
   async update(id: string, dto: UpdateGymDto) {
     try {

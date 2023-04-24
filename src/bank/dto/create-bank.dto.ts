@@ -2,16 +2,16 @@ import { Address } from "src/gym/entities/gym.entity";
 
 export class CreateBankDto {
   
-  accountHoldername: string;
+  accountHolderName: string;
   accountType: string;
   accountNo: string;
   ifsc: string;
-  mid: string;
-  bankname: string;
-  branchname: string;
+  name: string;
+  branchName: string;
   address:Address
   
   id?: string;
+  mid?: string;   
   bankId?:string;
   userid:string;
   gymId?:string;
