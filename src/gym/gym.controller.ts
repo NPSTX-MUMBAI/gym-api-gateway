@@ -34,6 +34,12 @@ export class GymController {
     return this.gymService.findById(id);
   }
 
+  @Get('details/:id')
+  getGymdetailsByBankID(@Param ('id') id:string) {
+    return this.gymService.getGymdetailsByBankID(id);
+  }
+
+
   @Get('/email/:email')   //Not Running
   async findAllGymForCurrentUser(@Param('email') email: string) {
     return await this.gymService.findAllGymForCurrentUser(email)
@@ -54,8 +60,8 @@ export class GymController {
     return await this.gymService.updateAddress(id, updateGymDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gymService.remove(id);
+  @Delete('details/remove/:gymId')
+  remove(@Param('gymId') gymId: string) {
+    return this.gymService.remove(gymId);
   }
 }

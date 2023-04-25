@@ -1,4 +1,5 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
+
 import {
   HttpException,
   Injectable,
@@ -62,7 +63,7 @@ export class GymService {
       //step1: first check if the gym exists
       const gymExists = await this.neo
         .read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE 
-        g.gymName="${dto.gymName}" AND g.email="${dto.email}" 
+        g.gymName="${dto.name}" AND g.email="${dto.email}" 
       AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
       console.log('gym=>', gymExists);
@@ -75,7 +76,7 @@ export class GymService {
         let id: string;
         const res = await this.neo.write(`CREATE 
         (g:Gym { gymId: apoc.create.uuid() ,
-          gymName:"${dto.gymName}",
+          name:"${dto.name}",
           
       email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
       MERGE (a:Address {line1:"${dto.address.line1}", 
@@ -195,12 +196,21 @@ export class GymService {
     return gymDetails;
   }
 
+   getGymdetailsByBankID(bankId:string) {
+    let getDetails = this.neo.read(`
+    MATCH (b:Bank {id:"${bankId}"}) - [a:HAS_ACCOUNT] -> (g:Gym )
+    RETURN b
+    `)
+    return getDetails;
+  }
+
+
 
   async update(id: string, dto: UpdateGymDto) {
     try {
       const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
       SET
-      g.gymName="${dto.gymName}",
+      g.name="${dto.name}",
       g.email="${dto.email}",
       g.panNo="${dto.panNo}",
       g.aadhar="${dto.aadhar}"
@@ -234,20 +244,36 @@ export class GymService {
     }
   }
 
-  async remove(id: string) {
+  // async remove(id: string) {
+  //   try {
+  //     const res = await this.neo.write(
+  //       `MATCH (g:Gym) WHERE g.gymId=$id
+  //     SET g.deleted=true
+  //     return g
+  //     `,
+  //       { id: id },
+  //     );
+  //     console.log(res);
+  //     return 'gym deleted successfully';
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new HttpException('error deleteing gym', error);
+  //   }
+  // }
+
+  async remove(gymId:string) {
     try {
-      const res = await this.neo.write(
-        `MATCH (g:Gym) WHERE g.id=$id
-      SET g.deleted=true
-      return g
-      `,
-        { id: id },
-      );
-      console.log(res);
-      return 'gym deleted successfully';
+      console.log('Deleting Gym ID ->',gymId);
+      
+      let gymExistWithR = await this.neo.read(`
+      MATCH (u:User) - [o:OWNS] -> (g:Gym {gymId:${gymId})
+      RETURN u
+      `)
+
+      return gymExistWithR;
+
     } catch (error) {
-      console.log(error);
-      throw new HttpException('error deleteing gym', error);
+      
     }
   }
 }

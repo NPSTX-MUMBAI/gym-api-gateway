@@ -1,7 +1,7 @@
 import { Address } from "../entities/gym.entity";
 
 export class CreateGymDto {
-    gymName: string;
+    name: string;
     email: string;
     panNo: string;
     gstNo: string;

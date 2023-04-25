@@ -11,7 +11,6 @@ export class BankService {
 
   async create(dto: CreateBankDto) {
     try {
-
       let id: string;
 
       const createBank = await this.neo.write(`CREATE 
@@ -30,91 +29,91 @@ export class BankService {
         id = r.b.bankId;
         console.log('BankId-', id);
       });
-       if(createBank){
-        const r = this.neo.write(`MATCH (g:Gym {gymId:"${dto.gymId}"}), (b:Bank {bankId:"${dto.bankId}"})
-        merge (g)-[r:has_Bank]-> (b) return b`)
+
+      //Relation cannot be match
+      if (createBank) {
+        const r = this.neo
+          .write(`MATCH (g:Gym {gymId:"${dto.gymId}"}), (b:Bank {bankId:"${dto.bankId}"})
+        merge (g)-[r:has_Bank]-> (b) return b`);
         console.log('Bank created successfully', r);
         return 'Bank created successfully';
-       }else{
+      } else {
         return 'failed to create gym due to invalid request';
-       }
-      } catch (err) {
-        console.log('Bank Error');
       }
+    } catch (err) {
+      console.log('Bank Error');
     }
-      // if (cq1) {
-      //   console.log('Responsing from cq1..');
+  }
+  // if (cq1) {
+  //   console.log('Responsing from cq1..');
 
-      //   const r = await this.neo
-      //     .write(`MATCH (b:Bank{id:"${dto.id}"}),(u:User {bankId:"${id}"})
-      //   merge (b)-[o:HAS_USER-ACC]->(u) return type(o)`)
-      //   console.log('Bank Added successfully!', r);
-      //   return 'Bank Added successfully';
-      // } else {
-      //   console.log('Failed');
+  //   const r = await this.neo
+  //     .write(`MATCH (b:Bank{id:"${dto.id}"}),(u:User {bankId:"${id}"})
+  //   merge (b)-[o:HAS_USER-ACC]->(u) return type(o)`)
+  //   console.log('Bank Added successfully!', r);
+  //   return 'Bank Added successfully';
+  // } else {
+  //   console.log('Failed');
 
-      // }
+  // }
 
-      //Bug
-      async create1(dto: CreateBankDto) {
-        try {
-    
-          const bankExist = await this.neo
-          .read(`MATCH (g:Gym {id:"${dto.id}"})-[a:HAS_ACCOUNT]->(b:Bank) WHERE 
-          b.name="${dto.name}" AND b.accountNo="${dto.accountNo}" 
-        AND b.accountType="${dto.accountType}" AND b.brachName="${dto.branchName}" return b `);
+  //Bug
+  // async create1(dto: CreateBankDto) {
+  //   try {
 
-          console.log("BankExist ? -",bankExist);
+  //     const bankExist = await this.neo
+  //     .read(`MATCH (g:Gym {id:"${dto.id}"})-[a:HAS_ACCOUNT]->(b:Bank) WHERE
+  //     b.name="${dto.name}" AND b.accountNo="${dto.accountNo}"
+  //   AND b.accountType="${dto.accountType}" AND b.brachName="${dto.branchName}" return b `);
 
-          let id: string;
-          
-          let gymId:String;
+  //     console.log("BankExist ? -",bankExist);
 
-          const createBank = await this.neo.write(`CREATE 
-          (b:Bank  { 
-            bankId:apoc.create.uuid(),
-            accountHolderName:"${dto.accountHolderName}",
-            accountNo:"${dto.accountNo}",
-            accountType:"${dto.accountType}",
-             name:"${dto.name}",
-             branchName:"${dto.branchName}",
-             ifsc:"${dto.ifsc}",
-             mid:"${dto.mid}" })
-            return b;
-          `);
-          createBank.map((r) => {
-            id = r.b.bankId;
+  //     let id: string;
 
-            console.log('BankId-', id);
-          });
-           if(createBank){
-            const r = this.neo.write(`MATCH (g:Gym {gymId:"${dto.gymId}"}), (b:Bank {bankId:"${dto.bankId}"})
-            merge (g)-[r:has_Bank]-> (b) return b`)
-            console.log('Bank created successfully', r);
-            return 'Bank created successfully';
-           }else{
-            return 'failed to create gym due to invalid request';
-           }
-          } catch (err) {
-            console.log('Bank Error');
-          }
-        }
+  //     let gymId:String;
 
+  //     const createBank = await this.neo.write(`CREATE
+  //     (b:Bank  {
+  //       bankId:apoc.create.uuid(),
+  //       accountHolderName:"${dto.accountHolderName}",
+  //       accountNo:"${dto.accountNo}",
+  //       accountType:"${dto.accountType}",
+  //        name:"${dto.name}",
+  //        branchName:"${dto.branchName}",
+  //        ifsc:"${dto.ifsc}",
+  //        mid:"${dto.mid}" })
+  //       return b;
+  //     `);
+  //     createBank.map((r) => {
+  //       id = r.b.bankId;
 
+  //       console.log('BankId-', id);
+  //     });
+  //      if(createBank){
+  //       const r = this.neo.write(`MATCH (g:Gym {gymId:"${dto.gymId}"}), (b:Bank {bankId:"${dto.bankId}"})
+  //       merge (g)-[r:has_Bank]-> (b) return b`)
+  //       console.log('Bank created successfully', r);
+  //       return 'Bank created successfully';
+  //      }else{
+  //       return 'failed to create gym due to invalid request';
+  //      }
+  //     } catch (err) {
+  //       console.log('Bank Error');
+  //     }
+  //   }
 
-  //  #BS1 
-  getBankDetailsFromGymId(gymId:string) {
+  //  #BS1
+  getBankDetailsFromGymId(gymId: string) {
     try {
       let getDetails = this.neo.read(`
-      MATCH (b:Bank )-[a:HAS_ACCOUNT]->(g:Gym {id:"${gymId}"})
+      MATCH (b:Bank )-[a:HAS_ACCOUNT]->(g:Gym {gymId:"${gymId}"})
       RETURN b
-            `)
-      return getDetails;
+            `);
 
-  } catch (error) {
-      console.log('Bank Side Error...',error);
-      
-  }
+      return getDetails;
+    } catch (error) {
+      console.log('Bank Side Error...', error);
+    }
   }
 
   async findAll() {
@@ -159,21 +158,95 @@ export class BankService {
     return bankDetails;
   }
 
-  // async findByGymId(id:String) {
-  //   const bankDetails = await this.neo.read(`
-  //   MATCH (b:Bank {}) RETURN b as bank
-  //   `)
-  // }
-
-
-
-
-
   update(id: number, updateBankDto: UpdateBankDto) {
     return `This action updates a #${id} bank`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bank`;
+  // Temporary Removing
+  // remove(id: string) {
+
+  //   console.log("Deleting ID -> ",id);
+
+  //   let bankDetail = this.neo.read(`
+  //     MATCH (b:Bank {bankId:"${id}"})
+  //     RETURN b as Bank;
+  //   `)
+
+  //   if(bankDetail) {
+  //     //Check relations between bank with user
+
+  //     let removeBank = this.neo.write(`
+  //     MATCH (b:Bank {bankId:"${id}"}
+  //     DETACH DELETE b;
+  //     `)
+
+  //   }
+
+  // }
+
+  async remove(id: string) {
+
+    let bankList : CreateBankDto[] = [];
+
+    try {
+      //1   Getting Bank Details From Bank ID
+      let bankDetails = await this.neo
+        .read(
+          `
+    MATCH (b:Bank {bankId:"${id}"}) 
+    RETURN b
+    `,
+        )
+        .then((detail) => {
+          console.log('res', detail);
+        });
+
+      //2   Finding Relation Related to the Bank  
+      //(HAS_ACCOUNT)
+      let findBankRelation = await this.neo.read(`
+      MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] -> (g:Gym)
+      RETURN type(a);
+    
+      `)
+      .then((res) => {
+        console.log("Res",res);
+        
+        //  Passing Bank ID, Getting type
+        if(res[0]['type(a)'] == 'HAS_ACCOUNT') {
+          console.log('Getting Relation HAS_ACCOUNT...',res);
+          
+          this.neo.write(`
+          MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
+          DETACH DELETE b 
+          `)
+
+
+          // let deleteBank = this.neo.write(`
+          // MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
+          // DETACH DELETE b
+          // `).then((log) => {
+          //   console.log("Deleted ....",log);
+            
+          // })
+
+
+         
+
+        }
+         else {
+          console.log('Cannot find Relation');
+        }
+      })
+
+        
+
+
+
+      
+
+
+    } catch (error) {
+      console.log('Bank Side Error', error);
+    }
   }
 }
