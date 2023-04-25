@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 import { AuthModule } from './auth/auth.module';
 import { OwnerModule } from './owner/owner.module';
 import { MemberModule } from './member/member.module';
@@ -39,14 +38,8 @@ AURA_INSTANCENAME=unacademy-db
         disableLosslessIntegers: true,
       },
     }),
-    OwnerModule, MemberModule, CollectionModule, ReportsModule, GymModule, BankModule, ServicesModule],
+    ServicesModule, OwnerModule, MemberModule, CollectionModule, ReportsModule, GymModule, BankModule],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  }, {
-      provide: APP_GUARD,
-      useClass: RolesGuard
-    }],
+  providers: [AppService,],
 })
 export class AppModule { }

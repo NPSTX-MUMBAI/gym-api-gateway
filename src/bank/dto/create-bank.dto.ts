@@ -6,7 +6,7 @@ export class CreateBankDto {
   ifsc: string;
   name: string;
   branchName: string;
-  address:Address
+  
   
   id?: string;
   mid?: string;   
