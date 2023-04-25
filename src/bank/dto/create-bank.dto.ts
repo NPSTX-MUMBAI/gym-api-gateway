@@ -6,6 +6,6 @@ export class CreateBankDto {
   gymId?: string;
   bankId?: string;
   accountHolderName: string;
-  name: string;
+  bankName: string;
   branchName: string;
 }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { Neo4jService } from '@brakebein/nest-neo4j';
@@ -10,24 +14,27 @@ export class BankService {
   constructor(private neo: Neo4jService) { }
 
   async create(Dto: CreateBankDto): Promise<any> {
+    console.log(Dto);
     const bankId = crypto.randomUUID();
     return new Promise(async (resolve) => {
       try {
         await this.neo.write(
           `merge (b:Bank {accountHolderName: "${Dto.accountHolderName}",
 accountType: "${Dto.accountType}",
-accountNo: "${Dto.accountNo}",
+accountNo: "${Dto.accountNo}",  
 ifsc: "${Dto.ifsc}",
 vpa: "${Dto.vpa}",
-bankName: "${Dto.name}",
+bankName: "${Dto.bankName}",
 branchName: "${Dto.branchName}",
 bankId:"${bankId}"})
 return b`,
         );
+
         const res = await this.neo
-          .write(`MATCH (g:Gym),(p:Bank) WHERE g.gymId="${Dto.gymId
-            }" AND p.bankId="${bankId}"
+          .write(`MATCH (g:Gym),(p:Bank) WHERE g.id="${Dto.gymId}" AND p.bankId="${bankId}"
         CREATE (g) - [r:HAS_ACCOUNT {createdOn:"${Date.now()}"}] -> (p) RETURN g,p,r`);
+
+        console.log("hhh",res);
 
         if (res.length > 0) {
           res.map((r) => {
@@ -39,6 +46,8 @@ return b`,
         }
         resolve({ status: true, msg: 'SUCCESS', statusCode: 201 });
       } catch (error) {
+        console.log(error.response);
+
         resolve({ status: false, msg: 'FAILED to generate response' });
       }
     });
@@ -66,22 +75,17 @@ SET n.accountHolderName= "${Dto.accountHolderName}"
 
   async findAll() {
     try {
-
       const banks = await this.neo.read(`MATCH (b:Bank) RETURN b`);
-      const banklist: CreateBankDto[] = []
+      const banklist: CreateBankDto[] = [];
 
-      console.log("Banks", banklist);
-
+      console.log('Banks', banklist);
 
       banks.map((r) => {
-        banklist.push(r.b)
+        banklist.push(r.b);
       });
       return banklist;
-
-    }
-    catch (err) {
+    } catch (err) {
       return new NotFoundException({}, 'Bank Not Found Any User!');
     }
-
   }
 }

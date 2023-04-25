@@ -16,13 +16,17 @@ import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 export class MemberService {
   constructor(private neo: Neo4jService, private authSvc: AuthService) { }
 
+ 
 
   async create(dto: CreateMemberDto) {
+    console.log(dto);
+    
 
     try {
 
       const res = await this.authSvc.signup({ userId: "", fullName: dto.fullName, email: dto.email, password: dto.password, mobileNo: dto.mobileNo, roles: [USER_ROLE.MEMBER], })
       console.log(res)
+      
 
       const r = await this.neo.write(`match(g: Gym), (u: User)
       where g.id = '${dto.gymId}'and u.email = '${dto.email}'

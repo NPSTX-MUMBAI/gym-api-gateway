@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { OwnerModule } from './owner/owner.module';
 import { MemberModule } from './member/member.module';
-import { CollectionModule } from './collection/collection.module';
+import { CollectionModule } from './bank/collection/collection.module';
 import { ReportsModule } from './reports/reports.module';
 import { Neo4jModule } from '@brakebein/nest-neo4j';
 import { GymModule } from './gym/gym.module';
