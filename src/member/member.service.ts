@@ -14,49 +14,60 @@ import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 
 @Injectable()
 export class MemberService {
-  constructor(private neo: Neo4jService, private authSvc: AuthService) { }
-
+  constructor(private neo: Neo4jService, private authSvc: AuthService) {}
 
   async create(dto: CreateMemberDto) {
-
     try {
+      //       const memberExists = await this.neo
+      // .read(`MATCH (u:Gym {gymId:"${dto.gymId}"})-[r: HAS_MEMBER {createdOn:"${Date.now()}"}]->(m:Member ) WHERE m.name="${dto.fullName}" AND g.email="${dto.email}"
+      //     AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
-      const res = await this.authSvc.signup({ userId: "", fullName: dto.fullName, email: dto.email, password: dto.password, mobileNo: dto.mobileNo, roles: [USER_ROLE.MEMBER], })
-      console.log(res)
-
-      const r = await this.neo.write(`match(g: Gym), (u: User)
+      const res = await this.authSvc.signup({
+        userId: '',
+        fullName: dto.fullName,
+        email: dto.email,
+        password: dto.password,
+        mobileNo: dto.mobileNo,
+        roles: [USER_ROLE.MEMBER],
+      });
+      console.log(res, '#######');
+      if (res.status === false) {
+        return 'errorrrrrrrr';
+      } else {
+        const r = await this.neo.write(`match(g: Gym), (u: User)
       where g.id = '${dto.gymId}'and u.email = '${dto.email}'
       merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) return u as user`);
-      console.log(r);
-      if (r.length > 0) {
-
-        const name: number = 10;
-        const nameArray: number[] = [];
-          console.log(dto.services)
-        dto.services.map(async (s) => {
-
-          try {
-
-            const query = await this.neo.write(`match(u:User), (s: Service) 
+        console.log(r);
+        if (r.length > 0) {
+          const name = 10;
+          const nameArray: number[] = [];
+          console.log(dto.services);
+          dto.services.map(async (s) => {
+            try {
+              const query = await this.neo.write(`match(u:User), (s: Service) 
           where u.email = '${dto.email}' and s.id = '${s.serviceId}'
-          merge(u) - [r: HAS_SERVICE {createdOn:"${Date.now()}", rate:"${s.rate}", 
+          merge(u) - [r: HAS_SERVICE {createdOn:"${Date.now()}", rate:"${
+                s.rate
+              }", 
           rateType:"${s.rateType}"}] -> (s) return u as user`);
-            console.log(query);
-          } catch (error) {
-            console.log(error);
-          }
-        });
+              console.log(query);
+            } catch (error) {
+              console.log(error);
+            }
+          });
 
-        return "member created successfully"
-        //return "member created successfully"
-
-      } else {
-        throw new HttpException("could not create member and it's relation", 402);
+          return 'member created successfully';
+          //return "member created successfully"
+        } else {
+          throw new HttpException(
+            "could not create member and it's relation",
+            402,
+          );
+        }
       }
     } catch (error) {
       console.log(error);
-      throw new HttpException("error encountered", 402);
-
+      throw new HttpException('error encountered', 402);
     }
   }
 
@@ -74,19 +85,22 @@ export class MemberService {
     }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} member`;
-  // }
+  findOne(id: number) {
+    return `This action returns a #${id} member`;
+  }
 
-  async findmemberbygymID(id: CreateMemberDto) {
+  async findmemberbygymID(id: any) {
+    console.log(id);
+
     try {
       const res = await this.neo.read(
-        `MATCH (n: Member{gymId: "${id}"}) return n`,
+        `MATCH (g:Gym {id:'${id}'  })-[:HAS_MEMBER]->(u:User)
+RETURN u`,
       );
       let member: Member[] = [];
       console.log(res);
-      if (res && res.length > 0) {
-        member = res.map((r) => (member = r.n));
+      if (res.length > 0) {
+        member = res.map((r) => (member = r.u));
         return member;
       } else {
         return null;

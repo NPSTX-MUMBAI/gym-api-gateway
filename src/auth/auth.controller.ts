@@ -17,8 +17,7 @@ import { SignUpDTO } from './dtos/signup.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authSvc: AuthService) { }
-
+  constructor(private readonly authSvc: AuthService) {}
 
   @SkipThrottle(true)
   @UseGuards(AuthGuard('local'))
@@ -29,12 +28,12 @@ export class AuthController {
     //return req.user;
   }
 
-  @Post('/signup')  //1  Wharting
+  @Post('/signup') //1  Wharting
   async signup(@Body() body: SignUpDTO) {
     return await this.authSvc.signup(body);
   }
 
-  @Post('/validateuser')  //2   
+  @Post('/validateuser') //2
   async signIn(@Body() body: LoginDTO) {
     return await this.authSvc.validateUser(body.email, body.password);
   }
@@ -47,5 +46,5 @@ export class AuthController {
 
   resetPassword() {}
 
-  logout() { }
+  logout() {}
 }

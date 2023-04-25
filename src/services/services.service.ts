@@ -5,9 +5,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class ServicesService {
-   
-  constructor(private neo: Neo4jService) { }
-
+  constructor(private neo: Neo4jService) {}
 
   async createDefaultservice() {
     try {
@@ -50,5 +48,4 @@ export class ServicesService {
       throw new HttpException(error, 402);
     }
   }
-
 }
