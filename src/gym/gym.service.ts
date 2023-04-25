@@ -11,11 +11,11 @@ import { CreateBankDto } from 'src/bank/dto/create-bank.dto';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { Gym } from './entities/gym.entity';
+import { log } from 'console';
 
 @Injectable()
 export class GymService {
-
-  constructor(private neo: Neo4jService) { }
+  constructor(private neo: Neo4jService) {}
   // async create(dto: CreateGymDto) {
   //   try {
   //     //step1: first check if the gym exists
@@ -58,7 +58,6 @@ export class GymService {
   // }
 
   async create(dto: CreateGymDto) {
-
     try {
       //step1: first check if the gym exists
       const gymExists = await this.neo
@@ -71,7 +70,6 @@ export class GymService {
           'gym exists with the same name for the same user',
         );
       } else {
-
         let id: string;
         const res = await this.neo
           .write(`CREATE (g:Gym { id: apoc.create.uuid() ,name:"${dto.name}",
@@ -82,11 +80,14 @@ export class GymService {
         country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"}) 
         MERGE (g)-[r:LOCATED_IN]->(a) return a,g
      `);
-        res.map((r) => id = r.g.id);
+        console.log(res, 'my gymm');
+
+        res.map((r) => (id = r.g.id));
         console.log('ID->', id);
         if (res) {
-          const r = await this.neo
-            .write(`MATCH (u:User{userId:"${dto.userId}"}),(g:Gym {id:"${id}"}) 
+          const r = await this.neo.write(`MATCH (u:User{userId:"${
+            dto.userId
+          }"}),(g:Gym {id:"${id}"}) 
           merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
           console.log('gym created successfully', r);
           return 'gym created successfully';
@@ -160,8 +161,10 @@ export class GymService {
   async findOne(id: string) {
     try {
       const res = await this.neo.read(
-        `MATCH (g:Gym) WHERE g.id=$id return g`,
-        { id: id },
+        `MATCH (g:Gym) WHERE g.id=${id} return g`,
+        {
+          id: id,
+        },
       );
       let gym: Gym;
       console.log(res);
@@ -179,8 +182,11 @@ export class GymService {
 
 
   async update(id: string, dto: UpdateGymDto) {
+    console.log(id, dto);
+
     try {
-      const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
+      const res = await this.neo.write(`MATCH (g:Gym) 
+      WHERE g.id="${id}" 
       SET
       g.name="${dto.name}",
       g.email="${dto.email}",
@@ -189,6 +195,8 @@ export class GymService {
       
       return g
       `);
+
+      console.log(res);
       return 'gym updated successfully';
     } catch (error) {
       throw new HttpException('error updating gym', error);

@@ -24,7 +24,7 @@ import { log } from 'console';
 
 @Controller('member')
 export class MemberController {
-  constructor(private readonly memberService: MemberService) { }
+  constructor(private readonly memberService: MemberService) {}
 
   @Post('/create')
   async create(@Body() createMemberDto: CreateMemberDto) {
@@ -37,7 +37,7 @@ export class MemberController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: CreateMemberDto) {
+  findOne(@Param('id') id: any) {
     return this.memberService.findmemberbygymID(id);
   }
 

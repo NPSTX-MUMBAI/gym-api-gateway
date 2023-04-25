@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { HasRoles } from 'src/auth/has-role.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { log } from 'console';
 
 @Controller('gym')
 export class GymController {
@@ -22,9 +23,9 @@ export class GymController {
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
-  @Post('/create')    //Running
+  @Post('/create') //Running
   async create(@Body() createGymDto: CreateGymDto) {
-    console.log('inside create gym controller=>', createGymDto)
+    console.log('inside create gym controller=>', createGymDto);
 
     return await this.gymService.create(createGymDto);
   }
@@ -54,14 +55,22 @@ export class GymController {
     return await this.gymService.findAllGymForCurrentUser(userId);
   }
 
-  @Get('/findaddress/:id')  
+  @Get('/findaddress/:id')
   async findGymAddress(@Param('id') email: string) {
     return await this.gymService.getGymAddress(email);
   }
 
-  @Patch('/update/:id')
+  @Patch('update/:id')
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
+    console.log(id, updateGymDto);
+
     return await this.gymService.update(id, updateGymDto);
+  }
+
+  @Get('update2/:id')
+  async update2(@Param('id') id: string) {
+    console.log(id);
+    return id;
   }
 
   @Patch('/update/address/:id')
