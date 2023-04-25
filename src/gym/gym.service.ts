@@ -177,6 +177,7 @@ export class GymService {
     }
   }
 
+
   async update(id: string, dto: UpdateGymDto) {
     try {
       const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
