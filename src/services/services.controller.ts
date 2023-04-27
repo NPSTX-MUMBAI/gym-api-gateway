@@ -1,70 +1,42 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
+import { ServiceDTO } from 'src/package/dto/service.dto';
 import { ServicesService } from './services.service';
 
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) { }
-
-    // @Post('/create')
-    // async create(@Body() createPackageDto: CreatePackageDto) {
-    //   return await this.packageService.create(createPackageDto);
-    // }
-
-    // @Post('/addservice')
-    // createService(@Body() serviceDto: ServiceDTO) {
-    //   return this.packageService.createService(serviceDto);
-    // }
-
-    //1
-    // @Get('')
-    // findAll() {
-    //   return this.packageService.findAll();
-    // }
-
-    // @Post('findallPackages')
-    // findAllpackage(@Body() dto: CreatePackageDto) {
-    //   return this.packageService.findallpackage(dto);
-    // }
-
-    // @Get('allPackages')
-    // findAll() {
-    //   return this.packageService.findAll();
-    // }
-
-    // @Post(':id')
-    // findOne(@Param('id') id: string) {
-    //   return this.packageService.findpackagebyId(id);
-    // }
-
-
-    // @Get(':id')   //Running
-    // findOne(@Param('id') id: string) {
-    //   return this.packageService.findpackagebyId(id);
-    // }
-
-    // @Get('packagenames')
-    // getPackageNamesWithId() {
-    //   this.packageService.getPackageNames();
-    // }
-
-
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updatePackageDto: UpdatePackageDto) {
-    //   return this.packageService.update(+id, updatePackageDto);
-    // }
-
-    // @Delete(':id')
-    // remove(@Param('id') id: string) {
-    //   return this.packageService.remove(+id);
-    // }
-
     
-  @Get('/generate/default/service') //Running
+  @Post('/generate/default/service') //Running
 
-  async generateDefaultservice() {
+  async generateDefaultservice(dto:ServiceDTO) {
     console.log('inside generate default service');
-    return await this.servicesService.createDefaultservice();
+    return await this.servicesService.createDefaultservice(dto);
 
-    // return this.packageService.testPService();
+  }
+
+  @Get()
+  findAll() {
+    return `This action returns all owner`;
+  }
+
+  @Get()
+  findOne(id: number) {
+    return `This action returns a #${id} owner`;
+  }
+
+  @Post()
+  create(createServiceDto:ServiceDTO ) {
+    return 'This action adds a new owner';
+  }
+
+  @Put()
+  update(id: number) {
+    return `This action updates a #${id} owner`;
+  }
+
+  @Delete()
+  remove(id: number) {
+    return `This action removes a #${id} owner`;
   }
 }

@@ -5,6 +5,7 @@ import { UpdateGymDto } from './dto/update-gym.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { HasRoles } from 'src/auth/has-role.decorator';
+import { BankService } from 'src/bank/bank.service';
 
 @Controller('gym')
 export class GymController {
@@ -33,12 +34,11 @@ export class GymController {
     // return await this.gymService.findOne(id);
     return this.gymService.findById(id);
   }
-
+  
   @Get('details/:id')
   getGymdetailsByBankID(@Param ('id') id:string) {
     return this.gymService.getGymdetailsByBankID(id);
   }
-
 
   @Get('/email/:email')   //Not Running
   async findAllGymForCurrentUser(@Param('email') email: string) {
@@ -50,6 +50,7 @@ export class GymController {
     return await this.gymService.getGymAddress(email);
   }
 
+ 
   @Patch('/update/:id')
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.update(id, updateGymDto);

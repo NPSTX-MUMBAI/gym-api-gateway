@@ -65,7 +65,7 @@ export class GymService {
         .read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE 
         g.gymName="${dto.name}" AND g.email="${dto.email}" 
       AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
-
+      
       console.log('gym=>', gymExists);
       if (gymExists.length > 0) {
         throw new ConflictException(

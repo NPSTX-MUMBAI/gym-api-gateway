@@ -47,180 +47,6 @@ export class PackageService {
     }
   }
 
-  // async createDefaultservice(dto:ServiceDTO){
-  //   try {
-  //     console.log('inside package service')
-  //     let defaultSvcs:ServiceDTO[]=[
-  //       {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-
-  //       isDefault:true,
-  //       name:'cardio',
-  //       imgUrl:'../assets/cardio1.jpg'
-  //     },
-  //     {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-  //
-  //       isDefault:true,
-  //       name:'Personal Training',
-  //       imgUrl:'../assets/Trainer1.jpg'
-  //     },
-  //     {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-
-  //       isDefault:true,
-  //       name:'Sauna',
-  //       imgUrl:'../assets/sauna.jpg'
-  //     },
-  //     {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-  //
-  //       isDefault:true,
-  //       name:'Lockers',
-  //       imgUrl:'../assets/lockers.jpg'
-  //     },
-  //     {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-
-  //       isDefault:true,
-  //       name:'Swimming',
-  //       imgUrl:'../assets/swimpool1.jpg'
-  //     },
-  //     {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-
-  //       isDefault:true,
-  //       name:'Strength Training',
-  //       imgUrl:'../assets/Strengthtraining.jpg'
-  //     },
-  //     {
-  //       id:crypto.randomUUID(),
-  // createdOn:new Date().toLocaleDateString(),
-
-  //       isDefault:true,
-  //       name:'Yoga',
-  //       imgUrl:'../assets/Yoga1.jpg'
-  //     },
-  //   ];
-
-  //   defaultSvcs.forEach(async (svc)=>{
-  //     const cq =`CREATE (s:Service { id:"${svc.id}",
-  //     name:"${svc.name}",
-  //     imgUrl:"${svc.imgUrl}",
-  //     createdOn:"${svc.createdOn}"
-  //     isDefault:"${svc.isDefault}"}) return s`
-  //     console.log(cq);
-
-  //     const res = await this.neo.write(cq);
-
-  //     // res.map((row)=>packageId=row.p.id)
-
-  //     let serviceId = '';
-
-  //     if(res) {
-  //       res.map((row) => serviceId = row.s.id);
-  //       console.log("IDMapping-",res);
-  //       console.log("SID-",serviceId);
-
-  //       const mcq = `MATCH(p:Package),(s:Service) WHERE p.name='Diwali Package'
-  //       AND s.name='sauna' CREATE (p) - [r:HAS_SERVICE] -> (u)
-  //       RETURN type(r)`
-
-  //       await this.neo.write(mcq);
-
-  //     }
-
-  //   })
-
-  //   console.log('outside loop')
-  //   return true;
-
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  async createDefaultservice(dto: ServiceDTO) {
-    try {
-      console.log('inside package service');
-      const defaultSvcs: ServiceDTO[] = [
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,  
-          name: 'Lockers',
-          imgUrl: '../assets/lockers.jpg',
-        },
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,
-          name: 'Yoga',
-          imgUrl: '../assets/Yoga1.jpg',
-        },
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,  
-          name: 'Cardio',
-          imgUrl: '../assets/lockers.jpg',
-        },
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,  
-          name: 'Personal Training',
-          imgUrl: '../assets/lockers.jpg',
-        },
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,  
-          name: 'Strength Training',
-          imgUrl: '../assets/lockers.jpg',
-        },
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,  
-          name: 'Swimming',
-          imgUrl: '../assets/lockers.jpg',
-        },
-        {
-          svcId: crypto.randomUUID(),
-          createdOn: new Date().toLocaleDateString(),
-          isDefault: true,  
-          name: 'Sauna',
-          imgUrl: '../assets/lockers.jpg',
-        },
-
-      ];
-
-      defaultSvcs.forEach(async (svc) => {
-        const query = `CREATE (s:Service { svcId:"${svc.svcId}", 
-      name:"${svc.name}", 
-      imgUrl:"${svc.imgUrl}",
-      createdOn:"${svc.createdOn}",
-      isDefault:"${svc.isDefault}"}) return s`;
-        console.log(query);
-        const res = await this.neo.write(query);
-        console.log(res);
-      });
-
-      console.log('outside loop');
-      return true;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error, 402);
-    }
-  }
-
   // async findallpackage(Dto: CreatePackageDto) {
   //   try {
   //     const query = await this.neo.read(
@@ -239,6 +65,7 @@ export class PackageService {
   // }
 
   //Running
+  
   async findpackagebyId(id: string) {
     console.log(id);
     try {
@@ -255,9 +82,6 @@ export class PackageService {
       return 'erorr';
     }
   }
-
-  
-
 
   packagelist: CreatePackageDto[] = [];
 
@@ -320,17 +144,9 @@ export class PackageService {
            console.log("Package Names",r);
            this.packageNames = r;
            console.log("Package Names",this.packageNames);
-           
-
         })
-          
-
-        
        }
-
      })
-      
-
     } catch (err) {
       console.log('', err);
     }

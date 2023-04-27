@@ -17,11 +17,17 @@ import { UpdateBankDto } from './dto/update-bank.dto';
 export class BankController {
   constructor(private readonly bankService: BankService) {}
 
-  @Post('add')  //Working
-  create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
-    return this.bankService.create(createBankDto);
-    // return this.bankService.create1(createBankDto);
+  // @Post('add')  //Working
+  // create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
+  //   return this.bankService.create1(createBankDto);
+  //   // return this.bankService.create1(createBankDto);
+  // }
+
+  @Post('create/relation/:id')
+  createR(@Param (':id') id:string, name:string) {
+    this.bankService.createR(id,name);
   }
+ 
 
   @Get('list') //Working
   findAll() {
@@ -30,7 +36,9 @@ export class BankController {
 
    // Banking Service  #1  Getting Bank Ids
    @Get(':id') //Running
-   findOne(@Param('id') id: string) {
+   findOne(
+    @Param('id') id: string
+    ) {
      return this.bankService.getBankIds(id);
    }
  
@@ -41,7 +49,7 @@ export class BankController {
     }
  
    // Banking Service  #3  Getting Bank Details From Gym ID
-   @Get('accounts/:id')
+   @Get('account/:id')
    getTwo(@Param('id') id: string) {
      return this.bankService.getBankDetailsFromGymId(id);
    }
@@ -51,7 +59,7 @@ export class BankController {
     return this.bankService.update(+id, updateBankDto);
   }
 
-  @Delete('accounts/:id')   
+  @Delete('account/remove/:id')   
   remove(@Param('id') id: string) {
     return this.bankService.remove(id);
   }

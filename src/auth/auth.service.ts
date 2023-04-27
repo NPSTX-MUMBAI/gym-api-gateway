@@ -115,10 +115,7 @@ export class AuthService {
 
     }
 
-    async getAllGyms() {
-        let gymCount = (await this.neo.read(`MATCH (n:Gym) RETURN n`)).length;
-        console.log("Available Gyms -> ",gymCount);
-    }
+    
 
   
 }

@@ -22,7 +22,6 @@ export class AuthController {
   @Get('all')
   getAll(email:string) {
     this.authSvc.getAllUsers(email);
-    this.authSvc.getAllGyms();
     
   }
 
