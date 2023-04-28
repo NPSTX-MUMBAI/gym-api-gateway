@@ -48,4 +48,24 @@ export class ServicesService {
       throw new HttpException(error, 402);
     }
   }
+
+  findServiceList() {
+    const r1 = this.neo.read(`
+    MATCH (s:Service) 
+    RETURN s
+    `).then((res) => {
+      
+      console.log("r1",res);
+    })
+
+    
+
+    // let array = []
+
+    // for (let i = 0; i < array.length; i++) {
+    //     array.push(r1[i].s)
+    // }
+    return {data: r1}
+  }
+
 }

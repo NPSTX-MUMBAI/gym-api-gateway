@@ -75,8 +75,11 @@ export class MemberService {
 
   async findAll() {
     try {
-      // const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
-      const res = await this.neo.read(`MATCH (u:Member)  return u `);
+      const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
+      // const res = await this.neo.read(`MATCH (u:Member)  return u `);
+      const res1 = await this.neo.read(`
+      MATCH (u:User) RETURN u;
+      `)
 
       res.map((r) => {
         console.log(r);

@@ -18,7 +18,7 @@ export class BankController {
   constructor(private readonly bankService: BankService) { }
 
   @Post('add')
-  create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
+  create(@Body() createBankDto: CreateBankDto) {
     return this.bankService.create(createBankDto);
     // return this.bankService.create1(createBankDto);
   }

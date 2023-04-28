@@ -4,7 +4,7 @@ export class CreateBankDto {
   accountType: string;
   accountNo: string;
   ifsc: string;
-  name: string;
+  bankName: string;
   branchName: string;
   
   

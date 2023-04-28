@@ -66,4 +66,9 @@ export class ServicesController {
 
     // return this.packageService.testPService();
   }
+
+  @Get('getlist')
+  findAll() {
+    return this.servicesService.findServiceList();
+  }
 }
