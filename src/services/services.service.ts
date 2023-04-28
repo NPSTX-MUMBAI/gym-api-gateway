@@ -153,6 +153,34 @@ export class ServicesService {
     }
   }
 
+  async findServiceList() {
+    const r1 =await this.neo.read(`
+    MATCH (s:Service) 
+    RETURN s ;
+    `)
+  let array =[]
+ 
+  for (let i = 0; i < r1.length; i++) {
+    array.push(r1[i].s)
+    console.log(); 
+    
+  }
+    return array;
+  }
 
+
+  remove(id:string) {
+
+    console.log('Deleting the Service ID - ',id);
+    
+    const w1 = this.neo.write
+    (`
+    MATCH (s:Service {svcId:"${id}"}) 
+    DETACH DELETE b
+    `);
+    
+    console.log('Service Deleted Succesfully!');
+    
+  }
   
 }

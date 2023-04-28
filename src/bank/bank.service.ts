@@ -158,53 +158,69 @@ export class BankService {
     return `This action updates a #${id} bank`;
   }
 
-  async remove(id: string) {
-    let bankList : CreateBankDto[] = [];
+  //1st Test
+  // async remove(id: string) {
+  //   let bankList : CreateBankDto[] = [];
 
-    try {
-      //1   Getting Bank Details From Bank ID
-      let bankDetails = await this.neo
-        .read(
-          `
+  //   try {
+  //     //1   Getting Bank Details From Bank ID
+  //     let bankDetails = await this.neo
+  //       .read(
+  //         `
+  //   MATCH (b:Bank {bankId:"${id}"}) 
+  //   RETURN b
+  //   `,
+  //       )
+  //       .then((detail) => {
+  //         console.log('res', detail);
+  //       });
+
+  //     //2   Finding Relation Related to the Bank  
+  //     //(HAS_ACCOUNT)
+  //     let findBankRelation = await this.neo.read(`
+  //     MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym)
+  //     RETURN type(a);
+  //     `)
+  //     .then((res) => {
+  //       console.log("Res",res);
+  //       // Type(a) can be dynamic here
+
+  //       //  Passing Bank ID, Getting type
+  //       if(res[0]['type(a)'] == 'HAS_ACCOUNT') {
+  //         console.log('Getting Relation HAS_ACCOUNT...',res);
+  //         this.neo.write(`
+  //         MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
+  //         DETACH DELETE b 
+  //         `)
+  //         // let deleteBank = this.neo.write(`
+  //         // MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
+  //         // DETACH DELETE b
+  //         // `).then((log) => {
+  //         //   console.log("Deleted ....",log);
+  //         // })
+  //       }
+  //        else {
+  //         console.log('Cannot find Relation');
+  //       }
+  //     })
+
+  //   } catch (error) {
+  //     console.log('Bank Side Error', error);
+  //   }
+  // }
+
+  remove(id:string) {
+    
+    console.log("Deleting Gym Owner's Bank ID",id);
+
+    const w1 = this.neo.write
+    (`
     MATCH (b:Bank {bankId:"${id}"}) 
-    RETURN b
-    `,
-        )
-        .then((detail) => {
-          console.log('res', detail);
-        });
+    DETACH DELETE b 
+    `);
 
-      //2   Finding Relation Related to the Bank  
-      //(HAS_ACCOUNT)
-      let findBankRelation = await this.neo.read(`
-      MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym)
-      RETURN type(a);
-      `)
-      .then((res) => {
-        console.log("Res",res);
-        // Type(a) can be dynamic here
 
-        //  Passing Bank ID, Getting type
-        if(res[0]['type(a)'] == 'HAS_ACCOUNT') {
-          console.log('Getting Relation HAS_ACCOUNT...',res);
-          this.neo.write(`
-          MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
-          DETACH DELETE b 
-          `)
-          // let deleteBank = this.neo.write(`
-          // MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
-          // DETACH DELETE b
-          // `).then((log) => {
-          //   console.log("Deleted ....",log);
-          // })
-        }
-         else {
-          console.log('Cannot find Relation');
-        }
-      })
-
-    } catch (error) {
-      console.log('Bank Side Error', error);
-    }
+    console.log('Deleted Gym Owners Bank ID - ',id);
+    
   }
 }

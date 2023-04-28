@@ -59,6 +59,7 @@ export class BankController {
     return this.bankService.update(+id, updateBankDto);
   }
 
+  //Running
   @Delete('account/remove/:id')   
   remove(@Param('id') id: string) {
     return this.bankService.remove(id);

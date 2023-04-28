@@ -1,5 +1,7 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
 
+// 2a20cbfe-deb9-4a77-8bd4-05f7417558be
+
 import {
   HttpException,
   Injectable,
@@ -244,6 +246,9 @@ export class GymService {
     }
   }
 
+
+
+  //#2nd Test
   // async remove(id: string) {
   //   try {
   //     const res = await this.neo.write(
@@ -261,19 +266,21 @@ export class GymService {
   //   }
   // }
 
+  //Temporary Running
   async remove(gymId:string) {
     try {
       console.log('Deleting Gym ID ->',gymId);
       
-      let gymExistWithR = await this.neo.read(`
-      MATCH (u:User) - [o:OWNS] -> (g:Gym {gymId:${gymId})
-      RETURN u
-      `)
-
-      return gymExistWithR;
+      const w1 = this.neo.write(`MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `);
+      
+      return w1;
 
     } catch (error) {
+      console.log('Cannot Be Delete as Gym ID Not Found!',error);
       
+     throw new NotFoundException;
     }
   }
+
+
 }

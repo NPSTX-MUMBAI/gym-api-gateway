@@ -8,7 +8,7 @@ import { FileTypeValidator, MaxFileSizeValidator, ParseFilePipe } from '@nestjs/
 import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
 
-@Controller('member')
+@Controller('members')
 export class MemberController {
   constructor(private readonly memberService: MemberService) { }
 
@@ -32,7 +32,8 @@ export class MemberController {
     return await this.memberService.update(id, updateMemberDto);
   }
 
-  @Delete(':id')
+  //Running
+  @Delete('account/delete/:id')
   async remove(@Param('id') id: string) {
     return await this.memberService.remove(id);
   }
