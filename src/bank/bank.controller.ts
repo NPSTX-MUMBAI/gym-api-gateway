@@ -13,52 +13,51 @@ import { BankService } from './bank.service';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 
-@Controller('bank')
+@Controller('bank') 
 export class BankController {
-  constructor(private readonly bankService: BankService) {}
+  constructor(private readonly bankSvc: BankService) {}
 
-  @Post('add')  //Working
+  @Post('add')  //Running
   create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
-    return this.bankService.create(createBankDto);
-    // return this.bankService.create1(createBankDto);
+    return this.bankSvc.create(createBankDto);
+    // return this.bankSvc.create1(createBankDto);
   }
 
-
-  @Get('list') //Working
+  @Get('list') //Running
   findAll() {
-    return this.bankService.findAll();
+    return this.bankSvc.findAll();
   }
 
-   // Banking Service  #1  Getting Bank Ids
+   // Banking Service  #1  Getting Bank Details by BankID
    @Get(':id') //Running
    findOne(
     @Param('id') id: string
     ) {
-     return this.bankService.getBankIds(id);
+      return this.bankSvc.getBankDetailsById(id);
    }
  
     // Banking Service  #2  Getting Bank Names 
-    @Get('banknames') //Runnning
-    getBanknames() {
-      return this.bankService.getBanknames();
-    }
  
    // Banking Service  #3  Getting Bank Details From Gym ID
-   @Get('account/:id')
+
+  //  @Get('account/:id')    //Check Relations
+   //  getThree(@Param('id') id: string) {
+   //    return this.bankSvc.getBankdetailsFrom(id);
+   //  }
+
+   @Get('account/:id')    //Not Working
    getTwo(@Param('id') id: string) {
-     return this.bankService.getBankDetailsFromGymId(id);
+     return this.bankSvc.getBankDetailsFromGymId(id);
    }
 
-  @Patch('update/:id')
+  @Patch('update/:id')    //Running
   update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
-    return this.bankService.update(+id, updateBankDto);
+    return this.bankSvc.update(id, updateBankDto);
   }
 
   //Running
   @Delete('account/details/remove/:id')   
   remove(@Param('id') id: string) {
-    return this.bankService.remove(id);
+    return this.bankSvc.remove(id);
   }
-
- 
 }

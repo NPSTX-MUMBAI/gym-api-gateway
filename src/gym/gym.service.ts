@@ -1,7 +1,5 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
 
-// 2a20cbfe-deb9-4a77-8bd4-05f7417558be
-
 import {
   HttpException,
   Injectable,
@@ -18,6 +16,7 @@ import { Gym } from './entities/gym.entity';
 @Injectable()
 export class GymService {
   constructor(private neo: Neo4jService) {}
+
   // async create(dto: CreateGymDto) {
   //   try {
   //     //step1: first check if the gym exists
@@ -58,7 +57,6 @@ export class GymService {
   //   }
 
   // }
-
 
   async create(dto: CreateGymDto) {
     try {
@@ -106,8 +104,6 @@ export class GymService {
       throw new HttpException(error, 501);
     }
   }
-
-
 
   // async findAll() {
   //   try {
@@ -172,7 +168,6 @@ export class GymService {
     }
   }
 
-
   // async getGymAddress(id: string) {
   //   try {
   //     const res = await this.neo.read(
@@ -186,7 +181,6 @@ export class GymService {
   //     throw new HttpException('error encountered', error);
   //   }
   // }
-
 
   // async findOne(id: string) {
   //   try {
@@ -229,9 +223,6 @@ export class GymService {
     
     return getDetails;
   }
-
-
-
 
   async update(id: string, dto: UpdateGymDto) {
     try {
@@ -280,11 +271,7 @@ export class GymService {
     MATCH (g:Gym {id:"${id}"}) 
     DETACH DELETE g
     `);
-
-
     console.log('Deleted Gym ID Is - ',id);
     return "Deleted Gym Successfully! ";
   }
-
-
 }

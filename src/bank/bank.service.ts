@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { SignUpDTO } from 'src/auth/dtos/signup.dto';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
+import { UpdateGymDto } from 'src/gym/dto/update-gym.dto';
 
 @Injectable()
 export class BankService {
@@ -12,7 +13,6 @@ export class BankService {
   async create(dto: CreateBankDto) {
     try {
       let id: string;
-
       const createBank = await this.neo.write(`CREATE 
       (b:Bank  { 
         bankId:apoc.create.uuid(),
@@ -59,21 +59,17 @@ export class BankService {
     }
   }
 
-
-  //  #BS1
+  //  #BS1  Not Running
   
-  getBankDetailsFromGymId(gymId: string) {
-    console.log('ID',gymId);
+  async getBankDetailsFromGymId(gymId: string) {
+    console.log('Gym ID ->',gymId);
     
     try {
-      let getDetails = this.neo.read(`
-      MATCH (b:Bank )-[a:HAS_ACCOUNT]-(g:Gym {gymId:"${gymId}"})
+      let getDetails = await this.neo.read(`
+      MATCH (b:Bank)-[a:HAS_ACCOUNT]-(g:Gym {gymId:"${gymId}"})
       RETURN b
-            `).then((res) => {
-              console.log("Inside Promise",res);
-              
-            })
-      console.log(getDetails);
+            `);
+            console.log(getDetails);
       return getDetails;
     } catch (error) {
       console.log('Bank Side Error...', error);
@@ -97,85 +93,49 @@ export class BankService {
     }
   }
 
-  async getBanknames() {
+  async getBankDetailsById(id:string) {
+
     try {
-      const banknames = await this.neo.read(`MATCH (b:Bank) RETURN b`);
-      const banklist: CreateBankDto[] = [];
+    const r1 = await this.neo.read(
+      `MATCH (b:Bank {bankId:"${id}"}) 
+    RETURN b`)
+    if(r1.length != 0) {
+      return r1
+    } else {
 
-      banknames.map((r) => {
-        banklist.push(r.b.bankName);
-      });
-      console.log('banklist-', banklist);
+      throw new NotFoundException('Not Found');
+    }
 
-      return banklist;
-    } catch (err) {
-      console.log('', err);
+  } catch (err) {
+    return err.response;
+  }
+  }
+
+  // async getBankIds(id: String) {
+  //   const bankDetails = await this.neo.read(`
+  //   MATCH (b:Bank{bankId:"${id}"}) RETURN b as bank;
+  //   `);
+  //   console.log('In Bank -', bankDetails);
+    
+  //   return bankDetails;
+  // }
+
+  async update(id: string, dto: UpdateBankDto) {
+    try {
+      const res = await this.neo.write(`MATCH (b:Bank) where b.bankId="${id}" 
+      SET
+      b.accountHolderName="${dto.accountHolderName}",
+      b.accountType="${dto.accountType}",
+      b.accountNo = "${dto.accountNo}",
+      b.bankname = "${dto.name}"
+      b.branchname = "${dto.branchName}",
+      return b
+      `);
+      return 'Gym updated successfully';
+    } catch (error) {
+      throw new HttpException('error updating gym', error);
     }
   }
-
-  async getBankIds(id: String) {
-    const bankDetails = await this.neo.read(`
-    MATCH (b:Bank{bankId:"${id}"}) RETURN b as bank;
-    `);
-    console.log('In Bank -', bankDetails);
-
-    return bankDetails;
-  }
-
-  update(id: number, updateBankDto: UpdateBankDto) {
-    return `This action updates a #${id} bank`;
-  }
-
-  //1st Test
-  // async remove(id: string) {
-  //   let bankList : CreateBankDto[] = [];
-
-  //   try {
-  //     //1   Getting Bank Details From Bank ID
-  //     let bankDetails = await this.neo
-  //       .read(
-  //         `
-  //   MATCH (b:Bank {bankId:"${id}"}) 
-  //   RETURN b
-  //   `,
-  //       )
-  //       .then((detail) => {
-  //         console.log('res', detail);
-  //       });
-
-  //     //2   Finding Relation Related to the Bank  
-  //     //(HAS_ACCOUNT)
-  //     let findBankRelation = await this.neo.read(`
-  //     MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym)
-  //     RETURN type(a);
-  //     `)
-  //     .then((res) => {
-  //       console.log("Res",res);
-  //       // Type(a) can be dynamic here
-
-  //       //  Passing Bank ID, Getting type
-  //       if(res[0]['type(a)'] == 'HAS_ACCOUNT') {
-  //         console.log('Getting Relation HAS_ACCOUNT...',res);
-  //         this.neo.write(`
-  //         MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
-  //         DETACH DELETE b 
-  //         `)
-  //         // let deleteBank = this.neo.write(`
-  //         // MATCH (b:Bank {bankId:"${id}"}) - [a:HAS_ACCOUNT] - (g:Gym) 
-  //         // DETACH DELETE b
-  //         // `).then((log) => {
-  //         //   console.log("Deleted ....",log);
-  //         // })
-  //       }
-  //        else {
-  //         console.log('Cannot find Relation');
-  //       }
-  //     })
-
-  //   } catch (error) {
-  //     console.log('Bank Side Error', error);
-  //   }
-  // }
 
   remove(id:string) {
     
@@ -186,8 +146,6 @@ export class BankService {
     MATCH (b:Bank {bankId:"${id}"}) 
     DETACH DELETE b 
     `);
-
-
     console.log('Deleted Gym Owners Bank ID - ',id);
     return "Deleted Gym Owners Bank ID ";
   }

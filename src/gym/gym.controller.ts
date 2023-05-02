@@ -49,18 +49,16 @@ export class GymController {
   async findGymAddress(@Param('id') email: string) {
     return await this.gymService.getGymAddress(email);
   }
-
  
   @Patch('/update/:id')   //Running    
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.update(id, updateGymDto);
   }
 
-  @Patch('/update/address/:id') 
+  @Patch('/update/address/:id')   //Problematic
   async updateAddress(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.updateAddress(id, updateGymDto);
   }
-
 
   //Running
   @Delete('account/details/delete/:id')
