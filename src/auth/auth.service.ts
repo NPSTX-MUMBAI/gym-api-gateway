@@ -24,6 +24,11 @@ export class AuthService {
         console.log('user=>', user);
         if (!user) return null;
         const passwordValid = await bcrypt.compare(password, user.password)
+        console.log("DB Pass - >",password);
+        console.log("Typed Pass - >",user.password);
+        
+        
+
         if (!user) {
             throw new NotAcceptableException('could not find the user');
         }

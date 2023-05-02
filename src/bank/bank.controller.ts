@@ -17,17 +17,12 @@ import { UpdateBankDto } from './dto/update-bank.dto';
 export class BankController {
   constructor(private readonly bankService: BankService) {}
 
-  // @Post('add')  //Working
-  // create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
-  //   return this.bankService.create1(createBankDto);
-  //   // return this.bankService.create1(createBankDto);
-  // }
-
-  @Post('create/relation/:id')
-  createR(@Param (':id') id:string, name:string) {
-    this.bankService.createR(id,name);
+  @Post('add')  //Working
+  create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
+    return this.bankService.create(createBankDto);
+    // return this.bankService.create1(createBankDto);
   }
- 
+
 
   @Get('list') //Working
   findAll() {
@@ -54,13 +49,13 @@ export class BankController {
      return this.bankService.getBankDetailsFromGymId(id);
    }
 
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
     return this.bankService.update(+id, updateBankDto);
   }
 
   //Running
-  @Delete('account/remove/:id')   
+  @Delete('account/details/remove/:id')   
   remove(@Param('id') id: string) {
     return this.bankService.remove(id);
   }

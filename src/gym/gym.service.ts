@@ -77,7 +77,7 @@ export class GymService {
       
         let id: string;
         const res = await this.neo.write(`CREATE 
-        (g:Gym { gymId: apoc.create.uuid() ,
+        (g:Gym { id: apoc.create.uuid() ,
           name:"${dto.name}",
           
       email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
@@ -135,13 +135,13 @@ export class GymService {
     }
   }
 
-  async findAllGymForCurrentUser(email: string) {
+  async findAllGymForCurrentUser(userId: string) {
     try {
-      console.log(email);
+      console.log(userId);
 
       const res = await this.neo.read(
         `MATCH (u:User)-[:OWNS]->(g:Gym) where u.email=$email return g;`,
-        { email: email },
+        { userId: userId },
       );
       const gyms: Gym[] = [];
       res.map((r) => gyms.push(r.g));
@@ -154,10 +154,16 @@ export class GymService {
 
   async getGymAddress(id: string) {
     try {
+
+      const res2 = this.neo.read(`
+      MATCH (g:Gym),(a:Address) WHERE g.id=$id and  
+      `)
+
       const res = await this.neo.read(
-        `MATCH (g:Gym) where g.id=$id return g;`,
+        `MATCH (g:Gym {id:"${id}"}) where g.id=$id 
+        return g;`,
         { id: id },
-      );
+      ); 
       const gyms: Gym[] = [];
       res.map((r) => gyms.push(r.g));
       return gyms;
@@ -165,6 +171,23 @@ export class GymService {
       throw new HttpException('error encountered', error);
     }
   }
+
+
+  // async getGymAddress(id: string) {
+  //   try {
+  //     const res = await this.neo.read(
+  //       `MATCH (g:Gym) where g.id=$id return g;`,
+  //       { id: id },
+  //     );
+  //     const gyms: Gym[] = [];
+  //     res.map((r) => gyms.push(r.g));
+  //     return gyms;
+  //   } catch (error) {
+  //     throw new HttpException('error encountered', error);
+  //   }
+  // }
+
+
   // async findOne(id: string) {
   //   try {
   //     const res = await this.neo.read(
@@ -200,11 +223,13 @@ export class GymService {
 
    getGymdetailsByBankID(bankId:string) {
     let getDetails = this.neo.read(`
-    MATCH (b:Bank {id:"${bankId}"}) - [a:HAS_ACCOUNT] -> (g:Gym )
-    RETURN b
+    MATCH (b:Bank {bankId:"${bankId}"}) - [a:HAS_ACCOUNT] - (g:Gym )
+    RETURN g
     `)
+    
     return getDetails;
   }
+
 
 
 
@@ -218,7 +243,7 @@ export class GymService {
       g.aadhar="${dto.aadhar}"
       return g
       `);
-      return 'gym updated successfully';
+      return 'Gym updated successfully';
     } catch (error) {
       throw new HttpException('error updating gym', error);
     }
@@ -246,40 +271,19 @@ export class GymService {
     }
   }
 
+  remove(id:string) {
+    
+    console.log("Deleting Gym ID Is",id);
+
+    const w1 = this.neo.write
+    (`
+    MATCH (g:Gym {id:"${id}"}) 
+    DETACH DELETE g
+    `);
 
 
-  //#2nd Test
-  // async remove(id: string) {
-  //   try {
-  //     const res = await this.neo.write(
-  //       `MATCH (g:Gym) WHERE g.gymId=$id
-  //     SET g.deleted=true
-  //     return g
-  //     `,
-  //       { id: id },
-  //     );
-  //     console.log(res);
-  //     return 'gym deleted successfully';
-  //   } catch (error) {
-  //     console.log(error);
-  //     throw new HttpException('error deleteing gym', error);
-  //   }
-  // }
-
-  //Temporary Running
-  async remove(gymId:string) {
-    try {
-      console.log('Deleting Gym ID ->',gymId);
-      
-      const w1 = this.neo.write(`MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `);
-      
-      return w1;
-
-    } catch (error) {
-      console.log('Cannot Be Delete as Gym ID Not Found!',error);
-      
-     throw new NotFoundException;
-    }
+    console.log('Deleted Gym ID Is - ',id);
+    return "Deleted Gym Successfully! ";
   }
 
 

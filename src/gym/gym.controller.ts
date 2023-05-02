@@ -35,34 +35,36 @@ export class GymController {
     return this.gymService.findById(id);
   }
   
-  @Get('details/:id')
+  @Get('details/:id')     //Running
   getGymdetailsByBankID(@Param ('id') id:string) {
     return this.gymService.getGymdetailsByBankID(id);
   }
 
-  @Get('/email/:email')   //Not Running
-  async findAllGymForCurrentUser(@Param('email') email: string) {
-    return await this.gymService.findAllGymForCurrentUser(email)
-  }
+  // @Get('/email/:email')   //Last
+  // async findAllGymForCurrentUser(@Param('email') email: string) {
+  //   return await this.gymService.findAllGymForCurrentUser(email)
+  // }
 
-  @Get('/findaddress/:id')  
+  @Get('/findaddress/:id')  //Running
   async findGymAddress(@Param('id') email: string) {
     return await this.gymService.getGymAddress(email);
   }
 
  
-  @Patch('/update/:id')
+  @Patch('/update/:id')   //Running    
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.update(id, updateGymDto);
   }
 
-  @Patch('/update/address/:id')
+  @Patch('/update/address/:id') 
   async updateAddress(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymService.updateAddress(id, updateGymDto);
   }
 
-  @Delete('account/details/delete/:gymId')
-  remove(@Param('gymId') gymId: string) {
-    return this.gymService.remove(gymId);
+
+  //Running
+  @Delete('account/details/delete/:id')
+  remove(@Param('id') id: string) {
+    return this.gymService.remove(id);
   }
 }

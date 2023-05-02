@@ -169,18 +169,50 @@ export class ServicesService {
   }
 
 
+  // remove(id:string) {
+
+  //   try {
+    
+
+  //   console.log('Deleting the Service ID - ',id);
+    
+  //   const w1 = this.neo.write
+  //   (`
+  //   MATCH (s:Service {svcId:"${id}"}) 
+  //   DETACH DELETE s
+  //   `);
+    
+  //   console.log('Service Deleted Succesfully!');
+  //   return "Service Deleted Succesfully!"
+
+      
+  // } catch (error) {
+      
+  // }
+  // }
+
+
   remove(id:string) {
 
-    console.log('Deleting the Service ID - ',id);
-    
-    const w1 = this.neo.write
-    (`
-    MATCH (s:Service {svcId:"${id}"}) 
-    DETACH DELETE b
-    `);
-    
-    console.log('Service Deleted Succesfully!');
-    
-  }
+      try {
+      
+      console.log('Deleting the Service ID - ',id);
+      
+      const w1 = this.neo.write
+      (`
+      MATCH (s:Service) 
+      WHERE s.svcId = "${id}" 
+      DETACH DELETE s
+      `);
+      
+      console.log('Service Deleted Succesfully!');
+      return "Service Deleted Succesfully!"
+  
+        
+    } catch (error) {
+        
+    }
+    }
+ 
   
 }

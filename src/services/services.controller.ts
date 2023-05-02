@@ -40,14 +40,14 @@ export class ServicesController {
     return 'This action adds a new owner';
   }
 
-  @Put()
-  update(id: number) {
-    return `This action updates a #${id} owner`;
-  }
+  // @Put('update/:id')
+  // update(id: number) {
+  //   return `This action updates a #${id} owner`;
+  // }
 
   //Working On
   @Delete('remove/service/:id')
   remove(id: string) {
-    this.defSvc.remove(id);
+    return this.defSvc.remove(id);
   }
 }
