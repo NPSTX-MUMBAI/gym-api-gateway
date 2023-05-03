@@ -8,7 +8,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
-import { ServiceDTO } from './dto/service.dto';
+import { ServiceDTO } from '../services/dto/service.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import * as crypto from 'crypto';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';

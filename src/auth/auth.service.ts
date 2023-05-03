@@ -64,7 +64,7 @@ export class AuthService {
     async signup(dto: SignUpDTO) {
         try {
             const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-            const userId=uuidv4()
+            const userId = uuidv4()
 
             console.log("Auth UUID - ",userId);
             

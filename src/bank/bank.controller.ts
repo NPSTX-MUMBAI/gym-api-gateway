@@ -17,11 +17,29 @@ import { UpdateBankDto } from './dto/update-bank.dto';
 export class BankController {
   constructor(private readonly bankSvc: BankService) {}
 
-  @Post('add')  //Running
-  create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
-    return this.bankSvc.create(createBankDto);
-    // return this.bankSvc.create1(createBankDto);
-  }
+  // @Post('add')  //Running
+  // create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
+  //   // return this.bankSvc.create(createBankDto);
+  //   // return this.bankSvc.create1(createBankDto);
+  // }
+
+  @Post('add')
+  create1(
+    @Body() 
+      bankDto:CreateBankDto
+    ) {
+      this.bankSvc.create1(bankDto)
+    }
+
+    //Running
+    @Post('addgymid/:id')
+    f1(
+      @Param('id') id:string,
+      @Body() 
+        bankDto:CreateBankDto
+      ) {
+        this.bankSvc.f1(id,bankDto);
+      }
 
   @Get('list') //Running
   findAll() {

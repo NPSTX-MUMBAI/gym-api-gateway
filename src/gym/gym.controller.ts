@@ -35,7 +35,7 @@ export class GymController {
     return this.gymService.findById(id);
   }
   
-  @Get('details/:id')     //Running
+  @Get('details/:id')     //Running   
   getGymdetailsByBankID(@Param ('id') id:string) {
     return this.gymService.getGymdetailsByBankID(id);
   }

@@ -6,6 +6,7 @@ export interface Gym {
     gstNo: string;
     aadhar?: string;
     address: Address;
+    userId: string;
 }
 
 export interface Address {

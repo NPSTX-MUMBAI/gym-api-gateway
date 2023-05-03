@@ -6,12 +6,18 @@ import { Neo4jService } from '@brakebein/nest-neo4j';
 import { User } from 'src/models/user.model';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { mergeScan } from 'rxjs';
+import { AppController } from 'src/app.controller';
+
+import { IsUUID } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Injectable()
 export class MemberService {
   constructor(private neo: Neo4jService) {
 
   }
+  //1st Attempt
   // async create(dto: CreateMemberDto) {
   //   try {
   //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
@@ -31,20 +37,54 @@ export class MemberService {
   //   }
   // }
 
-  async create(dto: CreateMemberDto) {
+  // async create(dto: CreateMemberDto) {
+  //   try {
+
+  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+
+  //     console.log("EN PASS - ",encryptedPassword);
+      
+
+  //     const query= await this.neo.write(`
+  //     CREATE (m:Member {
+  //     firstName:"${dto.firstName}",
+  //     lastName:"${dto.lastName}", 
+  //     email:"${dto.email}",
+  //     mobileNo:"${dto.mobileNo}",
+  //     password:"${dto.password}"
+  //   }) 
+  //     return m
+  //     union
+  //     merge(g:gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
+
+  //     console.log("GymID->",dto.gymId);
+  //     console.log("MemberID->",dto.memberId);
+
+  //   return { data: query, msg:"ok"}
+  //   } catch (error) {
+  //     return new HttpException(error, 503);
+  //   }
+  // }
+
+    async create(dto: CreateMemberDto) {
     try {
 
       const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+
+      console.log("EN PASS - ",encryptedPassword);
+        
+
       const query= await this.neo.write(`
-      CREATE (m:Member {firstName:"${dto.firstName}",
+      CREATE (m:Member {
+      firstName:"${dto.firstName}",
       lastName:"${dto.lastName}", 
       email:"${dto.email}",
       mobileNo:"${dto.mobileNo}",
-      password:"${dto.password}",
-      memberId:"${dto.memberId}" }) 
+      password:"${dto.password}"
+    }) 
       return m
       union
-      merge(g:gym {gymId: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
+      merge(g:gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
 
       console.log("GymID->",dto.gymId);
       console.log("MemberID->",dto.memberId);

@@ -18,10 +18,8 @@ import { ServicesModule } from './services/services.module';
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=lzpAnzMPt5DV_GG50IrFqqLocopsN95wguofamja-Es
 AURA_INSTANCENAME=unacademy-db
-
-
-
 */
+
 @Module({
   imports: [AuthModule,
     Neo4jModule.forRoot({
@@ -38,4 +36,5 @@ AURA_INSTANCENAME=unacademy-db
   controllers: [AppController],
   providers: [AppService,],
 })
+
 export class AppModule { }

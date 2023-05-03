@@ -1,13 +1,13 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 
 import * as crypto from 'crypto';
-import { ServiceDTO } from 'src/package/dto/service.dto';
+import { NotFoundError } from 'rxjs';
+import { ServiceDTO } from 'src/services/dto/service.dto';
 
 @Injectable()
 export class ServicesService {
-   
-  constructor(private neo: Neo4jService) { }
+  constructor(private neo: Neo4jService) {}
 
   //old
   // async createDefaultservice() {
@@ -60,8 +60,8 @@ export class ServicesService {
   //     ];
 
   //     defaultSvcs.forEach(async (svc) => {
-  //       const query = `CREATE (s:Service { id:"${svc.id}", 
-  //     name:"${svc.name}", 
+  //       const query = `CREATE (s:Service { id:"${svc.id}",
+  //     name:"${svc.name}",
   //     imgUrl:"${svc.imgUrl}",
   //     isDefault:"${svc.isDefault}"}) return s`;
   //       console.log(query);
@@ -77,59 +77,58 @@ export class ServicesService {
   //   }
   // }
 
-  
   async createDefaultservice(dto: ServiceDTO) {
     try {
       console.log('inside package service');
       const defaultSvcs: ServiceDTO[] = [
         {
           svcId: crypto.randomUUID(),
-          isDefault: true,  
+          isDefault: true,
           name: 'Lockers',
           imgUrl: '../assets/lockers.jpg',
-          rate:1000
+          rate: 1000,
         },
         {
           svcId: crypto.randomUUID(),
           isDefault: true,
           name: 'Yoga',
           imgUrl: '../assets/Yoga1.jpg',
-          rate:1000
+          rate: 1000,
         },
         {
           svcId: crypto.randomUUID(),
-          isDefault: true,  
+          isDefault: true,
           name: 'Cardio',
           imgUrl: '../assets/cardio1.jpg',
-          rate:1000
+          rate: 1000,
         },
         {
           svcId: crypto.randomUUID(),
-          isDefault: true,  
+          isDefault: true,
           name: 'Personal Training',
           imgUrl: '../assets/Trainer1.jpg',
-          rate:2000
+          rate: 2000,
         },
         {
           svcId: crypto.randomUUID(),
-          isDefault: true,  
+          isDefault: true,
           name: 'Strength Training',
           imgUrl: '../assets/Strengthtraining.jpg',
-          rate:2500
+          rate: 2500,
         },
         {
           svcId: crypto.randomUUID(),
-          isDefault: true,  
+          isDefault: true,
           name: 'Swimming',
           imgUrl: '../assets/swimpool1.jpg',
-          rate:2000
+          rate: 2000,
         },
         {
           svcId: crypto.randomUUID(),
-          isDefault: true,  
+          isDefault: true,
           name: 'Sauna',
           imgUrl: '../assets/sauna.jpg',
-          rate:3000
+          rate: 3000,
         },
       ];
 
@@ -154,65 +153,84 @@ export class ServicesService {
   }
 
   async findServiceList() {
-    const r1 =await this.neo.read(`
+    const r1 = await this.neo.read(`
     MATCH (s:Service) 
     RETURN s ;
-    `)
-  let array =[]
- 
-  for (let i = 0; i < r1.length; i++) {
-    array.push(r1[i].s)
-    console.log(); 
-    
-  }
+    `);
+    let array = [];
+
+    for (let i = 0; i < r1.length; i++) {
+      array.push(r1[i].s);
+      console.log();
+    }
     return array;
+  }
+
+  async findServiceById(id:string) {
+    console.log("Service ID - ",id);
+    
+    try {
+    const r1 = await this.neo.read(
+      `MATCH (s:Service {svcId:"${id}"}) 
+    RETURN s`)
+    
+
+  } catch (err) {
+    return err.response;
+  }
+  }
+
+  update(id:string,svcDto:ServiceDTO) {
+
+    try {
+    const r1 = this.neo.read(`
+    MATCH (s:Service {svcId:"${id}"})
+    SET 
+    a1 : "${svcDto.name}",
+    a2 : "${svcDto.rate}",
+    a3: "${svcDto.isDefault}"
+    RETURN s
+    `)
+    return r1;
+
+  } catch (error) {
+      throw new HttpException({},404)
+  }
   }
 
 
   // remove(id:string) {
 
   //   try {
-    
 
   //   console.log('Deleting the Service ID - ',id);
-    
+
   //   const w1 = this.neo.write
   //   (`
-  //   MATCH (s:Service {svcId:"${id}"}) 
+  //   MATCH (s:Service {svcId:"${id}"})
   //   DETACH DELETE s
   //   `);
-    
+
   //   console.log('Service Deleted Succesfully!');
   //   return "Service Deleted Succesfully!"
 
-      
   // } catch (error) {
-      
+
   // }
   // }
 
+  remove(id: string) {
+    try {
+      console.log('Deleting the Service ID - ', id);
 
-  remove(id:string) {
-
-      try {
-      
-      console.log('Deleting the Service ID - ',id);
-      
-      const w1 = this.neo.write
-      (`
+      const w1 = this.neo.write(`
       MATCH (s:Service) 
       WHERE s.svcId = "${id}" 
       DETACH DELETE s
       `);
-      
+
       console.log('Service Deleted Succesfully!');
-      return "Service Deleted Succesfully!"
-  
-        
-    } catch (error) {
-        
-    }
-    }
- 
-  
+      return 'Service Deleted Succesfully!';
+    } catch (error) {}
+  }
 }

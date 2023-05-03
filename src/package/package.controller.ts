@@ -10,7 +10,7 @@ import {
 import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
-import { ServiceDTO } from './dto/service.dto';
+import { ServiceDTO } from '../services/dto/service.dto';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 
 @Controller('package')

@@ -224,20 +224,44 @@ export class GymService {
     return getDetails;
   }
 
+  // async update(id: string, dto: UpdateGymDto) {
+  //   try {
+  //     const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
+  //     SET
+  //     g.name="${dto.name}",
+  //     g.email="${dto.email}",
+  //     g.panNo="${dto.panNo}",
+  //     g.aadhar="${dto.aadhar}"
+  //     return g
+  //     `);
+  //     return 'Gym updated successfully';
+  //   } catch (error) {
+  //     throw new HttpException('error updating gym', error);
+  //   }
+  // }
+
   async update(id: string, dto: UpdateGymDto) {
     try {
-      const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
-      SET
-      g.name="${dto.name}",
-      g.email="${dto.email}",
-      g.panNo="${dto.panNo}",
-      g.aadhar="${dto.aadhar}"
-      return g
-      `);
-      return 'Gym updated successfully';
-    } catch (error) {
-      throw new HttpException('error updating gym', error);
-    }
+
+      const r1 = this.neo.read(`
+      MATCH (g:Gym {id:"${id}"}) 
+      RETURN g
+      `)
+      if(r1) {
+
+        const res = await this.neo.write(`MATCH (g:Gym) where g.id="${id}" 
+        SET
+        g.name="${dto.name}",
+        g.email="${dto.email}",
+        g.panNo="${dto.panNo}",
+        g.aadhar="${dto.aadhar}"
+        return g
+        `);
+      }
+        return 'Gym updated successfully';
+      } catch (error) {
+        throw new HttpException('error updating gym', error);
+      }
   }
 
   async updateAddress(id: string, dto: UpdateGymDto) {

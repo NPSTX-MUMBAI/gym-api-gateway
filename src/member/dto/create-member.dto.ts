@@ -5,8 +5,8 @@ export class CreateMemberDto {
     mobileNo: string;
     password: string;   
     roles: string[];
+    
     gymId: string;
-
     memberId?: string;
     
 }

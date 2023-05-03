@@ -4,14 +4,9 @@ import { UpdateOwnerDto } from './dto/update-owner.dto';
 
 @Injectable()
 export class OwnerService {
-
-
   create(createOwnerDto: CreateOwnerDto) {
     return 'This action adds a new owner';
   }
-
-  
-
 
   findAll() {
     return `This action returns all owner`;

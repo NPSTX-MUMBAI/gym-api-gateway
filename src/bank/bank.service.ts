@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { Neo4jService } from '@brakebein/nest-neo4j';
@@ -10,7 +10,7 @@ import { UpdateGymDto } from 'src/gym/dto/update-gym.dto';
 export class BankService {
   constructor(private neo: Neo4jService) {}
 
-  async create(dto: CreateBankDto) {
+  async create1(dto: CreateBankDto) {
     try {
       let id: string;
       const createBank = await this.neo.write(`CREATE 
@@ -58,6 +58,94 @@ export class BankService {
       console.log('Bank Error');
     }
   }
+  async create(dto: CreateGymDto) {
+    try {
+      //step1: first check if the bank exists
+      const gymExists = await this.neo
+        .read(`
+        MATCH (u:User 
+          {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) 
+          WHERE 
+          g.gymName="${dto.name}" AND g.email="${dto.email}" 
+          AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g 
+      `);
+      
+      console.log('gym=>', gymExists);
+      if (gymExists.length > 0) {
+        throw new ConflictException(
+          'gym exists with the same name for the same user',
+        );
+      } else {
+      
+        let id: string;
+        const res = await this.neo.write(`CREATE 
+        (g:Gym { id: apoc.create.uuid() ,
+          name:"${dto.name}",
+          
+      email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
+      MERGE (a:Address {line1:"${dto.address.line1}", 
+        line2:"${dto.address.line2}", locality:"${dto.address.locality}", 
+        city:"${dto.address.city}",state:"${dto.address.state}",
+        country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"}) 
+        MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+     `);
+        res.map((r) => {
+          id = r.g.gymId;
+          console.log('ID->', id);
+        });
+        if (res) {
+          const r = await this.neo
+            .write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"}) 
+          merge (u)-[o:OWNS]->(g) return o`);
+        console.log('gym created successfully', r);
+          return 'gym created successfully';
+        } else {
+          return 'failed to create gym due to invalid request';
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 501);
+    }
+  }
+  
+  gymList : CreateGymDto[] = [];
+  selectedGym : CreateGymDto[] = [];
+
+  f1(id:string,bankDto:CreateBankDto) {
+
+      console.log("Gym ID - ",id);
+      
+      const r1 = this.neo.read(`
+    MATCH (g:Gym) WHERE g.id = "${id}"
+    RETURN g;
+    `).then((r1res) => {
+      console.log("Gym ID Wise Bank Details",r1res);
+      
+      const r2 = this.neo.read(`
+      MATCH (b:Bank) WHERE b.bankId = "${bankDto.bankId}"
+      RETURN b;
+      `).then((r2res) => {
+        console.log("Bank ID Wise Bank Details",r2res);
+//
+        const w1 = this.neo.write(`
+        MATCH (g:Gym),(b:Bank) WHERE g.id = "${id}" 
+        AND b.bankId = "${bankDto.bankId}"
+        CREATE (g) - [r:HAS_ACCOUNT] -> (b) 
+        RETURN g,b
+        `).then((r3res) => {
+          console.log("Setting Gym ID to the Bank",r3res);
+        })
+      })
+      })
+
+    if(r1) {
+      console.log('======');
+      
+    }
+
+    return r1;
+  }
 
   //  #BS1  Not Running
   
@@ -65,7 +153,7 @@ export class BankService {
     console.log('Gym ID ->',gymId);
     
     try {
-      let getDetails = await this.neo.read(`
+    let getDetails = await this.neo.read(`
       MATCH (b:Bank)-[a:HAS_ACCOUNT]-(g:Gym {gymId:"${gymId}"})
       RETURN b
             `);
@@ -89,7 +177,7 @@ export class BankService {
       });
       return banklist;
     } catch (err) {
-      return new NotFoundException({}, 'Banks Not  Found!');
+      return new NotFoundException({}, 'Banks Not Found!');
     }
   }
 
@@ -102,8 +190,7 @@ export class BankService {
     if(r1.length != 0) {
       return r1
     } else {
-
-      throw new NotFoundException('Not Found');
+      HttpException
     }
 
   } catch (err) {
@@ -124,11 +211,11 @@ export class BankService {
     try {
       const res = await this.neo.write(`MATCH (b:Bank) where b.bankId="${id}" 
       SET
-      b.accountHolderName="${dto.accountHolderName}",
+      b.accountHolderName="${dto?.accountHolderName}",
       b.accountType="${dto.accountType}",
       b.accountNo = "${dto.accountNo}",
-      b.bankname = "${dto.name}"
-      b.branchname = "${dto.branchName}",
+      b.name = "${dto.name}",
+      b.branchName = "${dto.branchName}"
       return b
       `);
       return 'Gym updated successfully';
