@@ -50,8 +50,8 @@ export class GymController {
   //   return await this.gymService.findAllGymForCurrentUser(email);
   // }
 
-  @Get('/user/:userId')
-  async findAllGymForCurrentUser(@Param('userId') userId: string) {
+  @Get('/user/:id')
+  async findAllGymForCurrentUser(@Param('id') userId: string) {
     return await this.gymService.findAllGymForCurrentUser(userId);
   }
 
