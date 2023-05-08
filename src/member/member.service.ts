@@ -11,6 +11,7 @@ import { Member } from './entities/member.entity';
 import * as crypto from 'crypto';
 import { AuthService } from 'src/auth/auth.service';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
+import { Address } from 'cluster';
 
 @Injectable()
 export class MemberService {
@@ -29,14 +30,30 @@ export class MemberService {
         password: dto.password,
         mobileNo: dto.mobileNo,
         roles: [USER_ROLE.MEMBER],
+        Address: [],
       });
       console.log(res, '#######');
       if (res.status === false) {
         return 'errorrrrrrrr';
       } else {
-        const r = await this.neo.write(`match(g: Gym), (u: User)
+        //   const r = await this.neo.write(`match(g: Gym), (u: User)
+        // where g.id = '${dto.gymId}'and u.email = '${dto.email}'
+        // merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) return u as user`);
+        const r = await this.neo.write(`match(g: Gym), (u:User)
       where g.id = '${dto.gymId}'and u.email = '${dto.email}'
-      merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) return u as user`);
+      merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) 
+      with u
+      merge (u)-[r:Has_Address]->(a:Address)
+     set a+={
+      line1:'${dto.address.line1}',
+    line2: '${dto.address.line2}',
+    locality: '${dto.address.locality}',
+    city: '${dto.address.city}',
+    state:'${dto.address.state}',
+    country: '${dto.address.country}',
+    pinCode: ${dto.address.pinCode}     }
+      return u,a `);
+
         console.log(r);
         if (r.length > 0) {
           const name = 10;
@@ -94,13 +111,17 @@ export class MemberService {
 
     try {
       const res = await this.neo.read(
-        `MATCH (g:Gym {id:'${id}'  })-[:HAS_MEMBER]->(u:User)
-RETURN u`,
+        ` MATCH (g:Gym {id: "${id}"})-[e:HAS_MEMBER]->(u:User)
+with g,u
+match (g)-[r:LOCATED_IN]->(a:Address)
+return u,a `,
       );
-      let member: Member[] = [];
       console.log(res);
+
+      let member: Member[] = [];
+
       if (res.length > 0) {
-        member = res.map((r) => (member = r.u));
+        member = res.map((r) => (member = { ...r.u, address: r.a }));
         return member;
       } else {
         return null;
@@ -112,10 +133,11 @@ RETURN u`,
 
   async update(id: string, dto: UpdateMemberDto) {
     try {
-      const res = await this.neo.write(`MATCH (u:User) where u.id="${id}" 
+      const res = await this.neo.write(`MATCH (u:User) where u.userId="${id}" 
       SET
       u.email="${dto.email}",
       u.fullName="${dto.fullName}",
+      
       u.mobileNo="${dto.mobileNo}"
       return u
       `);

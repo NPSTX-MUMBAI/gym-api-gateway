@@ -73,7 +73,7 @@ export class GymService {
         let id: string;
         const res = await this.neo
           .write(`CREATE (g:Gym { id: apoc.create.uuid() ,name:"${dto.name}",
-      email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
+      email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
       MERGE (a:Address {line1:"${dto.address.line1}", 
         line2:"${dto.address.line2}", locality:"${dto.address.locality}", 
         city:"${dto.address.city}",state:"${dto.address.state}",
@@ -134,11 +134,14 @@ export class GymService {
       console.log(userId);
 
       const res = await this.neo.read(
-        `MATCH (u:User {userId: "${userId}"})-[:OWNS]->(g:Gym) return g;`,
+        `MATCH (u:User {userId: "${userId}"})-[:OWNS]->(g:Gym) 
+        with g
+        match (g)-[r:LOCATED_IN]->(a:Address) return g,a;`,
         { userId: userId },
       );
       const gyms: Gym[] = [];
-      res.map((r) => gyms.push(r.g));
+
+      res.map((r) => gyms.push({ ...r['g'], address: r['a'] }));
       return gyms;
     } catch (error) {
       throw new HttpException('error encountered', error);

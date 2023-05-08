@@ -1,11 +1,15 @@
+import { Address } from '../entities/member.entity';
+
 export class CreateMemberDto {
-  memberId?: string;
+  userId?: string;
   fullName: string;
   email: string;
   mobileNo: string;
   password: string;
   roles?: string[];
   gymId: string;
+  address?: Address;
+
   services?: [
     {
       serviceId: string;
