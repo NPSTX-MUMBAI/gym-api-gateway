@@ -22,7 +22,7 @@ import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
 import { log } from 'console';
 
-@Controller('members')
+@Controller('member')
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
 
