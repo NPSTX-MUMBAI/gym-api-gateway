@@ -83,8 +83,8 @@ export class MemberService {
       password:"${dto.password}"
     }) 
       return m
-      union
-      merge(g:gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
+      union 
+      merge(g:Gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
 
       console.log("GymID->",dto.gymId);
       console.log("MemberID->",dto.memberId);
@@ -94,6 +94,10 @@ export class MemberService {
       return new HttpException(error, 503);
     }
   }
+
+
+  
+
 
   async findAll() {
 

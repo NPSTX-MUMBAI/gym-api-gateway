@@ -20,12 +20,13 @@ NEO4J_PASSWORD=lzpAnzMPt5DV_GG50IrFqqLocopsN95wguofamja-Es
 AURA_INSTANCENAME=unacademy-db
 */
 
+// port: 7687,
 @Module({
   imports: [AuthModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
       host: '29959c44.databases.neo4j.io',
-      port: 7687,
+      port:7687,
       username: 'neo4j',
       password: 'lzpAnzMPt5DV_GG50IrFqqLocopsN95wguofamja-Es',
       options: {

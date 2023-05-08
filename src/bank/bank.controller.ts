@@ -23,22 +23,22 @@ export class BankController {
   //   // return this.bankSvc.create1(createBankDto);
   // }
 
-  @Post('add')
-  create1(
-    @Body() 
-      bankDto:CreateBankDto
-    ) {
-      this.bankSvc.create1(bankDto)
-    }
+  // @Post('add')
+  // create1(
+  //   @Body() 
+  //     bankDto:CreateBankDto
+  //   ) {
+  //     this.bankSvc.create1(bankDto)
+  //   }
 
     //Running
-    @Post('addgymid/:id')
+    @Post('linkgymid/:id')
     f1(
       @Param('id') id:string,
       @Body() 
         bankDto:CreateBankDto
       ) {
-        this.bankSvc.f1(id,bankDto);
+        this.bankSvc.linkGymId(id,bankDto);
       }
 
   @Get('list') //Running
@@ -78,4 +78,12 @@ export class BankController {
   remove(@Param('id') id: string) {
     return this.bankSvc.remove(id);
   }
+
+
+  @Post('add')create4(@Body()bankDto:CreateBankDto) {
+      return this.bankSvc.create(bankDto)
+    }
+    
+
+
 }
