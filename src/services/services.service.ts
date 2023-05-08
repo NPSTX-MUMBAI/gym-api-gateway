@@ -22,6 +22,7 @@ export class ServicesService {
           isDefault: true,
           name: 'personal training',
           imgUrl: '../assets/Trainer1.jpg',
+          rate:2000
         },
         {
           id: crypto.randomUUID(),
