@@ -123,7 +123,7 @@ export class MemberService {
     pinCode: "${dto.address.pinCode}" }
  with u
  match(u), (s: Service)
-  where u.email = '${dto.email}' and s.svcId = '${dto.svcId}"
+  where u.email = "${dto.email}" and s.svcId = "${dto.svcId}"
           merge(u) - [r: HAS_SERVICE {createdOn:"${Date.now()}", rate:"${
           dto.rate
         }",rateType:"${dto.rateType}"}] -> (s)
