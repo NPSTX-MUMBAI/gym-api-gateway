@@ -229,18 +229,14 @@ export class BankService {
   //   }
   // }
 
-  remove(id:string) {
-    
-    console.log("Deleting Gym Owner's Bank ID",id);
+  remove(id: string) {
+    console.log("Deleting Gym Owner's Bank ID", id);
 
-    const w1 = this.neo.write
-    (`
+    const w1 = this.neo.write(`
     MATCH (b:Bank {bankId:"${id}"}) 
     DETACH DELETE b 
     `);
-
-
-    console.log('Deleted Gym Owners Bank ID - ',id);
-    
+    console.log('Deleted Gym Owners Bank ID - ', id);
+    return 'Deleted Gym Owners Bank ID ';
   }
 }

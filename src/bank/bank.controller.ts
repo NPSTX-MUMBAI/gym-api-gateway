@@ -33,10 +33,6 @@ export class BankController {
     return this.bankService.update(+id, updateBankDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bankService.remove(id);
-  }
 
 
   // Banking Service  #1  Getting Bank Ids
@@ -56,6 +52,10 @@ export class BankController {
   @Get('accounts/:id')
   getTwo(@Param('id') id: string) {
     return this.bankService.getBankDetailsFromGymId(id);
+  }
+  @Delete('account/details/remove/:id')  
+   remove(@Param('id') id: string) {
+    return this.bankService.remove(id);
   }
 
 }
