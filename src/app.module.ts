@@ -26,7 +26,7 @@ AURA_INSTANCENAME=unacademy-db
   imports: [
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10
+      limit: 10,
     }),
     AuthModule,
     Neo4jModule.forRoot({
@@ -39,14 +39,25 @@ AURA_INSTANCENAME=unacademy-db
         disableLosslessIntegers: true,
       },
     }),
-    OwnerModule, MemberModule, CollectionModule, ReportsModule, GymModule, BankModule, ServicesModule],
+    OwnerModule,
+    MemberModule,
+    CollectionModule,
+    ReportsModule,
+    GymModule,
+    BankModule,
+    ServicesModule,
+  ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  }, {
+  providers: [
+    AppService,
+    {
       provide: APP_GUARD,
-      useClass: RolesGuard
-    }],
+      useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}
