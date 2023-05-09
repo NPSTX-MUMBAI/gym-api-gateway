@@ -21,6 +21,12 @@ export class CreateMemberDto {
   // rate: any;
   // rateType: any;
   id: any;
+  gender: any;
+  startDate: any;
+  endDate: any;
+  aadharNo: any;
+  discount: any;
+  disability: any;
   // line1: any;
   // line2: any;
   // locality: any;

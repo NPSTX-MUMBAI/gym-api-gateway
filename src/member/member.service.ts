@@ -122,6 +122,15 @@ export class MemberService {
     country: "${dto.address.country}",
     pinCode: "${dto.address.pinCode}" }
  with u
+ set u +={
+  gender:"${dto.gender}",
+  startDate:"${dto.startDate}",
+  endDate:"${dto.endDate}",
+  aadharNo:"${dto.aadharNo}",
+  discount:"${dto.discount}",
+  disability:"${dto.disability}"
+ }
+ with u
  match(u), (s: Service)
   where u.email = "${dto.email}" and s.svcId = "${dto.svcId}"
           merge(u) - [r: HAS_SERVICE {createdOn:"${Date.now()}", rate:"${
