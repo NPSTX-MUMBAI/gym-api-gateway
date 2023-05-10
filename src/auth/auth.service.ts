@@ -97,6 +97,7 @@ export class AuthService {
         const res = await this.neo.write(query, params);
         return { status: true, msg: 'Account Created Successfully' };
       }
+      return { data: userExists };
     } catch (error) {
       return { status: false, msg: 'http exception' };
     }
