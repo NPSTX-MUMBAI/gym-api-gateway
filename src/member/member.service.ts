@@ -140,7 +140,7 @@ export class MemberService {
 
         console.log(createRealation);
 
-        return { data: createRealation, status: true, msg: 'relation builded' };
+        return { data: memberCheck, status: true, msg: 'relation builded' };
       } else {
         return { data: null, status: false, msg: 'one' };
       }
