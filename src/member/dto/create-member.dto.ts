@@ -1,4 +1,5 @@
 export class CreateMemberDto {
+    memberId: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -6,7 +7,6 @@ export class CreateMemberDto {
     password: string;   
     roles: string[];
     
-    gymId: string;
-    memberId?: string;
+    gymId?: string;
     
 }

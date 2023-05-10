@@ -3,10 +3,12 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 
 import * as crypto from 'crypto';
 import { NotFoundError } from 'rxjs';
+import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 import { ServiceDTO } from 'src/services/dto/service.dto';
 
 @Injectable()
 export class ServicesService {
+
   constructor(private neo: Neo4jService) {}
 
   //old
@@ -77,80 +79,124 @@ export class ServicesService {
   //   }
   // }
 
-  async createDefaultservice(dto: ServiceDTO) {
-    try {
-      console.log('inside package service');
-      const defaultSvcs: ServiceDTO[] = [
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Lockers',
-          imgUrl: '../assets/lockers.jpg',
-          rate: 1000,
-        },
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Yoga',
-          imgUrl: '../assets/Yoga1.jpg',
-          rate: 1000,
-        },
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Cardio',
-          imgUrl: '../assets/cardio1.jpg',
-          rate: 1000,
-        },
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Personal Training',
-          imgUrl: '../assets/Trainer1.jpg',
-          rate: 2000,
-        },
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Strength Training',
-          imgUrl: '../assets/Strengthtraining.jpg',
-          rate: 2500,
-        },
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Swimming',
-          imgUrl: '../assets/swimpool1.jpg',
-          rate: 2000,
-        },
-        {
-          svcId: crypto.randomUUID(),
-          isDefault: true,
-          name: 'Sauna',
-          imgUrl: '../assets/sauna.jpg',
-          rate: 3000,
-        },
-      ];
+  // async createDefaultservice(dto: ServiceDTO) {
+  //   try {
+  //     console.log('inside package service');
+  //     const defaultSvcs: ServiceDTO[] = [
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Lockers',
+  //         imgUrl: '../assets/lockers.jpg',
+  //         rate: 1000,
+  //         svcType:"recurring"
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Yoga',
+  //         imgUrl: '../assets/Yoga1.jpg',
+  //         rate: 1000,
+  //         svcType:"recurring"
 
-      defaultSvcs.forEach(async (svc) => {
-        const query = `CREATE (s:Service { svcId:"${svc.svcId}", 
-      name:"${svc.name}", 
-      imgUrl:"${svc.imgUrl}",
-      rate:"${svc.rate}",
-      createdOn:"${svc.createdOn}",
-      isDefault:"${svc.isDefault}"}) return s`;
-        console.log(query);
-        const res = await this.neo.write(query);
-        console.log(res);
-      });
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Cardio',
+  //         imgUrl: '../assets/cardio1.jpg',
+  //         rate: 1000,
+  //         svcType:"recurring"
 
-      console.log('outside loop');
-      return true;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error, 402);
-    }
-  }
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Personal Training',
+  //         imgUrl: '../assets/Trainer1.jpg',
+  //         rate: 2000,
+  //         svcType:"recurring"
+
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Strength Training',
+  //         imgUrl: '../assets/Strengthtraining.jpg',
+  //         rate: 2500,
+  //         svcType:"recurring"
+
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Swimming',
+  //         imgUrl: '../assets/swimpool1.jpg',
+  //         rate: 2000,
+  //         svcType:"recurring"
+
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Sauna',
+  //         imgUrl: '../assets/sauna.jpg',
+  //         rate: 3000,
+  //         svcType:"recurring"
+          
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'HIT Service',
+  //         imgUrl: '../assets/sauna.jpg',
+  //         rate: 3000,
+  //         svcType:"instance"
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Diet',
+  //         imgUrl: '../assets/sauna.jpg',
+  //         rate: 3000,
+  //         svcType:"instance"
+  //       },
+  //       {
+  //         svcId: crypto.randomUUID(),
+  //         isDefault: true,
+  //         name: 'Nutrition',
+  //         imgUrl: '../assets/sauna.jpg',
+  //         rate: 3000,
+  //         svcType:"instance"
+  //       },
+
+
+  //     ];
+
+  //     defaultSvcs.forEach(async (svc) => {
+
+
+
+  //       const query = `CREATE (s:Service { svcId:"${svc.svcId}", 
+  //     name:"${svc.name}", 
+  //     imgUrl:"${svc.imgUrl}",
+  //     rate:"${svc.rate}",
+  //     createdOn:"${svc.createdOn}",
+  //     isDefault:"${svc.isDefault}"}) return s`;
+  //       console.log(query);
+  //       const res = await this.neo.write(query);
+  //       console.log(res);
+  //     });
+
+  //     console.log('outside loop');
+  //     return true;
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new HttpException(error, 402);
+  //   }
+  // }
+
+
 
   async findServiceList() {
     const r1 = await this.neo.read(`
@@ -167,36 +213,131 @@ export class ServicesService {
   }
 
   async findServiceById(id:string) {
-    console.log("Service ID - ",id);
-    
     try {
-    const r1 = await this.neo.read(
-      `MATCH (s:Service {svcId:"${id}"}) 
-    RETURN s`)
-    
+      console.log('Service ID - ',id);
+      
+      const service = await this.neo.read(`
+      MATCH (s:Service {svcId:"${id}"})
+      RETURN s;
+      `)  
 
-  } catch (err) {
-    return err.response;
-  }
+      console.log("Service",service);
+
+        return service;
+      
+    } catch (error) {
+      console.log('Service Not Found',error);
+
+    }
+
   }
 
   update(id:string,svcDto:ServiceDTO) {
 
     try {
-    const r1 = this.neo.read(`
+    const w1 = this.neo.write(`
     MATCH (s:Service {svcId:"${id}"})
     SET 
-    a1 : "${svcDto.name}",
-    a2 : "${svcDto.rate}",
-    a3: "${svcDto.isDefault}"
+    s.rate = "${svcDto.rate}"
     RETURN s
     `)
-    return r1;
+    return w1;
 
   } catch (error) {
       throw new HttpException({},404)
   }
   }
+
+
+
+  // async addService(id, svcDto:ServiceDTO, gymDto:CreateGymDto) {
+  //   try {
+  //     let svcId : string
+
+  //    const createSvc = await this.neo.write(`
+  //     CREATE (s:Service {
+  //       svcId:apoc.create.uuid(),
+  //       name : "${svcDto.name}",
+  //       rate: "${svcDto.rate}",
+  //        isDefault: "${svcDto.isDefault}",
+  //        svcType: "${svcDto.svcType}",
+  //        createdOn: "${new Date()}"
+  //       })
+  //       return s
+  //       `)
+  //       createSvc.map((res) => {
+  //         svcId = res.s.svcId;
+
+  //         console.log("Service ID ",svcId);
+          
+  //   })
+  //       if(createSvc) {
+  //         const w1 = this.neo.write(`
+  //         MATCH (g:Gym {id:"${gymDto.id}"}), (s:Service {svcId:${svcId}})
+  //         CREATE (g) - [r:HAS_SERVICE] -> (s)
+  //         RETURN s
+  //         `)
+  //       }
+
+  //       return createSvc;
+
+  //     }
+  //     catch(error) {
+  //       console.log('',error);
+        
+  //     }
+
+  //   }
+
+
+  async addService(id:string,svcDto:ServiceDTO) {
+
+    let svcId:string
+
+    const createSvc = await this.neo.write(`
+      CREATE (s:Service {
+        svcId:apoc.create.uuid(),
+        name : "${svcDto.name}",
+        rate: "${svcDto.rate}",
+         isDefault: "${svcDto.isDefault}",
+         svcType: "${svcDto.svcType}",
+         createdOn: "${new Date()}"
+        })
+        return s
+        `)
+        createSvc.map((res) => {
+          svcId = res.s.svcId;
+
+          console.log("Service ID ",svcId);
+          
+    })
+
+    if(createSvc) {
+      const linkWithGym = this.neo.write(`
+      MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
+      MERGE (g) - [:HAS_SERVICE] -> (s)
+      RETURN g
+      `)
+
+      return linkWithGym;
+    } else {
+
+        console.log('Something went Wrong! Service Error ');
+        
+    }
+
+  }
+
+      
+    getServiceByGymId(id:string) {
+      const service = this.neo.read(`
+      MATCH (s:Service {svcId:"${id}"})
+      RETURN s
+      `)
+
+      return service;
+    }
+
 
 
   // remove(id:string) {
@@ -218,14 +359,15 @@ export class ServicesService {
 
   // }
   // }
+  //}
 
   remove(id: string) {
     try {
       console.log('Deleting the Service ID - ', id);
 
       const w1 = this.neo.write(`
-      MATCH (s:Service) 
-      WHERE s.svcId = "${id}" 
+      MATCH (s:Service {svcId:"${id}"}) 
+      
       DETACH DELETE s
       `);
 
@@ -233,4 +375,5 @@ export class ServicesService {
       return 'Service Deleted Succesfully!';
     } catch (error) {}
   }
+  
 }

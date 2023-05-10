@@ -11,6 +11,7 @@ import { SignUpDTO } from 'src/auth/dtos/signup.dto';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 import { BankService } from './bank.service';
 import { CreateBankDto } from './dto/create-bank.dto';
+import { linkGymidToBank } from './dto/map-bankwithgym.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 
 @Controller('bank') 
@@ -24,12 +25,24 @@ export class BankController {
   // }
 
   // @Post('add')
-  // create1(
+  // create(
   //   @Body() 
   //     bankDto:CreateBankDto
   //   ) {
-  //     this.bankSvc.create1(bankDto)
+  //     this.bankSvc.create(bankDto)
   //   }
+
+
+  @Post('add')
+  create(
+    @Param('id') id:string,
+    @Body() 
+      // bankDto:CreateBankDto,
+      linkedDTO:linkGymidToBank
+    ) {
+      this.bankSvc.create(linkedDTO)
+    }
+
 
     //Running
     @Post('linkgymid/:id')
@@ -77,13 +90,11 @@ export class BankController {
   @Delete('account/details/remove/:id')   
   remove(@Param('id') id: string) {
     return this.bankSvc.remove(id);
-  }
+  } 
 
 
-  @Post('add')create4(@Body()bankDto:CreateBankDto) {
-      return this.bankSvc.create(bankDto)
-    }
-    
+
+  
 
 
 }

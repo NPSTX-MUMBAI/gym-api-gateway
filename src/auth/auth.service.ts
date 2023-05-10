@@ -6,7 +6,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { User } from 'src/models/user.model';
 import { LoginDTO } from './dtos/login.dto';
-import { TestDto } from './dtos/test.dto';
 import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
@@ -68,7 +67,7 @@ export class AuthService {
 
             console.log("Auth UUID - ",userId);
             
-            const query = `CREATE (u:User {id:"${userId}",fullName:"${dto.fullName}",email:"${dto.email}",
+            const query = `CREATE (u:User {userId:"${userId}",fullName:"${dto.fullName}",email:"${dto.email}",
             mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}"
         }) SET u.roles = $roles`;
             const params = { roles: dto.roles };

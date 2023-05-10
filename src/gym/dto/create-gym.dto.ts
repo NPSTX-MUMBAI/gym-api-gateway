@@ -9,10 +9,8 @@ export class CreateGymDto {
     address: Address;
     createdBy?: string;
     id: any;
-
     createdOn:string;
     createdTime:string
-    
     gymId?: string;
     userid?:string;
     pkgId:string;

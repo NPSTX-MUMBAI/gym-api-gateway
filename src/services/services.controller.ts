@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
 import { ConstraintMetadata } from 'class-validator/types/metadata/ConstraintMetadata';
+import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 import { ServiceDTO } from 'src/services/dto/service.dto';
 import { ServicesService } from './services.service';
 
-@Controller('services')
+@Controller('service')
 
 
 export class ServicesController {
@@ -16,7 +17,7 @@ export class ServicesController {
 
   async generateDefaultservice(dto:ServiceDTO) {
     console.log('inside generate default service');
-    return await this.defSvc.createDefaultservice(dto);
+    // return await this.defSvc.createDefaultservice(dto);
 
   }
 
@@ -28,22 +29,39 @@ export class ServicesController {
    return this.defSvc.findServiceList();
   }
 
-  @Get(':id')     //Service Id Getting null
-  findOne(id: string) {
-    // return `This action returns a #${id} owner`;
+  @Get(':id')     //Running
+  findOne(
+    @Param('id') id: string
+    
+    ) { 
    return this.defSvc.findServiceById(id);
-
   }
 
-  @Post()       
-  create(createServiceDto:ServiceDTO ) {
-    return 'This action adds a new owner';
+  @Get(':id')     //Running
+  findTwo(
+    @Param('id') id: string,
+    ) {
+   return this.defSvc.getServiceByGymId(id);
   }
 
 
-  //Not Running
-  //Service Id Getting null
 
+  @Post('linkwithgym/:id')       
+  create(
+    @Param('id') id:string,
+    @Body() 
+    createServiceDto:ServiceDTO,
+    gymDto:CreateGymDto
+    ) {
+    // return 'This action adds a new owner';
+
+      this.defSvc.addService(id,createServiceDto)
+    
+  }
+
+
+
+  //Running
   @Patch('update/:id')
   update(
     @Param ('id') id:string,
@@ -53,9 +71,11 @@ export class ServicesController {
   }
 
 
-  //Service Id Getting null
+  //Running
   @Delete('remove/service/:id')
-  remove(id: string) {
+  remove(
+    @Param('id') id: string) 
+    {
     return this.defSvc.remove(id);
-  }
+    }
 }

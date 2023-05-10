@@ -72,104 +72,12 @@ export class BankService {
   //   }
   // }
 
-  // async create1(dto: CreateBankDto) {
-  //   try {
-  //     // let id: string;
-  //     const createBank = await this.neo
-  //       .write(
-  //         `
-  //     CREATE 
-  //     (b:Bank  { 
-  //       bankId:apoc.create.uuid(),
-  //       accountHolderName:"${dto.accountHolderName}",
-  //       accountNo:"${dto.accountNo}",
-  //       accountType:"${dto.accountType}",
-  //        bankName:"${dto.bankName}",
-  //        branchName:"${dto.branchName}",
-  //        ifsc:"${dto.ifsc}",
-  //        mid:"${dto.mid}" }
-  //        )
-  //       return b;
-  //     `,
-  //       )
-  //       .then((res) => {
-  //         console.log('Inside createBank Query', res);
 
-  //         // const w1 = this.neo.write(`
-  //         // MATCH (b:Bank {bankId:"${dto.bankId}"}),(g:Gym {id:"${dto.gymId}"})
-  //         // CREATE (g) - [:HAS_ACCOUNT] -> (b)
-  //         // RETURN b
-  //         // `)
-
-  //         // return w1;
-  //       });
-  //     return true;
-
-  //     // if (cq1) {
-  //     //   console.log('Responsing from cq1..');
-
-  //     //   const r = await this.neo
-  //     //     .write(`MATCH (b:Bank{id:"${dto.id}"}),(u:User {bankId:"${id}"})
-  //     //   merge (b)-[o:HAS_USER-ACC]->(u) return type(o)`)
-  //     //   console.log('Bank Added successfully!', r);
-  //     //   return 'Bank Added successfully';
-  //     // } else {
-  //     //   console.log('Failed');
-
-  //     // }
-  //   } catch (err) {
-  //     console.log('Bank Error');
-  //   }
-  // }
-
- 
-
-  // async create4(dto: CreateBankDto) {
-  //   try {
-  //     let bankId: string;
-  //     const createBank = await this.neo.write(`
-  //   CREATE 
-  //     (b:Bank  { 
-  //       bankId:apoc.create.uuid(),
-  //       accountHolderName:"${dto.accountHolderName}",
-  //       accountNo:"${dto.accountNo}",
-  //       accountType:"${dto.accountType}",
-  //        bankName:"${dto.bankName}",
-  //        branchName:"${dto.branchName}",
-  //        ifsc:"${dto.ifsc}",
-  //        mid:"${dto.mid}" }
-  //        )
-  //       return b;
-        
-  //   `);
-
-  //     //2
-  //     if (createBank) {
-  //       createBank.map((link) => {
-  //         let bankId: string;
-  //         bankId = link.b.bankId;
-  //         console.log(bankId);
-
-  //       //   const mapRelation = this.neo.write(`
-
-  //       // MATCH (g:Gym {id:"${dto.id}"}), (b:Bank {bankId:"${bankId}"})
-  //       // CREATE (g) - [r:HAS_ACCOUNT] -> (b)
-  //       // RETURN b
-  //       // `);
-  //         // return { data: mapRelation, msg: 'ok' };
-  //       });
-  //     } else {
-  //       ('not found');
-  //     }
-  //   } catch (error) {
-  //     return new HttpException(error, 503);
-  //   }
-  // }
-
-
+  // Constraints on AccountHolderName and AccountNo
   async create(dto:linkGymidToBank) {
  try {
-  let createBank = await this.neo.write(`CREATE 
+  let createBank = await this.neo.write(`
+  merge
   (b:Bank  { 
     bankId:apoc.create.uuid(),
     accountHolderName:"${dto.accountHolderName}",
@@ -316,10 +224,10 @@ export class BankService {
     try {
       const res = await this.neo.write(`MATCH (b:Bank) where b.bankId="${id}" 
       SET
-      b.accountHolderName="${dto?.accountHolderName}",
+      b.accountHolderName="${dto.accountHolderName}",
       b.accountType="${dto.accountType}",
       b.accountNo = "${dto.accountNo}",
-      b.name = "${dto.bankName}",
+      b.bankName = "${dto.bankName}",
       b.branchName = "${dto.branchName}"
       return b
       `);

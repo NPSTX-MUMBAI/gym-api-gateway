@@ -12,19 +12,19 @@ import { FileHeaderValidator } from './validators/fileheader.validator';
 export class MemberController {
   constructor(private readonly memberService: MemberService) { }
 
-  @Post('/add')
+  @Post('/account/add')
   create(@Body() createMemberDto: CreateMemberDto) {
-    return this.memberService.create(createMemberDto);
+    return this.memberService.create2(createMemberDto);
   }
 
-  @Get('/all')
+  @Get('/all')    //Running
   async findAll() {
     return await this.memberService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.memberService.findOne(+id);
+    return this.memberService.findOne(id);
   }
 
   @Patch('update/:id')
