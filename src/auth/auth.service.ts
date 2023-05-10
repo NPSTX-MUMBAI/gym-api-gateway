@@ -82,9 +82,9 @@ export class AuthService {
       const userExists = await this.neo.read(
         `MATCH (u:User {mobileNo: "${dto.mobileNo}"}) RETURN u `,
       );
-      console.log(userExists, 'line 85');
+      console.log(userExists, 'user present');
       if (userExists.length > 0) {
-        console.log('if me aayaaaaa');
+        console.log('cross the condition');
 
         return { status: false, msg: 'User Exists' };
       } else {

@@ -94,7 +94,7 @@ export class MemberService {
       const memberCheck = await this.neo.read(
         `MATCH (u:Gym {id:"${dto.id}"})-[r: HAS_MEMBER]->(m:User {fullName:"${dto.fullName}"}) return u`,
       );
-      console.log(memberCheck);
+      console.log('Member Found :', memberCheck);
       if (memberCheck.length == 0) {
         const res = await this.authSvc.signup({
           userId: '',
@@ -105,14 +105,14 @@ export class MemberService {
           roles: [USER_ROLE.MEMBER],
           Address: [],
         });
-        console.log(res);
+        console.log(res, 'member created');
 
         const createRealation = await this.neo.write(`match(g: Gym {id:"${
           dto.id
         }"}), (u:User {email:"${dto.email}"})
         merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) 
         with u
-      merge (u)-[r:Has_Address]->(a:Address)
+      merge (u {email:"${dto.email}"})-[r:Has_Address]->(a:Address)
       set a+={
       line1:"${dto.address.line1}",
     line2: "${dto.address.line2}",
@@ -140,11 +140,10 @@ export class MemberService {
 
         console.log(createRealation);
 
-        return { data: createRealation, status: true, msg: 'bhetala' };
+        return { data: createRealation, status: true, msg: 'relation builded' };
       } else {
         return { data: null, status: false, msg: 'one' };
       }
-      return { data: memberCheck };
     } catch (error) {
       return { data: null, status: false };
     }
