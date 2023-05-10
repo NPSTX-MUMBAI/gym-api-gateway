@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { Neo4jService } from '@brakebein/nest-neo4j';
@@ -7,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class BankService {
-  constructor(private neo: Neo4jService) { }
+  constructor(private neo: Neo4jService) {}
 
   async create(Dto: CreateBankDto): Promise<any> {
     const bankId = crypto.randomUUID();
@@ -25,8 +29,9 @@ bankId:"${bankId}"})
 return b`,
         );
         const res = await this.neo
-          .write(`MATCH (g:Gym),(p:Bank) WHERE g.gymId="${Dto.gymId
-            }" AND p.bankId="${bankId}"
+          .write(`MATCH (g:Gym),(p:Bank) WHERE g.gymId="${
+          Dto.gymId
+        }" AND p.bankId="${bankId}"
         CREATE (g) - [r:HAS_ACCOUNT {createdOn:"${Date.now()}"}] -> (p) RETURN g,p,r`);
 
         if (res.length > 0) {
@@ -66,22 +71,17 @@ SET n.accountHolderName= "${Dto.accountHolderName}"
 
   async findAll() {
     try {
-
       const banks = await this.neo.read(`MATCH (b:Bank) RETURN b`);
-      const banklist: CreateBankDto[] = []
+      const banklist: CreateBankDto[] = [];
 
-      console.log("Banks", banklist);
-
+      console.log('Banks', banklist);
 
       banks.map((r) => {
-        banklist.push(r.b)
+        banklist.push(r.b);
       });
       return banklist;
-
-    }
-    catch (err) {
+    } catch (err) {
       return new NotFoundException({}, 'Bank Not Found Any User!');
     }
-
   }
 }

@@ -29,7 +29,6 @@ AURA_INSTANCENAME=unacademy-db
       limit: 10,
     }),
     AuthModule,
-    OwnerModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
       host: '29959c44.databases.neo4j.io',
@@ -40,6 +39,7 @@ AURA_INSTANCENAME=unacademy-db
         disableLosslessIntegers: true,
       },
     }),
+    OwnerModule,
     MemberModule,
     CollectionModule,
     ReportsModule,

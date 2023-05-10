@@ -112,7 +112,7 @@ export class MemberService {
         }"}), (u:User {email:"${dto.email}"})
         merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) 
         with u
-      merge (u {email:"${dto.email}"})-[r:Has_Address]->(a:Address)
+      merge (u)-[r:Has_Address]->(a:Address)
       set a+={
       line1:"${dto.address.line1}",
     line2: "${dto.address.line2}",
@@ -140,7 +140,7 @@ export class MemberService {
 
         console.log(createRealation);
 
-        return { data: createRealation, status: true, msg: 'relation builded' };
+        return { data: memberCheck, status: true, msg: 'relation builded' };
       } else {
         return { data: null, status: false, msg: 'one' };
       }
