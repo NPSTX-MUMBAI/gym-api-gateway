@@ -41,7 +41,8 @@ export class GymController {
   @Get(':id') //Find ID
   async findOne(@Param('id') id: string) {
     console.log(id);
-    return await this.gymService.findOne(id);
+    // return await this.gymService.findOne(id);
+    return this.gymService.findOne(id);
   }
 
   // @Get('/email/:email')

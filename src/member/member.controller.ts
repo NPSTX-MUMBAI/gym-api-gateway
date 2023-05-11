@@ -49,7 +49,8 @@ export class MemberController {
     return await this.memberService.update(id, updateMemberDto);
   }
 
-  @Delete(':id')
+  //Running
+  @Delete('account/delete/:id')
   async remove(@Param('id') id: string) {
     return await this.memberService.remove(id);
   }

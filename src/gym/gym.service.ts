@@ -1,4 +1,7 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
+
+// 2a20cbfe-deb9-4a77-8bd4-05f7417558be
+
 import {
   HttpException,
   Injectable,
@@ -63,7 +66,7 @@ export class GymService {
       const gymExists = await this.neo
         .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}" 
       AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
-
+      
       console.log('gym=>', gymExists);
       if (gymExists.length > 0) {
         throw new ConflictException(
@@ -183,6 +186,8 @@ export class GymService {
     }
   }
 
+
+
   async update(id: string, dto: UpdateGymDto) {
     console.log(id, dto);
 
@@ -194,6 +199,7 @@ export class GymService {
       g.email="${dto.email}",
       g.panNo="${dto.panNo}",
       g.aadhar="${dto.aadhar}"
+      
       return g
       `);
 
@@ -226,20 +232,41 @@ export class GymService {
     }
   }
 
-  async remove(id: string) {
+
+
+  //#2nd Test
+  // async remove(id: string) {
+  //   try {
+  //     const res = await this.neo.write(
+  //       `MATCH (g:Gym) WHERE g.gymId=$id
+  //     SET g.deleted=true
+  //     return g
+  //     `,
+  //       { id: id },
+  //     );
+  //     console.log(res);
+  //     return 'gym deleted successfully';
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new HttpException('error deleteing gym', error);
+  //   }
+  // }
+
+  //Temporary Running
+  async remove(gymId:string) {
     try {
-      const res = await this.neo.write(
-        `MATCH (g:Gym) WHERE g.id=$id
-      SET g.deleted=true
-      return g
-      `,
-        { id: id },
-      );
-      console.log(res);
-      return 'gym deleted successfully';
+      console.log('Deleting Gym ID ->',gymId);
+      
+      const w1 = this.neo.write(`MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `);
+      
+      return w1;
+
     } catch (error) {
-      console.log(error);
-      throw new HttpException('error deleteing gym', error);
+      console.log('Cannot Be Delete as Gym ID Not Found!',error);
+      
+     throw new NotFoundException;
     }
   }
+
+
 }

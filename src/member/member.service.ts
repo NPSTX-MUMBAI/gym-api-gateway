@@ -90,6 +90,8 @@ export class MemberService {
   // }
 
   async create(dto: CreateMemberDto) {
+    console.log(dto);
+    
     try {
       const memberCheck = await this.neo.read(
         `MATCH (u:Gym {id:"${dto.id}"})-[r: HAS_MEMBER]->(m:User {fullName:"${dto.fullName}"}) return u`,
@@ -150,8 +152,11 @@ export class MemberService {
   }
   async findAll() {
     try {
-      // const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
-      const res = await this.neo.read(`MATCH (u:Member)  return u `);
+      const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
+      // const res = await this.neo.read(`MATCH (u:Member)  return u `);
+      const res1 = await this.neo.read(`
+      MATCH (u:User) RETURN u;
+      `)
 
       res.map((r) => {
         console.log(r);
@@ -209,12 +214,16 @@ return u,a `,
 
   async remove(id: string) {
     try {
+
+      console.log('Deleting Member ID - ',id);
+      
       const res = await this.neo.write(
-        `MATCH (u:User {id:"${id}"}) DETACH DELETE u`,
+        `MATCH (u:User {userId:"${id}"}) DETACH DELETE u`,
       );
       return 'member deleted successfully';
     } catch (error) {
       throw new HttpException('error', error);
     }
+    
   }
 }

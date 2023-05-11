@@ -10,13 +10,14 @@ import { AppModule } from './app.module';
 // }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule,{cors:true});
+ 
   app.enableCors({
-    origin: '*',
-    // allowedHeaders: '[Content-Type/XML]',
-    // credentials: true,
-    // methods: "['POST','GET','PUT','PATCH','DELETE']",
-  });
+    origin: "*",
+    // allowedHeaders: '[]',
+    credentials: true,
+    methods:['POST','GET']
+  })
 
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
