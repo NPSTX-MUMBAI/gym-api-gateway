@@ -157,4 +157,48 @@ export class ServicesService {
       return 'Service Deleted Succesfully!';
     } catch (error) {}
   }
+
+  // async createCustomService(dto:ServiceDTO) {
+  //   const res=await this.neo.read(`MATCH (g:Gym {id:"${dto.id}"})-[:HAS_SERVICE]->(s:Service) where s.name="${dto.name}" return s`);
+
+  //   if(res.length>0){
+  //     return {status:false, msg:'service already exists with this gym'}
+  //   }else{
+  //     const svcId=crypto.randomUUID();
+
+  //     const r=await this.neo.write(`CREATE (s:Service {id:"${svcId}",name:"${dto.name}",
+  //     rate:"${dto.rate}",serviceType:"${dto.serviceType}",noOfOccurence:"${dto.noOfOccurence}"})
+  //     MERGE (g:Gym {id:"${dto.id}"})-[r:HAS_SERVICE {createdOn:"${Date.now()}"}]->(s)
+  //     return s`);
+
+  //     return r.length>0?{status:true}:{status:false, msg:'failed to create service association with gym'}
+  //   }
+
+  // }
+
+  async createCustomService(dto: ServiceDTO) {
+    try {
+      const res = await this.neo.read(
+        `match (g:Gym {id:"${dto.gymId}"})-[r:HAS_SERVICE]->(s:Service {name:"${dto.name}"}) RETURN g`,
+      );
+      console.log(res);
+      if (res.length == 0) {
+        const svcId = crypto.randomUUID();
+        const r1 = await this.neo
+          .write(`merge (s:Service {svcId: "${svcId}",name:"${dto.name}",serviceType:"${dto.serviceType}"})
+           return s`);
+        const r2 = await this.neo.write(` match (g:Gym {id :"${
+          dto.gymId
+        }"}),(s: Service {svcId:"${svcId}"})
+             merge (g)-[r:HAS_SERVICE {createdOn:"${Date.now()}", rate: "${
+          dto.rate
+        }"}]->(s) return s`);
+        return { data: r1, msg: 'created', status: true };
+      } else {
+        return { data: null, msg: 'already exits', status: false };
+      }
+    } catch (error) {
+      error;
+    }
+  }
 }
