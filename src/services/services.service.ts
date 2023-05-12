@@ -1,5 +1,6 @@
-import { Neo4jService } from '@brakebein/nest-neo4j';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {Neo4jService} from '@brakebein/nest-neo4j'
+
 
 import * as crypto from 'crypto';
 import { NotFoundError } from 'rxjs';
