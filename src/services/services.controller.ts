@@ -35,9 +35,10 @@ export class ServicesController {
 
   }
 
-  @Post()       
-  create(createServiceDto:ServiceDTO ) {
-    return 'This action adds a new owner';
+  @Post('/add')       
+  async create(@Body() createServiceDto:ServiceDTO ) {
+    console.log('createServiceDTO=>',createServiceDto);
+    return await this.defSvc.createCustomService(createServiceDto)
   }
 
 

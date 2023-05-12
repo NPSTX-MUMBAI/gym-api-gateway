@@ -5,9 +5,10 @@ export class ServiceDTO{
     isDefault:boolean;
     rate:number;
     svcId: string;
-    userid?:string;
-    gymid?:string;
-    packageId?:string;
-    
-
+    serviceType:string;
+    noOfOccurence?:number;
+    id?:string;
+    gymId?:string
 }
+
+
