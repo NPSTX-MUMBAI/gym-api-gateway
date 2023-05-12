@@ -248,6 +248,11 @@ export class ServicesService {
   }
   }
 
+  findActiveServices() {
+
+  }
+
+  
 
 
   // async addService(id, svcDto:ServiceDTO, gymDto:CreateGymDto) {
@@ -301,6 +306,7 @@ export class ServicesService {
         rate: "${svcDto.rate}",
          isDefault: "${svcDto.isDefault}",
          svcType: "${svcDto.svcType}",
+         isActive:"${svcDto.isActive}",
          createdOn: "${new Date()}"
         })
         return s
@@ -308,7 +314,7 @@ export class ServicesService {
         createSvc.map((res) => {
           svcId = res.s.svcId;
 
-          console.log("Service ID ",svcId);
+          console.log("Service Created with Service ID ",svcId);
           
     })
 
@@ -318,6 +324,9 @@ export class ServicesService {
       MERGE (g) - [:HAS_SERVICE] -> (s)
       RETURN g
       `)
+      console.log('Service is added with Gym ID ',id);
+      
+
 
       return linkWithGym;
     } else {
@@ -337,6 +346,9 @@ export class ServicesService {
 
       return service;
     }
+
+
+   
 
 
 

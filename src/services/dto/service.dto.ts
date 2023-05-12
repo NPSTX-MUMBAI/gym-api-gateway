@@ -7,7 +7,8 @@ export class ServiceDTO{
     isDefault:boolean;
     rate:number;
     userid?:string;
-    
+    isActive:string;
+
     gymid?:string;
     svcType:string
 }

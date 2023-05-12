@@ -46,7 +46,7 @@ export class ServicesController {
 
 
 
-  @Post('linkwithgym/:id')       
+  @Post('addservicewithgym/:id')       
   create(
     @Param('id') id:string,
     @Body() 
