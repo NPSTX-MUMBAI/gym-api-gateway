@@ -12,6 +12,7 @@ export class CreateGymDto {
     createdOn:string;
     createdTime:string
     gymId?: string;
+    memberId?:String
     userid?:string;
     pkgId:string;
     svcId?:string

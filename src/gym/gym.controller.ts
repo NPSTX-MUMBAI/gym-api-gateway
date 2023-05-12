@@ -17,7 +17,7 @@ export class GymController {
   async create(@Body() createGymDto: CreateGymDto) {
     console.log('inside create gym controller=>', createGymDto)
 
-    return await this.gymSvc.create2(createGymDto);
+    return await this.gymSvc.create(createGymDto);
   }
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))

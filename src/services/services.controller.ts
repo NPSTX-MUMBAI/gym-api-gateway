@@ -46,7 +46,7 @@ export class ServicesController {
 
 
 
-  @Post('addservicewithgym/:id')       
+  @Post('addservice/:id')       
   create(
     @Param('id') id:string,
     @Body() 
@@ -72,12 +72,12 @@ export class ServicesController {
 
 
   //Running
-  @Delete('remove/service/:id')
-  remove(
-    @Param('id') id: string) 
-    {
-    return this.defSvc.remove(id);
-    }
+  // @Delete('remove/service/:id')
+  // remove(
+  //   @Param('id') id: string) 
+  //   {
+  //   return this.defSvc.remove(id);
+  //   }
 
-    
+
 }

@@ -10,32 +10,42 @@ import { FileHeaderValidator } from './validators/fileheader.validator';
 
 @Controller('members')
 export class MemberController {
-  constructor(private readonly memberService: MemberService) { }
+  constructor(private readonly memberSvc: MemberService) { }
 
-  @Post('/account/add')
-  create(@Body() createMemberDto: CreateMemberDto) {
-    return this.memberService.create2(createMemberDto);
+  // @Post('/account/add')
+  // create(@Body() createMemberDto: CreateMemberDto) {
+  //   return this.memberSvc.create2(createMemberDto);
+  // }
+
+
+  @Post('create')
+  create(
+    // @Param('id') id:string,
+    @Body() createMemberDto: CreateMemberDto) {
+    return this.memberSvc.create(createMemberDto)
   }
+
+
 
   @Get('/all')    //Running
   async findAll() {
-    return await this.memberService.findAll();
+    return await this.memberSvc.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.memberService.findOne(id);
+    return this.memberSvc.findOne(id);
   }
 
   @Patch('update/:id')
   async update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
-    return await this.memberService.update(id, updateMemberDto);
+    return await this.memberSvc.update(id, updateMemberDto);
   }
 
   //Running
   @Delete('account/delete/:id')
   async remove(@Param('id') id: string) {
-    return await this.memberService.remove(id);
+    return await this.memberSvc.remove(id);
   }
 
   // @Post('/imageupload')

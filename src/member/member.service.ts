@@ -129,6 +129,49 @@ export class MemberService {
   }
 
   
+  async create(dto:CreateMemberDto) {
+
+    try {
+      
+      let memberId : string;
+    const createMember = await this.neo.write(`
+    CREATE (m:Member {
+      memberId:apoc.create.uuid(),
+      firstName :"${dto.firstName}",  
+      lastName :"${dto.lastName}",
+      mobileNo :"${dto.mobileNo}",
+      email :"${dto.email}",
+      password :"${dto.password}",
+      roles :"${dto.roles}"
+    })
+    RETURN m
+    `)
+
+   
+
+    if(createMember.length > 0) {
+      createMember.map((res) => {
+        memberId = res.m.memberId;
+        console.log('Member ID ',memberId);
+        
+      })
+
+
+      const linkSvc = this.neo.write(`
+      MATCH (m:Member {memberId:"${memberId}"}),(s:Service {svcId:"${dto.svcId}"}) 
+      MERGE (m) - [r:ASSOCIATE] -> (s)
+      RETURN m`);
+
+      return linkSvc
+    }
+
+    
+  } catch (error) {
+    console.log('',error);
+    
+  }
+  
+}
 
 
   async findAll() {

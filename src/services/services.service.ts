@@ -208,7 +208,7 @@ export class ServicesService {
 
     for (let i = 0; i < r1.length; i++) {
       array.push(r1[i].s);
-      console.log();
+      console.log("Service List - ",array);
     }
     return array;
   }
@@ -313,7 +313,7 @@ export class ServicesService {
         return s
         `)
         createSvc.map((res) => {
-          svcId = res.s.svcId;
+          svcId = res.s.svcId
 
           console.log("Service Created with Service ID ",svcId);
           
@@ -327,7 +327,7 @@ export class ServicesService {
       `)
       console.log('Service is added with Gym ID ',id);
       
-
+     
 
       return linkWithGym;
     } else {

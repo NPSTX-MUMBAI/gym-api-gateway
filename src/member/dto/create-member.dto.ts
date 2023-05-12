@@ -8,5 +8,5 @@ export class CreateMemberDto {
     roles: string[];
     
     gymId?: string;
-    
+    svcId?:string;
 }
