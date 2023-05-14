@@ -30,7 +30,7 @@ AURA_INSTANCENAME=unacademy-db
       limit: 10,
     }),
     AuthModule,
-  
+
     OwnerModule,
     MemberModule,
     CollectionModule,
@@ -39,16 +39,15 @@ AURA_INSTANCENAME=unacademy-db
     BankModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
-      host: '29959c44.databases.neo4j.io',
+      host: '6b9f3275.databases.neo4j.io',
       port: 7687,
       username: 'neo4j',
-      password: 'lzpAnzMPt5DV_GG50IrFqqLocopsN95wguofamja-Es',
+      password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
       options: {
         disableLosslessIntegers: true,
       },
     }),
     ServicesModule,
-    
   ],
   controllers: [AppController],
   providers: [

@@ -1,5 +1,6 @@
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { log } from 'console';
 
 import * as crypto from 'crypto';
 import { NotFoundError } from 'rxjs';
@@ -114,18 +115,18 @@ export class ServicesService {
     return array;
   }
 
-  async findServiceById(id: string) {
-    console.log('Service ID - ', id);
+  // async findServiceById(id: string) {
+  //   console.log('Service ID - ', id);
 
-    try {
-      const r1 = await this.neo.read(
-        `MATCH (s:Service {svcId:"${id}"})
-    RETURN s`,
-      );
-    } catch (err) {
-      return err.response;
-    }
-  }
+  //   try {
+  //     const r1 = await this.neo.read(
+  //       `MATCH (s:Service {svcId:"${id}"})
+  //   RETURN s`,
+  //     );
+  //   } catch (err) {
+  //     return err.response;
+  //   }
+  // }
 
   update(id: string, svcDto: ServiceDTO) {
     try {
@@ -158,24 +159,6 @@ export class ServicesService {
     } catch (error) {}
   }
 
-  // async createCustomService(dto:ServiceDTO) {
-  //   const res=await this.neo.read(`MATCH (g:Gym {id:"${dto.id}"})-[:HAS_SERVICE]->(s:Service) where s.name="${dto.name}" return s`);
-
-  //   if(res.length>0){
-  //     return {status:false, msg:'service already exists with this gym'}
-  //   }else{
-  //     const svcId=crypto.randomUUID();
-
-  //     const r=await this.neo.write(`CREATE (s:Service {id:"${svcId}",name:"${dto.name}",
-  //     rate:"${dto.rate}",serviceType:"${dto.serviceType}",noOfOccurence:"${dto.noOfOccurence}"})
-  //     MERGE (g:Gym {id:"${dto.id}"})-[r:HAS_SERVICE {createdOn:"${Date.now()}"}]->(s)
-  //     return s`);
-
-  //     return r.length>0?{status:true}:{status:false, msg:'failed to create service association with gym'}
-  //   }
-
-  // }
-
   async createCustomService(dto: ServiceDTO) {
     try {
       const res = await this.neo.read(
@@ -199,6 +182,64 @@ export class ServicesService {
       }
     } catch (error) {
       error;
+    }
+  }
+
+  async selectedServices(dto: any) {
+    try {
+      const arr: any[] = dto.array;
+      let query;
+      let i;
+      for (i = 0; i < arr.length; i++) {
+        query = await this.neo.write(
+          `CREATE -[r:HAS_Selected]->(g:Gym {id:"${dto.id}"})(s:Service {svcId:"${arr[i]}"}) RETURN r`,
+        );
+      }
+
+      if (arr.length == i) {
+        return { data: query, msg: 'Services', status: true };
+      } else {
+        return { data: null, msg: 'Error Service Not Found', status: false };
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async findServiceByGymId(id: string) {
+    try {
+      const query = await this.neo.read(
+        `match (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service) RETURN s`,
+      );
+      console.log(query);
+
+      if (query.length > 0) {
+        return { data: query, msg: 'Services Found', status: true };
+      } else {
+        return { data: null, msg: 'Error Service Not Found', status: false };
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async deleteServiceByGymId(
+    dto: ServiceDTO,
+  ): Promise<{ status: boolean; msg: string; data?: any }> {
+    try {
+      console.log(dto);
+      const query = await this.neo.write(
+        `match (g:Gym {id:"${dto.id}"})-[r:HAS_SERVICE]->(s:Service {svcId:"${dto.svcId}"}) delete r`,
+      );
+      console.log(query);
+
+      if (query) {
+        return { data: query, msg: 'Services Remove', status: true };
+      } else {
+        return { data: null, msg: 'Error', status: false };
+      }
+    } catch (error) {
+      return { status: false, msg: 'failed' };
     }
   }
 }

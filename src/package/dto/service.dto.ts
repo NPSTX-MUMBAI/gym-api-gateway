@@ -10,6 +10,7 @@ export class ServiceDTO {
   //   packageId?: string;
   serviceType?: serviceType[];
   noOfOccurrence?: number;
+  id?: string;
 }
 
 export enum serviceType {
