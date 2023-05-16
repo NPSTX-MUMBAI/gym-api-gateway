@@ -159,7 +159,7 @@ export class MemberService {
 
       const linkSvc = this.neo.write(`
       MATCH (m:Member {memberId:"${memberId}"}),(s:Service {svcId:"${dto.svcId}"}) 
-      MERGE (m) - [r:ASSOCIATE] -> (s)
+      MERGE (m) - [r:ASSOCIATE {svcId:"${dto.svcId}"}] -> (s)
       RETURN m`);
 
       return linkSvc
@@ -207,7 +207,8 @@ export class MemberService {
       u.email="${dto.email}",
       u.firstName="${dto.firstName}",
       u.lastName="${dto.lastName}",
-      u.mobileNo="${dto.mobileNo}"
+      u.mobileNo="${dto.mobileNo}",
+
       return u
       `)
       return "member updated successfully";

@@ -1,15 +1,14 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import {Neo4jService} from '@brakebein/nest-neo4j'
-
+import { Neo4jService } from '@brakebein/nest-neo4j';
 
 import * as crypto from 'crypto';
 import { NotFoundError } from 'rxjs';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 import { ServiceDTO } from 'src/services/dto/service.dto';
+import { AssociateSvcDto } from './dto/associateService.dto';
 
 @Injectable()
 export class ServicesService {
-
   constructor(private neo: Neo4jService) {}
 
   //old
@@ -144,7 +143,7 @@ export class ServicesService {
   //         imgUrl: '../assets/sauna.jpg',
   //         rate: 3000,
   //         svcType:"recurring"
-          
+
   //       },
   //       {
   //         svcId: crypto.randomUUID(),
@@ -171,15 +170,12 @@ export class ServicesService {
   //         svcType:"instance"
   //       },
 
-
   //     ];
 
   //     defaultSvcs.forEach(async (svc) => {
 
-
-
-  //       const query = `CREATE (s:Service { svcId:"${svc.svcId}", 
-  //     name:"${svc.name}", 
+  //       const query = `CREATE (s:Service { svcId:"${svc.svcId}",
+  //     name:"${svc.name}",
   //     imgUrl:"${svc.imgUrl}",
   //     rate:"${svc.rate}",
   //     createdOn:"${svc.createdOn}",
@@ -197,8 +193,6 @@ export class ServicesService {
   //   }
   // }
 
-
-
   async findServiceList() {
     const r1 = await this.neo.read(`
     MATCH (s:Service) 
@@ -208,53 +202,43 @@ export class ServicesService {
 
     for (let i = 0; i < r1.length; i++) {
       array.push(r1[i].s);
-      console.log("Service List - ",array);
+      console.log('Service List - ', array);
     }
     return array;
   }
 
-  async findServiceById(id:string) {
+  async findServiceById(id: string) {
     try {
-      console.log('Service ID - ',id);
-      
+      console.log('Service ID - ', id);
+
       const service = await this.neo.read(`
       MATCH (s:Service {svcId:"${id}"})
       RETURN s;
-      `)  
+      `);
 
-      console.log("Service",service);
+      console.log('Service', service);
 
-        return service;
-      
+      return service;
     } catch (error) {
-      console.log('Service Not Found',error);
-
+      console.log('Service Not Found', error);
     }
-
   }
 
-  update(id:string,svcDto:ServiceDTO) {
-
+  update(id: string, svcDto: ServiceDTO) {
     try {
-    const w1 = this.neo.write(`
+      const w1 = this.neo.write(`
     MATCH (s:Service {svcId:"${id}"})
     SET 
     s.rate = "${svcDto.rate}"
     RETURN s
-    `)
-    return w1;
-
-  } catch (error) {
-      throw new HttpException({},404)
-  }
-  }
-
-  findActiveServices() {
-
+    `);
+      return w1;
+    } catch (error) {
+      throw new HttpException({}, 404);
+    }
   }
 
-  
-
+  findActiveServices() {}
 
   // async addService(id, svcDto:ServiceDTO, gymDto:CreateGymDto) {
   //   try {
@@ -275,7 +259,7 @@ export class ServicesService {
   //         svcId = res.s.svcId;
 
   //         console.log("Service ID ",svcId);
-          
+
   //   })
   //       if(createSvc) {
   //         const w1 = this.neo.write(`
@@ -290,15 +274,13 @@ export class ServicesService {
   //     }
   //     catch(error) {
   //       console.log('',error);
-        
+
   //     }
 
   //   }
 
-
-  async addService(id:string,svcDto:ServiceDTO) {
-
-    let svcId:string
+  async addService(id: string, svcDto: ServiceDTO) {
+    let svcId: string;
 
     const createSvc = await this.neo.write(`
       CREATE (s:Service {
@@ -311,47 +293,201 @@ export class ServicesService {
          createdOn: "${new Date()}"
         })
         return s
-        `)
-        createSvc.map((res) => {
-          svcId = res.s.svcId
+        `);
+    createSvc.map((res) => {
+      svcId = res.s.svcId;
 
-          console.log("Service Created with Service ID ",svcId);
-          
-    })
+      console.log('Service Created with Service ID ', svcId);
+    });
 
-    if(createSvc) {
+    if (createSvc) {
       const linkWithGym = this.neo.write(`
       MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
       MERGE (g) - [:HAS_SERVICE] -> (s)
       RETURN g
-      `)
-      console.log('Service is added with Gym ID ',id);
-      
-     
+      `);
+      console.log('Service is added with Gym ID ', id);
 
       return linkWithGym;
     } else {
-
-        console.log('Something went Wrong! Service Error ');
-        
+      console.log('Something went Wrong! Service Error ');
     }
-
   }
 
-      
-    getServiceByGymId(id:string) {
-      const service = this.neo.read(`
-      MATCH (s:Service {svcId:"${id}"})
-      RETURN s
-      `)
+  //  async associateService(id:string,dto:AssociateSvcDto) {
 
-      return service;
+  //   try {
+  //     const checkMember = this.neo.read(`
+  //     MATCH (m:Member {memberId:"${id}"})
+  //     RETURN m
+
+  //     `)
+
+  //     if(checkMember) {
+  //       console.log('Member is Present');
+
+  //     }
+
+  //     const checkSvc = this.neo.read(`
+  //     MATCH (s:Service {svcId:"${dto.svcId}"})
+  //     RETURN s
+  //     `)
+
+  //     if(checkSvc) {
+  //       console.log('Service is Present');
+
+  //     }
+
+  //     const checkIfAssociate = this.neo.read(`
+  //     MATCH p = (m:Member {memberId:"${}"}) - [:ASSOCIATE] - (s:Service {svcId:"${}"})
+  //     `)
+
+  //   } catch (error) {
+  //     console.log('Service Error!',error);
+
+  //   }
+
+  //   }
+
+  // async associateSvc(id:string,dto:AssociateSvcDto) {
+
+  //   try {
+
+  //     const getMemberId = this.neo.read(`
+  //     MATCH (m:Member {memberId:"${id}"})
+  //     RETURN m.memberId
+  //     `).then((res) => {
+  //       console.log("Got Member Id ",res);
+
+  //     })
+
+  //     if(getMemberId) {
+
+  //       const getSvcid = this.neo.read(`
+  //       MATCH (s:Service {svcId:"${dto.svcId}"})
+  //       RETURN s.svcId
+  //       `).then((res) => {
+  //         console.log("Got Service Id ",res);
+
+  //       })
+
+  //       if(getSvcid) {
+  //         console.log('Checking Association ...');
+
+  //         const checkAssociation = this.neo.read(`
+  //         MATCH p=(m:Member {memberId:"${id}"}) - [r:ASSOCIATE] -> (s:Service {svcId:"${dto.svcId}"})
+  //         RETURN type(r)
+  //         `).then((res) => {
+
+  //           const lynkSvc = this.neo.write(`
+  //           MATCH (m:Member {memberId:"${id}"}),(s:Service {svcId:"${dto.svcId}"})
+  //           CREATE (m) - [:ASSOCIATE] -> (s)
+  //           RETURN m
+  //           `)
+
+  //           console.log('Member ',id,' Now linked with Service ID',dto.svcId);
+
+  //           return lynkSvc;
+  //         })
+
+  //       }
+
+  //     } else {
+  //       console.log('Not Exist');
+
+  //       const lynkSvc = this.neo.write(`
+  //       MATCH (m:Member {memberId:"${id}"}),(s:Service {svcId:"${dto.svcId}"})
+  //       CREATE (m) - [:ASSOCIATE] -> (s)
+  //       RETURN  m
+  //       `)
+
+  //       return lynkSvc;
+
+  //     }
+
+  //   } catch (error) {
+
+  //   }
+  // }
+
+    // async associateSvc(id:string,dto:AssociateSvcDto) {
+    //   try {
+    //     //1
+    //     console.log('Association Starts Here...');
+        
+    //     const getMember = this.neo.read(`
+    //     MATCH (m:Member {memberId:"${id}"})
+    //     RETURN m.memberId
+    //     `).then((res1) => {
+    //       console.log('RES1 ',res1);
+          
+    //       //2 
+    //       const getSvc = this.neo.read(`
+    //       MATCH (s:Service {svcId:"${dto.svcId}"})
+    //       RETURN s.svcId
+    //       `).then((res2) => {
+    //         const checkAssociation = this.neo.read(`
+    //         MATCH p=(m:Member {memberId:"${id}"}) - [r:ASSOCIATE] -> (s:Service {svcId:"${dto.svcId}"})
+    //         RETURN m.memberId,s.svcId
+    //         `).then((res3) => {
+    //           console.log("IDs ",res3);
+              
+    //           const linkSvc = this.neo.write(`
+    //           MATCH (m:Member {memberId:"${id}"}),(s:Service {svcId:"${dto.svcId}"})
+    //           CREATE (m) - [r:ASSOCIATE {rate:"${dto.services[0].rate}"}] -> (s)
+    //           RETURN m
+    //           `).then((res4) => {
+    //             console.log("Linked - ",res4);
+                
+    //           })
+
+
+    //         })
+
+
+    //       })
+
+
+
+         
+    //     })
+
+    //   } catch (error) {
+        
+    //   }
+
+    // }
+
+    async associateSvcWithMember(dto:AssociateSvcDto) {
+      try {
+
+        dto.services.map(async (service)=>{
+          const res= await this.neo.write(`MATCH (u:User {userId:"${dto.memberId}"}),
+          (s:Service {svcId:"${service.svcId}"}) 
+          MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
+          rate:"${service.rate}"}]->(s) return r
+         `)  
+        })
+
+        return {status:true, data:null, msg:'all association done successfully'}
+        
+      } catch (error) {
+        console.log(error);
+        return {status:false, data:error, msg:'failed due to technical error'}
+        
+      }
     }
 
 
-   
 
+  getServiceByGymId(id: string) {
+    const service = this.neo.read(`
+      MATCH (s:Service {svcId:"${id}"})
+      RETURN s
+      `);
 
+    return service;
+  }
 
   // remove(id:string) {
 
@@ -388,5 +524,4 @@ export class ServicesService {
       return 'Service Deleted Succesfully!';
     } catch (error) {}
   }
-  
 }

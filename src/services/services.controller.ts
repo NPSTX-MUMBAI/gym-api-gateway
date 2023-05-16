@@ -3,6 +3,7 @@ import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-st
 import { ConstraintMetadata } from 'class-validator/types/metadata/ConstraintMetadata';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 import { ServiceDTO } from 'src/services/dto/service.dto';
+import { AssociateSvcDto } from './dto/associateService.dto';
 import { ServicesService } from './services.service';
 
 @Controller('service')
@@ -59,6 +60,14 @@ export class ServicesController {
     
   }
 
+  @Post('/associatesvc')
+  async associateServiceWithMember(
+    
+    @Body()
+    dto:AssociateSvcDto) {
+      console.log(dto);
+     return await this.defSvc.associateSvcWithMember(dto);
+  }
 
 
   //Running

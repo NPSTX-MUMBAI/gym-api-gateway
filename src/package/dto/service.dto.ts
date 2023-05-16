@@ -1,4 +1,5 @@
 export class ServiceDTO {
+
   name: string;
   imgUrl?: string;
   createdOn?: string;
@@ -7,9 +8,10 @@ export class ServiceDTO {
   svcId: string;
   //   userid?: string;
   gymId?: string;
-  //   packageId?: string;
+  memeberId?: string;
   serviceType?: serviceType[];
   noOfOccurrence?: number;
+
 }
 
 export enum serviceType {

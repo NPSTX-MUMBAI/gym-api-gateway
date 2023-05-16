@@ -10,5 +10,6 @@ export class ServiceDTO{
     isActive:string;
 
     gymid?:string;
-    svcType:string
+    svcType:string;
+    
 }

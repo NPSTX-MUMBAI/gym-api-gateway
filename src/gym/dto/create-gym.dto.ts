@@ -10,11 +10,13 @@ export class CreateGymDto {
     createdBy?: string;
     id: any;
     createdOn:string;
-    createdTime:string
+    createdTime:string;
+
     gymId?: string;
-    memberId?:String
+    memberId?:String;
     userid?:string;
     pkgId:string;
-    svcId?:string
+    svcId?:string;
 
+    
 }
