@@ -2,6 +2,7 @@ import { Address } from "src/gym/entities/gym.entity";
 
 export class CreateBankDto {
   
+  bankId:string;
   accountHolderName: string;
   accountType: string;
   accountNo: string;
@@ -13,7 +14,6 @@ export class CreateBankDto {
   mid?: string;   
 
   id?: string;
-  bankId?:string;
   userid:string;
   // gymId?:string;
 }

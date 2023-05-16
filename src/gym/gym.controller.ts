@@ -60,6 +60,15 @@ export class GymController {
     return await this.gymSvc.updateAddress(id, updateGymDto);
   }
 
+  @Post('detachsvc')
+  detachService(
+    @Body()
+    gymDto:CreateGymDto )
+    {
+      return this.gymSvc.detachService(gymDto);
+    }
+
+
   //Running
   @Delete('account/details/delete/:id')
   remove(@Param('id') id: string) {

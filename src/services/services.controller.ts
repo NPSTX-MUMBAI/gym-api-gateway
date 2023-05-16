@@ -6,7 +6,7 @@ import { ServiceDTO } from 'src/services/dto/service.dto';
 import { AssociateSvcDto } from './dto/associateService.dto';
 import { ServicesService } from './services.service';
 
-@Controller('service')
+@Controller('services')
 
 
 export class ServicesController {
@@ -56,7 +56,7 @@ export class ServicesController {
     ) {
     // return 'This action adds a new owner';
 
-      this.defSvc.addService(id,createServiceDto)
+      this.defSvc.addCustomService(id,createServiceDto)
     
   }
 
@@ -69,6 +69,17 @@ export class ServicesController {
      return await this.defSvc.associateSvcWithMember(dto);
   }
 
+
+  @Post('deassociatesvc')
+  deassociateServiceWithMember(
+    @Body()
+    dto:AssociateSvcDto
+  ) {
+    return this.defSvc.deassociateSvcWithMember(dto);
+
+  }
+  
+  
 
   //Running
   @Patch('update/:id')

@@ -8,6 +8,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { timingSafeEqual } from 'crypto';
+import { Neo4jTypeInterceptor } from 'nest-neo4j/dist';
 import { stringify } from 'querystring';
 import { SignUpDTO } from 'src/auth/dtos/signup.dto';
 import { CreateBankDto } from 'src/bank/dto/create-bank.dto';
@@ -115,7 +116,7 @@ export class GymService {
 
     try {
       let gymId:string;
-      let memberId:string;
+      let userId:string;
 
       const createGym = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
           email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
@@ -133,21 +134,33 @@ export class GymService {
             
         })
 
+        // const linkMember = await this.neo.write(`
+        // MATCH (g:Gym {gymId:"${gymId}"}),(m:Member {memberId:"${dto.memberId}"}) 
+        // MERGE (g) - [r:HAS_MEMBER] -> (m)
+        // RETURN type(r)
+        // `)
+
+        // linkMember.map((res) => {
+        //   memberId = res.m.memberId;
+        //   console.log("Member ID - ",memberId);
+          
+        // })
+        // return linkMember;
+
+
         const linkMember = await this.neo.write(`
-        MATCH (g:Gym {gymId:"${gymId}"}),(m:Member {memberId:"${dto.memberId}"}) 
+        MATCH (g:Gym {gymId:"${gymId}"}),(u:User {userId:"${dto.userId}"}) 
         MERGE (g) - [r:HAS_MEMBER] -> (m)
         RETURN type(r)
-
         `)
 
         linkMember.map((res) => {
-          memberId = res.m.memberId;
-          console.log("Member ID - ",memberId);
+          userId = res.u.userId;
+          console.log("User ID - ",userId);
           
         })
 
           
-        return linkMember;
 
       }
     } catch (error) {
@@ -318,6 +331,7 @@ export class GymService {
 
     return gymDetails;
   }
+  
 
   getGymdetailsByBankID(bankId: string) {
     let getDetails = this.neo.read(`
@@ -326,6 +340,33 @@ export class GymService {
     `);
 
     return getDetails;
+  }
+
+  detachService(dto:CreateGymDto) {
+    try {
+
+      console.log('Detaching Service start...');
+      
+      const selectService = this.neo.read(`
+      MATCH (g:Gym {gymId:"${dto.userId}"}) - [:HAS_SERVICE] - (s:Service {svcId:"${dto.svcId}"}) 
+      RETURN g
+      `).then((res) => {
+        const w1 = this.neo.write(`
+        MATCH (g:Gym {userId:"${dto.userId}"}) - [:HAS_SERVICE] - (s:Service {svcId:"${dto.svcId}"}) 
+        DETACH DELETE s;
+
+        `)
+      })
+
+    
+
+
+              
+
+    } catch (error) {
+      console.log('Detach unsuccessful! Try Again',error);
+      
+    }
   }
 
   // async update(id: string, dto: UpdateGymDto) {

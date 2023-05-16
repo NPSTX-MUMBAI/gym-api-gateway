@@ -14,9 +14,9 @@ export class CreateGymDto {
 
     gymId?: string;
     memberId?:String;
-    userid?:string;
-    pkgId:string;
+    userId?:string;
+    // pkgId:string;
     svcId?:string;
-
+    bankId?:string;
     
 }

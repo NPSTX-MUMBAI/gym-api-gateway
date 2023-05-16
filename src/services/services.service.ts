@@ -279,7 +279,7 @@ export class ServicesService {
 
   //   }
 
-  async addService(id: string, svcDto: ServiceDTO) {
+  async addCustomService(id: string, svcDto: ServiceDTO) {
     let svcId: string;
 
     const createSvc = await this.neo.write(`
@@ -478,6 +478,29 @@ export class ServicesService {
       }
     }
 
+    deassociateSvcWithMember(dto:AssociateSvcDto) {
+      console.log('Deassociateion starts...');
+      
+      try {
+        //1
+        const r1 = this.neo.read(`
+        MATCH (u:User {userId:"${dto.memberId}"})
+        RETURN u
+        `)
+
+        //2
+        const r2 = this.neo.write(`
+        MATCH (u:User {userId:"${dto.memberId}"}) - [r:SUBSCRIBED_TO] - (s:Service {svcId:"${dto.services[0].svcId}"})
+        DETACH DELETE r
+        
+        `)
+        return r2
+
+      } catch (error) {
+        console.log('',error);
+        
+      }
+    }
 
 
   getServiceByGymId(id: string) {
