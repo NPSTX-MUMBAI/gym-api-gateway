@@ -104,6 +104,8 @@ export class GymService {
     }
   }
 
+  
+
   // async findAll() {
   //   try {
   //     const res = await this.neo.read(`MATCH (g:Gym) return g`);

@@ -212,7 +212,7 @@ return u,a `,
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string):Promise<{status:boolean,msg:string}>{
     try {
 
       console.log('Deleting Member ID - ',id);
@@ -220,7 +220,8 @@ return u,a `,
       const res = await this.neo.write(
         `MATCH (u:User {userId:"${id}"}) DETACH DELETE u`,
       );
-      return 'member deleted successfully';
+        return {status:true,msg:'member deleted successfully'};
+      
     } catch (error) {
       throw new HttpException('error', error);
     }

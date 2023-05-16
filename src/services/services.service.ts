@@ -3,7 +3,7 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 
 import * as crypto from 'crypto';
 import { NotFoundError } from 'rxjs';
-import { ServiceDTO } from 'src/package/dto/service.dto';
+import { ServiceDTO, serviceType } from 'src/package/dto/service.dto';
 
 @Injectable()
 export class ServicesService {
@@ -88,15 +88,16 @@ export class ServicesService {
           name: 'Lockers',
           imgUrl: '../assets/lockers.jpg',
           rate: 1000,
-          serviceType:'Recurring'
-        },
+          serviceType:[serviceType.RECURRING]
+          
+        },  
         {
           svcId: crypto.randomUUID(),
           isDefault: true,
           name: 'Yoga',
           imgUrl: '../assets/Yoga1.jpg',
           rate: 1000,
-          serviceType:'Recurring'
+          serviceType:[serviceType.RECURRING]
         },
         {
           svcId: crypto.randomUUID(),
@@ -104,7 +105,7 @@ export class ServicesService {
           name: 'Cardio',
           imgUrl: '../assets/cardio1.jpg',
           rate: 1000,
-          serviceType:'Recurring'
+          serviceType:[serviceType.RECURRING]
         },
         {
           svcId: crypto.randomUUID(),
@@ -112,7 +113,7 @@ export class ServicesService {
           name: 'Personal Training',
           imgUrl: '../assets/Trainer1.jpg',
           rate: 2000,
-          serviceType:'Recurring'
+          serviceType:[serviceType.RECURRING]
         },
         {
           svcId: crypto.randomUUID(),
@@ -120,7 +121,8 @@ export class ServicesService {
           name: 'Strength Training',
           imgUrl: '../assets/Strengthtraining.jpg',
           rate: 2500,
-          serviceType:'Recurring'
+          serviceType:[serviceType.INSTANCE]
+          
         },
         {
           svcId: crypto.randomUUID(),
@@ -128,7 +130,7 @@ export class ServicesService {
           name: 'Swimming',
           imgUrl: '../assets/swimpool1.jpg',
           rate: 2000,
-          serviceType:'Recurring'
+          serviceType:[serviceType.RECURRING]
         },
         {
           svcId: crypto.randomUUID(),
@@ -136,7 +138,7 @@ export class ServicesService {
           name: 'Sauna',
           imgUrl: '../assets/sauna.jpg',
           rate: 3000,
-          serviceType:'Recurring'
+          serviceType:[serviceType.RECURRING]
         },
       ];
 

@@ -5,10 +5,14 @@ export class ServiceDTO{
     isDefault:boolean;
     rate:number;
     svcId: string;
-    serviceType:string;
+    serviceType?: serviceType[];
     noOfOccurence?:number;
     id?:string;
     gymId?:string
 }
+export enum serviceType {
+ INSTANCE = 'INSTANCE',
+ RECURRING = 'RECURRING',
 
+}
 
