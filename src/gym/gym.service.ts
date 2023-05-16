@@ -19,46 +19,6 @@ import { log } from 'console';
 @Injectable()
 export class GymService {
   constructor(private neo: Neo4jService) {}
-  // async create(dto: CreateGymDto) {
-  //   try {
-  //     //step1: first check if the gym exists
-  //     const gymExists = await this.neo.read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
-  //     AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
-
-  //     console.log("gym=>", gymExists);
-  //     if (gymExists.length > 0) {
-  //       throw new ConflictException("gym exists with the same name for the same user");
-  //     } else {
-  //       let id: string;
-  //       const res = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
-  //     email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
-  //     MERGE (a:Address {line1:"${dto.address.line1}",
-  //       line2:"${dto.address.line2}", locality:"${dto.address.locality}",
-  //       city:"${dto.address.city}",state:"${dto.address.state}",
-  //       country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
-  //       MERGE (g)-[r:LOCATED_IN]->(a) return a,g
-  //    `)
-  //       res.map((r) => {
-  //         id = r.g.gymId;
-  //         console.log("ID->",id);
-  //       })
-  //       if (res) {
-  //         const r = await this.neo.write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"})
-  //         merge (u)-[o:OWNS]->(g) return o`);
-  //         console.log("gym created successfully", r);
-  //         return "gym created successfully"
-
-  //       } else {
-  //         return "failed to create gym due to invalid request"
-  //       }
-  //     }
-
-  //   } catch (error) {
-  //     console.log(error);
-  //     throw new HttpException(error, 501);
-  //   }
-
-  // }
 
   async create(dto: CreateGymDto) {
     try {
@@ -66,7 +26,7 @@ export class GymService {
       const gymExists = await this.neo
         .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}" 
       AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
-      
+
       console.log('gym=>', gymExists);
       if (gymExists.length > 0) {
         throw new ConflictException(
@@ -186,8 +146,6 @@ export class GymService {
     }
   }
 
-
-
   async update(id: string, dto: UpdateGymDto) {
     console.log(id, dto);
 
@@ -232,8 +190,6 @@ export class GymService {
     }
   }
 
-
-
   //#2nd Test
   // async remove(id: string) {
   //   try {
@@ -253,20 +209,19 @@ export class GymService {
   // }
 
   //Temporary Running
-  async remove(gymId:string) {
+  async remove(gymId: string) {
     try {
-      console.log('Deleting Gym ID ->',gymId);
-      
-      const w1 = this.neo.write(`MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `);
-      
-      return w1;
+      console.log('Deleting Gym ID ->', gymId);
 
+      const w1 = this.neo.write(
+        `MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `,
+      );
+
+      return w1;
     } catch (error) {
-      console.log('Cannot Be Delete as Gym ID Not Found!',error);
-      
-     throw new NotFoundException;
+      console.log('Cannot Be Delete as Gym ID Not Found!', error);
+
+      throw new NotFoundException();
     }
   }
-
-
 }

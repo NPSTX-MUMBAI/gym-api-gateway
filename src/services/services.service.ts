@@ -187,9 +187,8 @@ export class ServicesService {
       } else {
         const currentDate = Date.now();
         const res = await this.neo.write(
-          `match (g:Gym {id:"${gymId}"})
-           with g
-           MERGE (g)-[r:HAS_SERVICE {rate:"${rate}", createdOn:"${currentDate}"}]->(s:Service{svcId:"${svcId}"}) return r`,
+          `match (g:Gym {id:"${gymId}"}), (s:Service{svcId:"${svcId}"})
+          CREATE (g)-[r:HAS_SERVICE {rate:"${rate}", createdOn:"${currentDate}"}]->(s) return r`,
         );
 
         console.log(res);
