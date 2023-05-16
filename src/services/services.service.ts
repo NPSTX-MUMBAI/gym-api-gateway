@@ -4,7 +4,11 @@ import { log } from 'console';
 
 import * as crypto from 'crypto';
 import { NotFoundError } from 'rxjs';
-import { ServiceDTO, serviceType } from 'src/package/dto/service.dto';
+import {
+  ServiceDTO,
+  ServicesDTO,
+  serviceType,
+} from 'src/package/dto/service.dto';
 
 @Injectable()
 export class ServicesService {
@@ -101,19 +105,27 @@ export class ServicesService {
     }
   }
 
-  async findServiceList() {
-    const r1 = await this.neo.read(`
-    MATCH (s:Service)
-    RETURN s ;
-    `);
-    const array = [];
+  // async fetchServiceList(gymId: string) {
+  //   const r1 = await this.neo.read(`
+  //   MATCH (s:Service)
+  //   RETURN s ;
+  //   `);
+  //   const array = [];
 
-    for (let i = 0; i < r1.length; i++) {
-      array.push(r1[i].s);
-      console.log();
-    }
-    return array;
-  }
+  //   for (let i = 0; i < r1.length; i++) {
+  //     array.push(r1[i].s);
+  //     console.log();
+  //   }
+  //   return array;
+  // }
+
+  // async fetchServiceListById(id: string) {
+
+  //   try {
+  //     const res = await this.neo.read(
+  //       `MATCH(g:Gym{id: "${id}"})-[e:HAS_SERVICE]->(s:service) return g,s`)
+  //   }
+  // }
 
   // async findServiceById(id: string) {
   //   console.log('Service ID - ', id);
@@ -159,6 +171,45 @@ export class ServicesService {
     } catch (error) {}
   }
 
+  async associateServiceWithGym(gymId: string, svcId: string, rate: number) {
+    try {
+      //step1: check if service is already associated or not.if already associated, then no action required
+      const chk = await this.neo.read(
+        `match (g:Gym {id:"${gymId}"})-[r:HAS_SERVICE]->(s:Service{svcId:"${svcId}"}) return g`,
+      );
+      console.log(chk);
+
+      if (chk.length > 0) {
+        return {
+          status: false,
+          msg: `gym with id ${gymId} is already associated with service ${svcId}`,
+        };
+      } else {
+        const currentDate = Date.now();
+        const res = await this.neo.write(
+          `match (g:Gym {id:"${gymId}"})
+           with g
+           MERGE (g)-[r:HAS_SERVICE {rate:"${rate}", createdOn:"${currentDate}"}]->(s:Service{svcId:"${svcId}"}) return r`,
+        );
+
+        console.log(res);
+
+        return {
+          status: true,
+          msg: 'service associated successfully',
+          data: res,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      return {
+        status: false,
+        data: error,
+        msg: 'technical error encountered. please contact system admin',
+      };
+    }
+  }
+
   async createCustomService(dto: ServiceDTO) {
     try {
       const res = await this.neo.read(
@@ -185,14 +236,14 @@ export class ServicesService {
     }
   }
 
-  async selectedServices(dto: any) {
+  async selectedServices(dto: ServiceDTO) {
     try {
-      const arr: any[] = dto.array;
+      const arr: Array<ServicesDTO> = dto.svcIds;
       let query;
       let i;
       for (i = 0; i < arr.length; i++) {
         query = await this.neo.write(
-          `CREATE -[r:HAS_Selected]->(g:Gym {id:"${dto.id}"})(s:Service {svcId:"${arr[i]}"}) RETURN r`,
+          `MERGE (g:Gym {id:"${dto.id}"})-[r:HAS_SERVICE]->(s:Service {svcId:"${arr[i].svcId}",name:"${arr[i].name}"}) RETURN r`,
         );
       }
 
@@ -206,11 +257,13 @@ export class ServicesService {
     }
   }
 
-  async findServiceByGymId(id: string) {
+  async getServiceByGymId(id: string) {
     try {
+      console.log('id=>', id);
       const query = await this.neo.read(
-        `match (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service) RETURN s`,
+        `MATCH (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service) RETURN s`,
       );
+
       console.log(query);
 
       if (query.length > 0) {
@@ -219,6 +272,7 @@ export class ServicesService {
         return { data: null, msg: 'Error Service Not Found', status: false };
       }
     } catch (error) {
+      console.log(error);
       return error;
     }
   }

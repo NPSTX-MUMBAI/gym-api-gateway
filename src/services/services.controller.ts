@@ -25,13 +25,13 @@ export class ServicesController {
     return await this.defSvc.createDefaultservice(dto);
   }
 
-  //#2
-  @Get('getlist') //Running
-  findAll() {
-    // return `This action returns all owner`;
-
-    return this.defSvc.findServiceList();
-  }
+  // // #2
+  // @Get('getlist') //Running
+  // fetchserviceList(@Param() data: string) {
+  //   // return `This action returns all owner`;
+  //   console.log(data);
+  //   return this.defSvc.fetchServiceList();
+  // }
 
   // @Get(':id') //Service Id Getting null
   // findOne(id: string) {
@@ -52,9 +52,11 @@ export class ServicesController {
   }
 
   @Get(':id')
-  findserviceById(id: string) {
+  async getserviceById(@Param('id') id: any) {
     // return `This action returns a #${id} owner`;
-    return this.defSvc.findServiceByGymId(id);
+    console.log(`findserviceById ${id}`);
+
+    return await this.defSvc.getServiceByGymId(id);
   }
 
   //Not Running
@@ -74,5 +76,16 @@ export class ServicesController {
   @Delete('remove')
   async deleteServiceByGymId(@Body() dto: ServiceDTO) {
     return await this.defSvc.deleteServiceByGymId(dto);
+  }
+
+  @Post('/associateService')
+  async associateServiceWithGym(
+    @Body() body: { gymId: string; svcId: string; rate: number; name: string },
+  ) {
+    return await this.defSvc.associateServiceWithGym(
+      body.gymId,
+      body.svcId,
+      body.rate,
+    );
   }
 }
