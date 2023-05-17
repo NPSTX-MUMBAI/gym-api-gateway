@@ -17,6 +17,6 @@ export class UpdateBankDto{
     id?: string;
     bankId?:string;
     userid?:string;
-    // gymId?:string;
+ gymId?:string;
 
 }
