@@ -6,59 +6,143 @@ import { Neo4jService } from '@brakebein/nest-neo4j';
 import { User } from 'src/models/user.model';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { mergeScan } from 'rxjs';
-import { Gym } from 'src/gym/entities/gym.entity';
-import { Member } from './entities/member.entity';
-import * as crypto from 'crypto';
+import { AppController } from 'src/app.controller';
+
+import { IsUUID } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
+import { create } from 'domain';
 import { AuthService } from 'src/auth/auth.service';
-import { USER_ROLE } from 'src/auth/dtos/signup.dto';
+
 
 @Injectable()
 export class MemberService {
   constructor(private neo: Neo4jService, private authSvc: AuthService) { }
 
+  
+  //1st Attempt
+  // async create(dto: CreateMemberDto) {
+  //   try {
+  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+  //     const query= await this.neo.write(`merge (m:member {firstName:"${dto.firstName}",
+  //     lastName:"${dto.lastName}",
+  //     email:"${dto.email}",
+  //     mobileNo:"${dto.mobileNo}",
+  //     password:"${dto.password}"
+  //   ,memberId:"${dto.memberId}" }) 
+  //    return m
+  //    union
+  //    merge(g:gym {gymId: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
 
-  async create(dto: CreateMemberDto) {
+  //   return { data: query, msg:"ok"}
+  //   } catch (error) {
+  //     return new HttpException(error, 503);
+  //   }
+  // }
+
+  // async create(dto: CreateMemberDto) {
+  //   try {
+
+  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+
+  //     console.log("EN PASS - ",encryptedPassword);
+      
+
+  //     const query= await this.neo.write(`
+  //     CREATE (m:Member {
+  //     firstName:"${dto.firstName}",
+  //     lastName:"${dto.lastName}", 
+  //     email:"${dto.email}",
+  //     mobileNo:"${dto.mobileNo}",
+  //     password:"${dto.password}"
+  //   }) 
+  //     return m
+  //     union
+  //     merge(g:gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
+
+  //     console.log("GymID->",dto.gymId);
+  //     console.log("MemberID->",dto.memberId);
+
+  //   return { data: query, msg:"ok"}
+  //   } catch (error) {
+  //     return new HttpException(error, 503);
+  //   }
+  // }
+
+  //   async create1(dto: CreateMemberDto) {
+  //   try {
+
+  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+
+  //     console.log("EN PASS - ",encryptedPassword);
+        
+
+  //     const query= await this.neo.write(`
+  //     CREATE (m:Member {
+  //     firstName:"${dto.firstName}",
+  //     lastName:"${dto.lastName}", 
+  //     email:"${dto.email}",
+  //     mobileNo:"${dto.mobileNo}",
+  //     password:"${dto.password}"
+  //   }) 
+  //     return m
+  //     union 
+  //     merge(g:Gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
+
+  //     console.log("GymID->",dto.gymId);
+  //     console.log("MemberID->",dto.memberId);
+
+  //   return { data: query, msg:"ok"}
+  //   } catch (error) {
+  //     return new HttpException(error, 503);
+  //   }
+  // }
+
+
+  
+  async create(dto:CreateMemberDto) {
 
     try {
+      
+      let memberId : string;
+    const createMember = await this.neo.write(`
+    CREATE (m:Member {
+      memberId:apoc.create.uuid(),
+      firstName :"${dto.firstName}",  
+      lastName :"${dto.lastName}",
+      mobileNo :"${dto.mobileNo}",
+      email :"${dto.email}",
+      password :"${dto.password}",
+      roles :"${dto.roles}"
+    })
+    RETURN m
+    `)
 
-      const res = await this.authSvc.signup({ userId: "", fullName: dto.fullName, email: dto.email, password: dto.password, mobileNo: dto.mobileNo, roles: [USER_ROLE.MEMBER], })
-      console.log(res)
+   
 
-      const r = await this.neo.write(`match(g: Gym), (u: User)
-      where g.id = '${dto.gymId}'and u.email = '${dto.email}'
-      merge(g) - [r: HAS_MEMBER {createdOn:"${Date.now()}"}] -> (u) return u as user`);
-      console.log(r);
-      if (r.length > 0) {
+    if(createMember.length > 0) {
+      createMember.map((res) => {
+        memberId = res.m.memberId;
+        console.log('Member ID ',memberId);
+        
+      })
 
-        const name: number = 10;
-        const nameArray: number[] = [];
-          console.log(dto.services)
-        dto.services.map(async (s) => {
 
-          try {
+      const linkSvc = this.neo.write(`
+      MATCH (m:Member {memberId:"${memberId}"}),(s:Service {svcId:"${dto.svcId}"}) 
+      MERGE (m) - [r:ASSOCIATE {svcId:"${dto.svcId}"}] -> (s)
+      RETURN m`);
 
-            const query = await this.neo.write(`match(u:User), (s: Service) 
-          where u.email = '${dto.email}' and s.id = '${s.serviceId}'
-          merge(u) - [r: HAS_SERVICE {createdOn:"${Date.now()}", rate:"${s.rate}", 
-          rateType:"${s.rateType}"}] -> (s) return u as user`);
-            console.log(query);
-          } catch (error) {
-            console.log(error);
-          }
-        });
-
-        return "member created successfully"
-        //return "member created successfully"
-
-      } else {
-        throw new HttpException("could not create member and it's relation", 402);
-      }
-    } catch (error) {
-      console.log(error);
-      throw new HttpException("error encountered", 402);
-
+      return linkSvc
     }
+
+    
+  } catch (error) {
+    console.log('',error);
+    
   }
+  
+}
+
 
   async findAll() {
     try {
@@ -74,26 +158,15 @@ export class MemberService {
     }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} member`;
-  // }
+  findOne(id: string) {
+    // return `This action returns a #${id} member`;
 
-  async findmemberbygymID(id: CreateMemberDto) {
-    try {
-      const res = await this.neo.read(
-        `MATCH (n: Member{gymId: "${id}"}) return n`,
-      );
-      let member: Member[] = [];
-      console.log(res);
-      if (res && res.length > 0) {
-        member = res.map((r) => (member = r.n));
-        return member;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      throw new HttpException('error encountered', error);
-    }
+    const r1 = this.neo.read(`
+    MATCH (u:Member {memberID:"${id}"})
+    RETURN u.userId;
+    `)
+
+    return r1;
   }
 
   async update(id: string, dto: UpdateMemberDto) {
@@ -101,8 +174,10 @@ export class MemberService {
       const res = await this.neo.write(`MATCH (u:User) where u.id="${id}" 
       SET
       u.email="${dto.email}",
-      u.fullName="${dto.fullName}",
-      u.mobileNo="${dto.mobileNo}"
+      u.firstName="${dto.firstName}",
+      u.lastName="${dto.lastName}",
+      u.mobileNo="${dto.mobileNo}",
+
       return u
       `);
       return 'member updated successfully';
@@ -111,14 +186,14 @@ export class MemberService {
     }
   }
 
-  async remove(id: string) {
-    try {
-      const res = await this.neo.write(
-        `MATCH (u:User {id:"${id}"}) DETACH DELETE u`,
-      );
-      return 'member deleted successfully';
-    } catch (error) {
-      throw new HttpException('error', error);
-    }
+  remove(id: string) {
+    console.log('Deleting Member ID Is', id);
+
+    const w1 = this.neo.write(`
+    MATCH (m:Member {memberId:"${id}"}) 
+    DETACH DELETE m
+    `);
+    console.log('Deleted Gym ID Is - ', id);
+    return 'Deleted Gym Member Successfully! ';
   }
 }

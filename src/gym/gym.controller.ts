@@ -14,11 +14,11 @@ import { UpdateGymDto } from './dto/update-gym.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { HasRoles } from 'src/auth/has-role.decorator';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { BankService } from 'src/bank/bank.service';
 
 @Controller('gym')
 export class GymController {
-  constructor(private readonly gymService: GymService) {}
+  constructor(private readonly gymSvc: GymService) { }
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
@@ -26,53 +26,65 @@ export class GymController {
   async create(@Body() createGymDto: CreateGymDto) {
     console.log('inside create gym controller=>', createGymDto)
 
-    return await this.gymService.create(createGymDto);
+    return await this.gymSvc.create(createGymDto);
   }
-
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
 
   @Get('/all')
   async findAll() {
-    return await this.gymService.findAll();
+    return await this.gymSvc.findAll();
   }
+  
 
-  @Get(':id') //Find ID
+  @Get(':id')           //Running
   async findOne(@Param('id') id: string) {
     console.log(id);
-    return await this.gymService.findOne(id);
+    // return await this.gymService.findOne(id);
+    return this.gymSvc.findById(id);
+  }
+  
+  @Get('details/:id')     //Running   
+  getGymdetailsByBankID(@Param ('id') id:string) {
+    return this.gymSvc.getGymdetailsByBankID(id);
   }
 
-  // @Get('/email/:email')
+  // @Get('/email/:email')   //Last
   // async findAllGymForCurrentUser(@Param('email') email: string) {
-  //   return await this.gymService.findAllGymForCurrentUser(email);
+  //   return await this.gymService.findAllGymForCurrentUser(email)
   // }
 
-  @Get('/user/:userId')
-  async findAllGymForCurrentUser(@Param('userId') userId: string) {
-    return await this.gymService.findAllGymForCurrentUser(userId);
-  }
-
-  @Get('/findaddress/:id')  
+  @Get('/findaddress/:id')  //Running
   async findGymAddress(@Param('id') email: string) {
-    return await this.gymService.getGymAddress(email);
+    return await this.gymSvc.getGymAddress(email);
   }
-
-  @Patch('/update/:id')
+ 
+  @Patch('/update/:id')   //Running    
   async update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
-    return await this.gymService.update(id, updateGymDto);
+    return await this.gymSvc.update(id, updateGymDto);
   }
 
-  @Patch('/update/address/:id')
-  async updateAddress(
-    @Param('id') id: string,
-    @Body() updateGymDto: UpdateGymDto,
-  ) {
-    return await this.gymService.updateAddress(id, updateGymDto);
+  @Patch('/update/address/:id')   //Problematic
+  async updateAddress(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
+    return await this.gymSvc.updateAddress(id, updateGymDto);
   }
 
-  @Delete(':id')
+  @Post('detachsvc')
+  detachService(
+    @Body()
+    gymDto:CreateGymDto )
+    {
+      return this.gymSvc.detachService(gymDto);
+    }
+
+
+  //Running
+  @Delete('account/details/delete/:id')
   remove(@Param('id') id: string) {
-    return this.gymService.remove(id);
+    return this.gymSvc.remove(id);
   }
+
+
+ 
+
 }

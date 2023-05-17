@@ -5,6 +5,6 @@ export class Bank {
   accountNo: string;
   ifsc: string;
   mid: string;
-  bankname: string;
+  name: string;
   branchname: string;
 }

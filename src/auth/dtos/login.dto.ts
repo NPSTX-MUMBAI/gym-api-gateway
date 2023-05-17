@@ -1,7 +1,7 @@
 
 export class LoginDTO {
     email: string;
-    password: string;
+    password: string | undefined;
     
 
 }

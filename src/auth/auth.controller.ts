@@ -20,9 +20,14 @@ export class AuthController {
   constructor(private readonly authSvc: AuthService) { }
 
 
-  @SkipThrottle(true)
-  @UseGuards(AuthGuard('local'))
-  @Post('/login')
+  @Get('all')
+  getAll(email:string) {
+    this.authSvc.getAllUsers(email);
+    
+  }
+
+  @UseGuards(AuthGuard('local') )
+  @Post('/login')   //3
   async login(@Body() body: LoginDTO, @Request() req) {
     // console.log("Req-",req);
     return await this.authSvc.login(req.user);

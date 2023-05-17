@@ -20,8 +20,9 @@ import { ServicesModule } from './services/services.module';
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=lzpAnzMPt5DV_GG50IrFqqLocopsN95wguofamja-Es
 AURA_INSTANCENAME=unacademy-db
+*/
 
- */
+// port: 7687,
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -31,22 +32,17 @@ AURA_INSTANCENAME=unacademy-db
     AuthModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
-      host: '29959c44.databases.neo4j.io',
-      port: 7687,
+      host: '6b9f3275.databases.neo4j.io',
+      port:7687,
       username: 'neo4j',
-      password: 'lzpAnzMPt5DV_GG50IrFqqLocopsN95wguofamja-Es',
+      password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
       options: {
         disableLosslessIntegers: true,
       },
     }),
-    OwnerModule, MemberModule, CollectionModule, ReportsModule, GymModule, BankModule, ServicesModule],
+    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  }, {
-      provide: APP_GUARD,
-      useClass: RolesGuard
-    }],
+  providers: [AppService,],
 })
+
 export class AppModule { }

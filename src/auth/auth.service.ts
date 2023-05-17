@@ -13,7 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { User } from 'src/models/user.model';
 import { LoginDTO } from './dtos/login.dto';
-import { TestDto } from './dtos/test.dto';
 import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
@@ -107,10 +106,8 @@ export class AuthService {
     console.log('Total Gym Users -> ', gymUserCount);
   }
 
-  // async getAllGyms() {
-  //   const gymCount = (await this.neo.read(`MATCH (n:Gym) RETURN n`)).length;
-  //   console.log('Available Gyms -> ', gymCount);
-  // }
+  
+    
 
   
 }
