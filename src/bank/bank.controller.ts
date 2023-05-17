@@ -16,85 +16,47 @@ import { UpdateBankDto } from './dto/update-bank.dto';
 
 @Controller('bank')
 export class BankController {
-  constructor(private readonly bankSvc: BankService) { }
-
-  // @Post('add')  //Running
-  // create(@Body() createBankDto: CreateBankDto, userDto: SignUpDTO) {
-  //   // return this.bankSvc.create(createBankDto);
-  //   // return this.bankSvc.create1(createBankDto);
-  // }
-
-  // @Post('add')
-  // create(
-  //   @Body() 
-  //     bankDto:CreateBankDto
-  //   ) {
-  //     this.bankSvc.create(bankDto)
-  //   }
-
+  constructor(private readonly bankService: BankService) { }
 
   @Post('add')
-  create(
-    @Param('id') id: string,
-    @Body()
-    // bankDto:CreateBankDto,
-    linkedDTO: linkGymidToBank
-  ) {
-    //this.bankSvc.create(linkedDTO)
-  }
-
-
-  //Running
-  @Post('linkgymid/:id')
-  f1(
-    @Param('id') id: string,
-    @Body()
-    bankDto: CreateBankDto
-  ) {
-    this.bankSvc.linkGymId(id, bankDto);
+  create(@Body() createBankDto: CreateBankDto) {
+    return this.bankService.create(createBankDto);
+    // return this.bankService.create1(createBankDto);
   }
 
   @Get('list') //Running
   findAll() {
-    return this.bankSvc.findAll();
+    return this.bankService.findAll();
   }
 
-  // Banking Service  #1  Getting Bank Details by BankID
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
+    return this.bankService.update(id, updateBankDto);
+  }
+
+
+
+  // Banking Service  #1  Getting Bank Ids
   @Get(':id') //Running
-  findOne(
-    @Param('id') id: string
-  ) {
-    return this.bankSvc.getBankDetailsById(id);
+  findOne(@Param('id') id: string) {
+    return this.bankService.getBankIds(id);
   }
 
   // Banking Service  #2  Getting Bank Names 
 
-  // Banking Service  #3  Getting Bank Details From Gym ID
-
-  //  @Get('account/:id')    //Check Relations
-  //  getThree(@Param('id') id: string) {
-  //    return this.bankSvc.getBankdetailsFrom(id);
+  //  @Get('banknames') //Runnning
+  //  getBanknames() {
+  //    return this.bankService.getBanknames();
   //  }
 
-  @Get('account/:id')    //Not Working
+  // Banking Service  #3  Getting Bank Details From Gym ID
+  @Get('accounts/:id')
   getTwo(@Param('id') id: string) {
-    return this.bankSvc.getBankDetailsFromGymId(id);
+    return this.bankService.getBankDetailsFromGymId(id);
   }
-
-  @Patch('update/:id')    //Running
-  update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
-    return this.bankSvc.update(id, updateBankDto);
-  }
-
-  //Running
   @Delete('account/details/remove/:id')
   remove(@Param('id') id: string) {
-    return this.bankSvc.remove(id);
+    return this.bankService.remove(id);
   }
-
-
-
-
-
 
 }

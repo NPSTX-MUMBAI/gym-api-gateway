@@ -22,27 +22,13 @@ import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
 import { log } from 'console';
 
-@Controller('members')
+@Controller('member')
 export class MemberController {
   constructor(private readonly memberSvc: MemberService) { }
 
-<<<<<<< HEAD
   @Post('/create')
   async create(@Body() createMemberDto: CreateMemberDto) {
-    return await this.memberService.create(createMemberDto);
-=======
-  // @Post('/account/add')
-  // create(@Body() createMemberDto: CreateMemberDto) {
-  //   return this.memberSvc.create2(createMemberDto);
-  // }
-
-
-  @Post('create')
-  create(
-    // @Param('id') id:string,
-    @Body() createMemberDto: CreateMemberDto) {
-    return this.memberSvc.create(createMemberDto)
->>>>>>> 903463badc3e04777d22ceff3d6b77434e8a271e
+    return await this.memberSvc.create(createMemberDto);
   }
 
 
@@ -53,27 +39,22 @@ export class MemberController {
   }
 
   @Get(':id')
-<<<<<<< HEAD
-  findOne(@Param('id') id: CreateMemberDto) {
-    return this.memberService.findmemberbygymID(id);
+
+  findOne(@Param('id') id: any) {
+
+    return this.memberSvc.findmemberbygymID(id);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   async update(
     @Param('id') id: string,
     @Body() updateMemberDto: UpdateMemberDto,
   ) {
-    return await this.memberService.update(id, updateMemberDto);
-=======
-  findOne(@Param('id') id: string) {
-    return this.memberSvc.findOne(id);
+    return await this.memberSvc.update(id, updateMemberDto);
   }
 
-  @Patch('update/:id')
-  async update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
-    return await this.memberSvc.update(id, updateMemberDto);
->>>>>>> 903463badc3e04777d22ceff3d6b77434e8a271e
-  }
+
+
 
   //Running
   @Delete('account/delete/:id')

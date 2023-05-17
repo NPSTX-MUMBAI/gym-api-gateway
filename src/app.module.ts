@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 import { AuthModule } from './auth/auth.module';
 import { OwnerModule } from './owner/owner.module';
 import { MemberModule } from './member/member.module';
-import { CollectionModule } from './collection/collection.module';
+import { CollectionModule } from './bank/collection/collection.module';
 import { ReportsModule } from './reports/reports.module';
 import { Neo4jModule } from '@brakebein/nest-neo4j';
 import { GymModule } from './gym/gym.module';
@@ -27,20 +26,27 @@ AURA_INSTANCENAME=unacademy-db
   imports: [
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10
+      limit: 10,
     }),
     AuthModule,
+
+    OwnerModule,
+    MemberModule,
+    CollectionModule,
+    ReportsModule,
+    GymModule,
+    BankModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
       host: '6b9f3275.databases.neo4j.io',
-      port:7687,
+      port: 7687,
       username: 'neo4j',
       password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
       options: {
         disableLosslessIntegers: true,
       },
     }),
-    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule],
+    ServicesModule, OwnerModule, MemberModule, CollectionModule, ReportsModule, GymModule, BankModule],
   controllers: [AppController],
   providers: [AppService,],
 })

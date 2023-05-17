@@ -1,10 +1,10 @@
 export class Bank {
   id?: string;
-  accountHoldername: string;
+  accountHolderName: string;
   accountType: string;
   accountNo: string;
   ifsc: string;
-  mid: string;
-  name: string;
-  branchname: string;
+  mid?: string;
+  bankName: string;
+  branchName: string;
 }

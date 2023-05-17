@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { User } from 'src/models/user.model';
 import { NotFoundException } from '@nestjs/common/exceptions';
@@ -12,13 +12,16 @@ import { IsUUID } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'domain';
 import { AuthService } from 'src/auth/auth.service';
-
+import { USER_ROLE } from 'src/auth/dtos/signup.dto';
+import { Address } from 'cluster';
+import { log } from 'console';
+import { Member } from './entities/member.entity';
 
 @Injectable()
 export class MemberService {
   constructor(private neo: Neo4jService, private authSvc: AuthService) { }
 
-  
+
   //1st Attempt
   // async create(dto: CreateMemberDto) {
   //   try {
@@ -45,7 +48,7 @@ export class MemberService {
   //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
 
   //     console.log("EN PASS - ",encryptedPassword);
-      
+
 
   //     const query= await this.neo.write(`
   //     CREATE (m:Member {
@@ -74,7 +77,7 @@ export class MemberService {
   //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
 
   //     console.log("EN PASS - ",encryptedPassword);
-        
+
 
   //     const query= await this.neo.write(`
   //     CREATE (m:Member {
@@ -98,13 +101,13 @@ export class MemberService {
   // }
 
 
-  
-  async create(dto:CreateMemberDto) {
+
+  async create(dto: CreateMemberDto) {
 
     try {
-      
-      let memberId : string;
-    const createMember = await this.neo.write(`
+
+      let memberId: string;
+      const createMember = await this.neo.write(`
     CREATE (m:Member {
       memberId:apoc.create.uuid(),
       firstName :"${dto.firstName}",  
@@ -117,37 +120,37 @@ export class MemberService {
     RETURN m
     `)
 
-   
-
-    if(createMember.length > 0) {
-      createMember.map((res) => {
-        memberId = res.m.memberId;
-        console.log('Member ID ',memberId);
-        
-      })
 
 
-      const linkSvc = this.neo.write(`
+      if (createMember.length > 0) {
+        createMember.map((res) => {
+          memberId = res.m.memberId;
+          console.log('Member ID ', memberId);
+
+        })
+
+
+        const linkSvc = this.neo.write(`
       MATCH (m:Member {memberId:"${memberId}"}),(s:Service {svcId:"${dto.svcId}"}) 
       MERGE (m) - [r:ASSOCIATE {svcId:"${dto.svcId}"}] -> (s)
       RETURN m`);
 
-      return linkSvc
+        return linkSvc
+      }
+
+
     }
-
-    
-  } catch (error) {
-    console.log('',error);
-    
+    catch (error) {
+      console.log('', error);
+    }
   }
-  
-}
-
-
   async findAll() {
     try {
-      // const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
-      const res = await this.neo.read(`MATCH (u:Member)  return u `);
+      const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
+      // const res = await this.neo.read(`MATCH (u:Member)  return u `);
+      const res1 = await this.neo.read(`
+      MATCH (u:User) RETURN u;
+      `)
 
       res.map((r) => {
         console.log(r);
@@ -158,26 +161,43 @@ export class MemberService {
     }
   }
 
-  findOne(id: string) {
-    // return `This action returns a #${id} member`;
+  findOne(id: number) {
+    return `This action returns a #${id} member`;
+  }
 
-    const r1 = this.neo.read(`
-    MATCH (u:Member {memberID:"${id}"})
-    RETURN u.userId;
-    `)
+  async findmemberbygymID(id: any) {
+    console.log(id);
 
-    return r1;
+    try {
+      const res = await this.neo.read(
+        ` MATCH (g:Gym {id: "${id}"})-[e:HAS_MEMBER]->(u:User)
+with g,u
+match (g)-[r:LOCATED_IN]->(a:Address)
+return u,a `,
+      );
+      console.log(res);
+
+      let member: Member[] = [];
+
+      if (res.length > 0) {
+        member = res.map((r) => (member = { ...r.u, address: r.a }));
+        return member;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new HttpException('error encountered', error);
+    }
   }
 
   async update(id: string, dto: UpdateMemberDto) {
     try {
-      const res = await this.neo.write(`MATCH (u:User) where u.id="${id}" 
+      const res = await this.neo.write(`MATCH (u:User) where u.userId="${id}" 
       SET
       u.email="${dto.email}",
-      u.firstName="${dto.firstName}",
-      u.lastName="${dto.lastName}",
-      u.mobileNo="${dto.mobileNo}",
-
+      u.fullName="${dto.fullName}",
+      
+      u.mobileNo="${dto.mobileNo}"
       return u
       `);
       return 'member updated successfully';
@@ -186,14 +206,18 @@ export class MemberService {
     }
   }
 
-  remove(id: string) {
-    console.log('Deleting Member ID Is', id);
+  async remove(id: string) {
+    try {
 
-    const w1 = this.neo.write(`
-    MATCH (m:Member {memberId:"${id}"}) 
-    DETACH DELETE m
-    `);
-    console.log('Deleted Gym ID Is - ', id);
-    return 'Deleted Gym Member Successfully! ';
+      console.log('Deleting Member ID - ', id);
+
+      const res = await this.neo.write(
+        `MATCH (u:User {userId:"${id}"}) DETACH DELETE u`,
+      );
+      return 'member deleted successfully';
+    } catch (error) {
+      throw new HttpException('error', error);
+    }
+
   }
 }

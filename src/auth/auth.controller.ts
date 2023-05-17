@@ -21,12 +21,12 @@ export class AuthController {
 
 
   @Get('all')
-  getAll(email:string) {
+  getAll(email: string) {
     this.authSvc.getAllUsers(email);
-    
+
   }
 
-  @UseGuards(AuthGuard('local') )
+  @UseGuards(AuthGuard('local'))
   @Post('/login')   //3
   async login(@Body() body: LoginDTO, @Request() req) {
     // console.log("Req-",req);
@@ -34,12 +34,12 @@ export class AuthController {
     //return req.user;
   }
 
-  @Post('/signup')  //1  Wharting
+  @Post('/signup') //1  Wharting
   async signup(@Body() body: SignUpDTO) {
     return await this.authSvc.signup(body);
   }
 
-  @Post('/validateuser')  //2   
+  @Post('/validateuser') //2
   async signIn(@Body() body: LoginDTO) {
     return await this.authSvc.validateUser(body.email, body.password);
   }
@@ -50,7 +50,7 @@ export class AuthController {
     return req.user;
   }
 
-  resetPassword() {}
+  resetPassword() { }
 
   logout() { }
 }

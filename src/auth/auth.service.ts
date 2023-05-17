@@ -5,6 +5,7 @@ import {
   NotAcceptableException,
   HttpCode,
   Get,
+  Param,
 } from '@nestjs/common';
 import { SignUpDTO } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt';
@@ -16,7 +17,7 @@ import { LoginDTO } from './dtos/login.dto';
 import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
-  constructor(private neo: Neo4jService, private jwtService: JwtService) {}
+  constructor(private neo: Neo4jService, private jwtService: JwtService) { }
 
   async validateUser(email: string, password: string): Promise<any> {
     console.log('inside validateUser=>', email, password);
@@ -60,19 +61,44 @@ export class AuthService {
   //     }
   // }
 
+  // async signup(dto: SignUpDTO) {
+  //   try {
+  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+
+  //     const query = `CREATE (u:User {userId:apoc.create.uuid(),fullName:"${dto.fullName}",email:"${dto.email}",
+  //           mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}"
+  //       }) SET u.roles = $roles`;
+  //     const params = { roles: dto.roles };
+  //     const res = await this.neo.write(query, params);
+  //     return 'account created successfully';
+  //   } catch (error) {
+  //     return new HttpException(error, 503);
+  //   }
+  // }
+
   async signup(dto: SignUpDTO) {
     try {
-      const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-      
+      const userExists = await this.neo.read(
+        `MATCH (u:User {mobileNo: "${dto.mobileNo}"}) RETURN u `,
+      );
+      console.log(userExists, 'user present');
+      if (userExists.length > 0) {
+        console.log('cross the condition');
 
-      const query = `CREATE (u:User {userId:apoc.create.uuid(),fullName:"${dto.fullName}",email:"${dto.email}",
-            mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}"
-        }) SET u.roles = $roles`;
-      const params = { roles: dto.roles };
-      const res = await this.neo.write(query, params);
-      return 'account created successfully';
+        return { status: false, msg: 'User Exists' };
+      } else {
+        const encryptedPassword = bcrypt.hashSync(dto.password, 10);
+
+        const query = `CREATE (u:User {userId:apoc.create.uuid(), fullName:"${dto.fullName}", email:"${dto.email}",
+         mobileNo:"${dto.mobileNo}", password:"${encryptedPassword}" })
+         SET u.roles = $roles`;
+        const params = { roles: dto.roles };
+        const res = await this.neo.write(query, params);
+        return { status: true, msg: 'Account Created Successfully' };
+      }
+      return { data: userExists };
     } catch (error) {
-      return new HttpException(error, 503);
+      return { status: false, msg: 'http exception' };
     }
   }
 
@@ -106,8 +132,8 @@ export class AuthService {
     console.log('Total Gym Users -> ', gymUserCount);
   }
 
-  
-    
 
-  
+
+
+
 }
