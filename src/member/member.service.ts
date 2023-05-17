@@ -110,8 +110,7 @@ export class MemberService {
       const createMember = await this.neo.write(`
     CREATE (m:Member {
       memberId:apoc.create.uuid(),
-      firstName :"${dto.firstName}",  
-      lastName :"${dto.lastName}",
+      fullName:"${dto.fullName}",
       mobileNo :"${dto.mobileNo}",
       email :"${dto.email}",
       password :"${dto.password}",

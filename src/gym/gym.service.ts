@@ -128,6 +128,48 @@ export class GymService {
   //   }
   // }
 
+  async findById(id: String) {
+    const gymDetails = await this.neo.read(`MATCH (g:Gym{id:"${id}"}) RETURN g as gym;`);
+    console.log('In Gym -', gymDetails);
+    return gymDetails;
+
+  }
+
+
+  getGymdetailsByBankID(bankId: string) {
+
+    let getDetails = this.neo.read(`
+
+    MATCH (b:Bank {bankId:"${bankId}"}) - [a:HAS_ACCOUNT] - (g:Gym )
+
+    RETURN g
+
+    `);
+    return getDetails;
+  }
+
+
+
+
+  detachService(dto: CreateGymDto) {
+
+    try {
+      console.log('Detaching Service start...');
+      const selectService = this.neo.read(`
+      MATCH (g:Gym {gymId:"${dto.userId}"}) - [:HAS_SERVICE] - (s:Service {svcId:"${dto.svcId}"})
+      RETURN g
+      `).then((res) => {
+        const w1 = this.neo.write(`
+        MATCH (g:Gym {userId:"${dto.userId}"}) - [:HAS_SERVICE] - (s:Service {svcId:"${dto.svcId}"})
+        DETACH DELETE s;`)
+      })
+    } catch (error) {
+      console.log('Detach unsuccessful! Try Again', error);
+    }
+  }
+
+
+
   async findAll() {
     try {
       const res = await this.neo.read(

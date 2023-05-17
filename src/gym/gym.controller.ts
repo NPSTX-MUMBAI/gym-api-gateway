@@ -51,6 +51,7 @@ export class GymController {
     return this.gymSvc.getGymdetailsByBankID(id);
   }
 
+  
   // @Get('/email/:email')   //Last
   // async findAllGymForCurrentUser(@Param('email') email: string) {
   //   return await this.gymService.findAllGymForCurrentUser(email)
