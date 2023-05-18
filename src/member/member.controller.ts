@@ -7,6 +7,7 @@ import { UploadedFile } from '@nestjs/common/decorators';
 import { FileTypeValidator, MaxFileSizeValidator, ParseFilePipe } from '@nestjs/common/pipes';
 import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
+import { AddDietDTO } from './dto/add-diet.dto';
 
 @Controller('members')
 export class MemberController {
@@ -24,9 +25,7 @@ export class MemberController {
     @Body() createMemberDto: CreateMemberDto) {
     return this.memberSvc.create(createMemberDto)
   }
-
-
-
+  
   @Get('/all')    //Running
   async findAll() {
     return await this.memberSvc.findAll();
@@ -90,4 +89,13 @@ export class MemberController {
     return "file uploaded successfully";
 
   }
+
+//   @Post('/adddefaultdiet')
+// async  addDefaultDiet(
+//     @Body()
+//     dto:AddDietDTO
+//   ) {
+//     return await this.memberSvc.addDefaultDiet(dto)
+//   }
+  
 }

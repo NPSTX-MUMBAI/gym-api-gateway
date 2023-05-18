@@ -12,6 +12,7 @@ import { Neo4jModule } from '@brakebein/nest-neo4j';
 import { GymModule } from './gym/gym.module';
 import { BankModule } from './bank/bank.module';
 import { ServicesModule } from './services/services.module';
+import { DietModule } from './diet/diet.module';
 
 /**
  * NEO4J_URI=neo4j+s://29959c44.databases.neo4j.io
@@ -29,11 +30,8 @@ AURA_INSTANCENAME=unacademy-db
       port:7687,
       username: 'neo4j',
       password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
-      options: {
-        disableLosslessIntegers: true,
-      },
     }),
-    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule],
+    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule, DietModule],
   controllers: [AppController],
   providers: [AppService,],
 })

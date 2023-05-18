@@ -9,12 +9,12 @@ export class ServiceDTO {
   //   userid?: string;
   gymId?: string;
   memeberId?: string;
-  serviceType?: serviceType[];
+  serviceType?: SERVICE_TYPE[];
   noOfOccurrence?: number;
 
 }
 
-export enum serviceType {
+export enum SERVICE_TYPE {
   INSTANCE = 'INSTANCE',
   RECURRING = 'RECURRING',
 }

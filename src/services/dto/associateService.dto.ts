@@ -5,8 +5,10 @@ export class AssociateSvcDto {
         svcId:string,
         rate:string
     }>
-     
-
+    
+    userId?:string;
+    gymId?:string;
+    svcId?:string;
 }
 
 

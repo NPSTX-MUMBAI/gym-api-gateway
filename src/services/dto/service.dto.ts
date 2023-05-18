@@ -6,9 +6,9 @@ export class ServiceDTO{
     createdOn?:string;
     isDefault:boolean;
     rate:number;
-    userid?:string;
     isActive:string;
-
+    
+    userId?:string;
     gymid?:string;
     svcType:string;
     

@@ -6,6 +6,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { HasRoles } from 'src/auth/has-role.decorator';
 import { BankService } from 'src/bank/bank.service';
+import { AssociateSvcDto } from 'src/services/dto/associateService.dto';
 
 @Controller('gym')
 export class GymController {
@@ -14,10 +15,14 @@ export class GymController {
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(USER_ROLE.ADMIN)
   @Post('/create')    //Running
-  async create(@Body() createGymDto: CreateGymDto) {
+  async create(
+    @Body() createGymDto: CreateGymDto,
+            svcDto:AssociateSvcDto    
+    ) {
     console.log('inside create gym controller=>', createGymDto)
 
-    return await this.gymSvc.create(createGymDto);
+    // return await this.gymSvc.create(createGymDto);
+    return await this.gymSvc.create(createGymDto,svcDto)
   }
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
@@ -60,12 +65,21 @@ export class GymController {
     return await this.gymSvc.updateAddress(id, updateGymDto);
   }
 
+  @Post('attachsvc')
+  attachService(
+    @Body()
+    gymDto:CreateGymDto )
+    {
+      return this.gymSvc.attachSvc(gymDto);
+    }
+
+
   @Post('detachsvc')
   detachService(
     @Body()
     gymDto:CreateGymDto )
     {
-      return this.gymSvc.detachService(gymDto);
+      return this.gymSvc.detachSvc(gymDto);
     }
 
 

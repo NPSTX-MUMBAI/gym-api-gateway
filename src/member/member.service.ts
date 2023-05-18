@@ -11,6 +11,8 @@ import { AppController } from 'src/app.controller';
 import { IsUUID } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'domain';
+import { AddDietDTO } from './dto/add-diet.dto';
+
 
 
 @Injectable()
@@ -18,83 +20,10 @@ export class MemberService {
   constructor(private neo: Neo4jService) {
 
   }
-  //1st Attempt
-  // async create(dto: CreateMemberDto) {
-  //   try {
-  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-  //     const query= await this.neo.write(`merge (m:member {firstName:"${dto.firstName}",
-  //     lastName:"${dto.lastName}",
-  //     email:"${dto.email}",
-  //     mobileNo:"${dto.mobileNo}",
-  //     password:"${dto.password}"
-  //   ,memberId:"${dto.memberId}" }) 
-  //    return m
-  //    union
-  //    merge(g:gym {gymId: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
 
-  //   return { data: query, msg:"ok"}
-  //   } catch (error) {
-  //     return new HttpException(error, 503);
-  //   }
-  // }
 
-  // async create(dto: CreateMemberDto) {
-  //   try {
 
-  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
 
-  //     console.log("EN PASS - ",encryptedPassword);
-      
-
-  //     const query= await this.neo.write(`
-  //     CREATE (m:Member {
-  //     firstName:"${dto.firstName}",
-  //     lastName:"${dto.lastName}", 
-  //     email:"${dto.email}",
-  //     mobileNo:"${dto.mobileNo}",
-  //     password:"${dto.password}"
-  //   }) 
-  //     return m
-  //     union
-  //     merge(g:gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
-
-  //     console.log("GymID->",dto.gymId);
-  //     console.log("MemberID->",dto.memberId);
-
-  //   return { data: query, msg:"ok"}
-  //   } catch (error) {
-  //     return new HttpException(error, 503);
-  //   }
-  // }
-
-  //   async create1(dto: CreateMemberDto) {
-  //   try {
-
-  //     const encryptedPassword = bcrypt.hashSync(dto.password, 10);
-
-  //     console.log("EN PASS - ",encryptedPassword);
-        
-
-  //     const query= await this.neo.write(`
-  //     CREATE (m:Member {
-  //     firstName:"${dto.firstName}",
-  //     lastName:"${dto.lastName}", 
-  //     email:"${dto.email}",
-  //     mobileNo:"${dto.mobileNo}",
-  //     password:"${dto.password}"
-  //   }) 
-  //     return m
-  //     union 
-  //     merge(g:Gym {id: "${dto.gymId}"})-[r:HAS_MEMBER]->(m:member{memberId:"${dto.memberId}"}) return m`);
-
-  //     console.log("GymID->",dto.gymId);
-  //     console.log("MemberID->",dto.memberId);
-
-  //   return { data: query, msg:"ok"}
-  //   } catch (error) {
-  //     return new HttpException(error, 503);
-  //   }
-  // }
 
 
 
@@ -172,6 +101,10 @@ export class MemberService {
   }
   
 }
+
+
+
+
 
 
   async findAll() {

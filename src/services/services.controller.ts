@@ -38,14 +38,22 @@ export class ServicesController {
    return this.defSvc.findServiceById(id);
   }
 
-  @Get(':id')     //Running
-  findTwo(
-    @Param('id') id: string,
-    ) {
-   return this.defSvc.getServiceByGymId(id);
+  @Post('service/:id')     //Running
+  async findTwo(@Param('userId') memberId:any) {
+  //  return this.defSvc.getServiceByGymId(id); 
+  return await this.defSvc.getServiceByMember(memberId);
   }
 
+  @Post('findservice')
+  async findService(
+    @Body() dto:AssociateSvcDto) {
+   return this.defSvc.getServiceByMember(dto)
+  }
+  
+  
 
+
+  
 
   @Post('addservice/:id')       
   create(
@@ -66,7 +74,8 @@ export class ServicesController {
     @Body()
     dto:AssociateSvcDto) {
       console.log(dto);
-     return await this.defSvc.associateSvcWithMember(dto);
+    //  return await this.defSvc.associateSvcWithMember(dto);
+     return await this.defSvc.associateSvc(dto);
   }
 
 
