@@ -118,7 +118,7 @@ export class DietService {
           })
 
           const addMemberDiet = this.neo.write(`
-          MATCH (u:User {userId:"${dto.userId}"}),(m:Meal {mealId:"${mealId}"})
+          MATCH (u:User {userId:"${dto.userId}"}),(m:Meal {mealId:"${dto.mealId}"})
           CREATE (u) - [r:HAS_DIET] -> (m)
           return u
           `)
@@ -135,6 +135,9 @@ export class DietService {
       }
     }
 
+
+   
+
     async addFood(dto:AddFoodDTO) {
       try {
         let foodId:string
@@ -143,7 +146,21 @@ export class DietService {
         CREATE (f:Food {
           foodId:apoc.create.uuid(),
           foodType:"${dto.foodType}",
-          foodName:"${dto.foodName}"
+          foodName:"${dto.foodName}",
+          description:"${dto.description}",
+
+          calories:"${dto.calories}",
+          serving_size_g:"${dto.serving_size_g}",
+          fat_total_g:"${dto.fat_total_g}",
+          fat_saturated_g:"${dto.fat_saturated_g}",
+          protein_g:"${dto.protein_g}",
+          sodium_mg:"${dto.sodium_mg}",
+          potassium_mg:"${dto.potassium_mg}",
+          cholesterol_mg:"${dto.cholesterol_mg}",
+          carbohydrates_total_g:"${dto.carbohydrates_total_g}",
+          fiber_g:"${dto.fiber_g}",
+          sugar_g:"${dto.sugar_g}"
+
         })
         return f;
         `)
