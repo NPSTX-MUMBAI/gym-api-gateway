@@ -1,15 +1,19 @@
 export class AddDietDTO {
+    dietId:string;
+    isVeg:IsVeg;
+    dietType:string;
 
-    dietType:boolean;
     breakfast?:boolean;
     lunch:boolean;
     salad:boolean;
-    fruits:boolean;
     shakes:boolean;    
     
-    isVeg:string;
-    userId:string;
-    // gainer:boolean;
-    // steroids:boolean;
-    // protein:boolean;
+    fruits:string;
+    userId?:string;
+
+}
+
+export enum IsVeg {
+    veg = 'VEG',
+    nonveg = 'NONVEG'
 }
