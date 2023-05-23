@@ -22,12 +22,13 @@ export class GymService {
   constructor(private neo: Neo4jService) {}
 
 
-  // async create(dto:CreateGymDto) {
+  // async create(dto:CreateGymDto,svcDto:AssociateSvcDto) {
 
   //   try {
   //     let gymId:string;
   //     let userId:string;
 
+  //     //1
   //     const createGym = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
   //         email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
   //         MERGE (a:Address {line1:"${dto.address.line1}",
@@ -44,6 +45,7 @@ export class GymService {
             
   //       })
 
+  //       //2
   //       const linkMember = await this.neo.write(`
   //       MATCH (g:Gym {gymId:"${gymId}"}),(u:User {userId:"${dto.userId}"}) 
   //       MERGE (g) - [r:HAS_MEMBER] -> (u)
@@ -56,7 +58,22 @@ export class GymService {
           
   //       })
 
-          
+
+  //       //3
+  //       // svcDto.services.map((service) => {
+  //       //   const res = this.neo.write(`
+  //       //     MATCH (g:Gym {gymId:"${gymId}"}),(s:Service {svcId:"${svcDto.svcId}"})
+  //       //     MERGE (g) - [:HAS_SERVICE  {createdDate:"${Date.now()}",
+  //       //     rate:"${service.rate}"     
+  //       //   }] -> (s)
+  //       //   return g
+  //       //   `).then((res) => {
+  //       //     console.log('Service added - ',res);
+            
+  //       //   })
+  //       // })
+
+
 
   //     }
   //   } catch (error) {
@@ -66,66 +83,122 @@ export class GymService {
   // }
 
 
-  async create(dto:CreateGymDto,svcDto:AssociateSvcDto) {
 
-    try {
-      let gymId:string;
-      let userId:string;
+  // async create(dto:CreateGymDto,svcDto:AssociateSvcDto) {
 
-      //1
-      const createGym = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
-          email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
-          MERGE (a:Address {line1:"${dto.address.line1}",
-            line2:"${dto.address.line2}", locality:"${dto.address.locality}",
-            city:"${dto.address.city}",state:"${dto.address.state}",
-            country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
-            MERGE (g)-[r:LOCATED_IN]->(a) return a,g
-         `)
+  //   try {
+  //     let gymId:string;
+  //     let userId:string;
 
-      if(createGym.length > 0) {
-          createGym.map((res) => {
-            gymId = res.g.gymId
-            console.log('Gym ID ',gymId);
+  //     //1
+  //     const createGym = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
+  //         email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
+  //         MERGE (a:Address {line1:"${dto.address.line1}",
+  //           line2:"${dto.address.line2}", locality:"${dto.address.locality}",
+  //           city:"${dto.address.city}",state:"${dto.address.state}",
+  //           country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
+  //           MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+  //        `)
+
+  //     if(createGym.length > 0) {
+  //         createGym.map((res) => {
+  //           gymId = res.g.gymId
+  //           console.log('Gym ID ',gymId);
             
-        })
+  //       })
 
-        //2
-        const linkMember = await this.neo.write(`
-        MATCH (g:Gym {gymId:"${gymId}"}),(u:User {userId:"${dto.userId}"}) 
-        MERGE (g) - [r:HAS_MEMBER] -> (u)
-        RETURN type(r)
-        `)
+  //       //2
+  //       const linkMember = await this.neo.write(`
+  //       MATCH (g:Gym {gymId:"${gymId}"}),(u:User {userId:"${dto.userId}"}) 
+  //       MERGE (g) - [r:HAS_MEMBER] -> (u)
+  //       RETURN type(r)
+  //       `)
 
-        linkMember.map((res) => {
-          userId = res.u.userId;
-          console.log("User ID - ",userId);
+  //       linkMember.map((res) => {
+  //         userId = res.u.userId;
+  //         console.log("User ID - ",userId);
           
-        })
+  //       })
 
 
-        //3
-        // svcDto.services.map((service) => {
-        //   const res = this.neo.write(`
-        //     MATCH (g:Gym {gymId:"${gymId}"}),(s:Service {svcId:"${svcDto.svcId}"})
-        //     MERGE (g) - [:HAS_SERVICE  {createdDate:"${Date.now()}",
-        //     rate:"${service.rate}"     
-        //   }] -> (s)
-        //   return g
-        //   `).then((res) => {
-        //     console.log('Service added - ',res);
+  //       //3
+  //       // svcDto.services.map((service) => {
+  //       //   const res = this.neo.write(`
+  //       //     MATCH (g:Gym {gymId:"${gymId}"}),(s:Service {svcId:"${svcDto.svcId}"})
+  //       //     MERGE (g) - [:HAS_SERVICE  {createdDate:"${Date.now()}",
+  //       //     rate:"${service.rate}"     
+  //       //   }] -> (s)
+  //       //   return g
+  //       //   `).then((res) => {
+  //       //     console.log('Service added - ',res);
             
-        //   })
-        // })
+  //       //   })
+  //       // })
 
 
 
-      }
-    } catch (error) {
-      console.log('',error);
+  //     }
+  //   } catch (error) {
+  //     console.log('',error);
       
-    }
-  }
+  //   }
+  // }
 
+
+  async create(dto: CreateGymDto) {
+
+     try {
+     //step1: first check if the gym exists
+     const gymExists = await this.neo
+     .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
+     AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
+     console.log('gym=>', gymExists);
+    
+     if (gymExists.length > 0) {
+     throw new ConflictException(
+      'gym exists with the same name for the same user',
+     );
+    
+     } else {
+     let gymId: string;
+     const res = await this.neo
+      .write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
+     email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
+     MERGE (a:Address {line1:"${dto.address.line1}",
+     line2:"${dto.address.line2}", locality:"${dto.address.locality}",
+     city:"${dto.address.city}",state:"${dto.address.state}",
+     country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
+     MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+     `);
+     console.log(res, 'my gymm');
+     res.map((r) => (gymId = r.g.gymId));
+     console.log('ID->', gymId);
+    
+     if (res) {
+      const r = await this.neo.write(`MATCH (u:User
+        {userId:"${dto.userId}"}),(g:Gym {gymId:"${gymId}"})
+        merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
+    
+      console.log('gym created successfully', r);
+      return 'gym created successfully';
+    
+     } else {
+    
+      return 'failed to create gym due to invalid request';
+    
+     }
+    
+     }
+    
+     } catch (error) {
+    
+     console.log(error);
+    
+     throw new HttpException(error, 501);
+    
+     }
+    
+     }
 
 
  
@@ -143,33 +216,18 @@ export class GymService {
     }
   }
 
-  async findAllGymForCurrentUser(userId: string) {
-    try {
-      console.log(userId);
+ 
 
-      const res = await this.neo.read(
-        `MATCH (u:User)-[:OWNS]->(g:Gym) where u.email=$email return g;`,
-        { userId: userId },
-      );
-      const gyms: Gym[] = [];
-      res.map((r) => gyms.push(r.g));
-
-      return gyms;
-    } catch (error) {
-      throw new HttpException('error encountered', error);
-    }
-  }
-
-  async getGymAddress(id: string) {
+  async getGymAddress(gymId: string) {
     try {
       const res2 = this.neo.read(`
       MATCH (g:Gym),(a:Address) WHERE g.id=$id and  
       `);
 
       const res = await this.neo.read(
-        `MATCH (g:Gym {id:"${id}"}) where g.id=$id 
+        `MATCH (g:Gym {gymId:"${gymId}"})
         return g;`,
-        { id: id },
+        { id: gymId },
       );
       const gyms: Gym[] = [];
       res.map((r) => gyms.push(r.g));
@@ -335,11 +393,53 @@ export class GymService {
     console.log('Deleting Gym ID Is', id);
 
     const w1 = this.neo.write(`
-    MATCH (g:Gym {id:"${id}"}) 
+    MATCH (g:Gym {gymId:"${id}"}) 
     DETACH DELETE g
     `);
     console.log('Deleted Gym ID Is - ', id);
     return 'Deleted Gym Successfully! ';
+  }
+
+
+  getGymSvcList(dto:CreateGymDto) {
+    try {
+      
+      const gymList = this.neo.read(`
+      MATCH (g:Gym {gymId:"${dto.gymId}"})
+      RETRURN g
+      `).then((res) => {
+        console.log('=======',res);
+        
+      })
+      return gymList;
+    } catch (error) {
+      
+    }
+  }
+
+
+
+
+  async findAllGymForCurrentUser(userId: string) {
+    try {
+      console.log(userId);
+      
+      const res = await this.neo.read(
+        `MATCH (u:User {userId:"${userId}"})-[:OWNS]->(g:Gym) 
+          with g
+          MATCH (g) - [r:LOCATED_IN] -> (a:Address) 
+          return g,a;`,
+        { userId: userId },
+      );
+      const gyms: Gym[] = [];
+        res.map((r) => {
+          gyms.push({...r['g'],address:r['a']});
+          return gyms;
+        })
+
+    } catch (error) {
+      throw new HttpException('error encountered', error);
+    }
   }
 
 }

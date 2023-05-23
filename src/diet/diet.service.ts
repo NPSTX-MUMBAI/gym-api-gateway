@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { AddDietDTO } from 'src/member/dto/add-diet.dto';
 
 import { UpdateDietDto } from './dto/update-diet.dto';
-import { AddMeallDTO } from './dto/add-mill.dto';
+import { AddMeallDTO } from './dto/add-meal.dto';
 import { AddFoodDTO } from './dto/add-food.dto';
+import { Workbook } from 'exceljs';
+import { updatemealItemsDTO } from './dto/update-mealitems.dto';
 
 @Injectable()
 export class DietService {
@@ -72,7 +74,7 @@ export class DietService {
               RETURN d
         `)
   
-
+              
         if(createDefaultDiet) {  
           createDefaultDiet.map((res) => {
             dietId = res.d.dietId;
@@ -135,9 +137,7 @@ export class DietService {
       }
     }
 
-
-   
-
+ 
     async addFood(dto:AddFoodDTO) {
       try {
         let foodId:string
@@ -188,6 +188,27 @@ export class DietService {
       }
     }
 
+
+
+
+    async updateMealItems(dto:updatemealItemsDTO) {
+      try {
+
+      const updateFood =this.neo.write(`
+      MATCH (m:Meal {mealId:"${dto.mealId}"}) - [:CONSIST_OF] -> (f:Food {foodId:"${dto.foodId}")
+      SET f.foodType = "${dto.foodType}", 
+          f.foodName = "${dto.foodName}"
+      RETURN f
+
+      `)
+    return updateFood;      
+      } catch (error) {
+        
+        throw new NotFoundException('Error')
+      }
+    }
+
+
   findAll() {
     return `This action returns all diet`;
   }
@@ -203,4 +224,7 @@ export class DietService {
   remove(id: number) {
     return `This action removes a #${id} diet`;
   }
+
+  
 }
+

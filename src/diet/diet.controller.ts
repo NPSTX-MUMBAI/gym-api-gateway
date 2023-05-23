@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AddDietDTO } from 'src/member/dto/add-diet.dto';
 import { DietService } from './diet.service';
 import { AddFoodDTO } from './dto/add-food.dto';
-import { AddMeallDTO } from './dto/add-mill.dto';
+import { AddMeallDTO } from './dto/add-meal.dto';
 import { CreateDietDto } from './dto/create-diet.dto';
 import { UpdateDietDto } from './dto/update-diet.dto';
+import { updatemealItemsDTO } from './dto/update-mealitems.dto';
 
 @Controller('diet')
 export class DietController {
@@ -20,10 +22,9 @@ export class DietController {
     return this.dietSvc.addMeal(createMealDto);
   }
 
-  @Post('addFood')
-  addFood(@Body() createFoodDto: AddFoodDTO) {
-    return this.dietSvc.addFood(createFoodDto);
-  }
+  //can be set images of food here
+ 
+
 
   @Get()
   findAll() {
@@ -35,9 +36,11 @@ export class DietController {
     // return this.dietSvc.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDietDto: UpdateDietDto) {
-    // return this.dietSvc.update(+id, updateDietDto);
+  @Patch('/updatemeal')
+  update(
+    @Body() updateMealDto: updatemealItemsDTO) {
+      
+    return this.dietSvc.updateMealItems(updateMealDto);
   }
 
   @Delete(':id')

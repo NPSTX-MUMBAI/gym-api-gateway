@@ -10,7 +10,7 @@ export class AddDietDTO {
     
     fruits:string;
     userId?:string;
-
+    mealId?:string;
 }
 
 export enum IsVeg {

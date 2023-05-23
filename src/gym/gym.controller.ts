@@ -21,8 +21,9 @@ export class GymController {
     ) {
     console.log('inside create gym controller=>', createGymDto)
 
-    // return await this.gymSvc.create(createGymDto);
-    return await this.gymSvc.create(createGymDto,svcDto)
+    // return await this.gymSvc.create(createGymDto,svcDto)
+    return await this.gymSvc.create(createGymDto)
+
   }
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
@@ -50,9 +51,15 @@ export class GymController {
   //   return await this.gymService.findAllGymForCurrentUser(email)
   // }
 
+  @Get('user/:id')
+  async findAllGymForCurrentUser(@Param('id') userId:string) {
+      return await this.gymSvc.findAllGymForCurrentUser(userId)
+
+  }
+
   @Get('/findaddress/:id')  //Running
-  async findGymAddress(@Param('id') email: string) {
-    return await this.gymSvc.getGymAddress(email);
+  async findGymAddress(@Param('gymId') gymId:string) {
+    return await this.gymSvc.getGymAddress(gymId);
   }
  
   @Patch('/update/:id')   //Running    
@@ -64,6 +71,15 @@ export class GymController {
   async updateAddress(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
     return await this.gymSvc.updateAddress(id, updateGymDto);
   }
+
+   //Running
+   @Delete('account/details/delete/:id')
+   remove(@Param('id') id: string) {
+     return this.gymSvc.remove(id);
+   }
+ 
+   
+
 
   @Post('attachsvc')
   attachService(
@@ -83,11 +99,14 @@ export class GymController {
     }
 
 
-  //Running
-  @Delete('account/details/delete/:id')
-  remove(@Param('id') id: string) {
-    return this.gymSvc.remove(id);
-  }
+ 
+    @Get()
+    getSvcByGymID(
+      @Body()
+      dto:CreateGymDto
+    ) {
+      this.gymSvc.getGymSvcList(dto)
+    }
 
 
  
