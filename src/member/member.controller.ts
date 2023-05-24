@@ -21,6 +21,8 @@ import {
 import { FileExtensionValidator } from './validators/fileextn.validator';
 import { FileHeaderValidator } from './validators/fileheader.validator';
 import { log } from 'console';
+import { CreateBodydto } from './dto/body-parameter.dto';
+import { updateBodyparameter } from './dto/updateBody-parameter.dto';
 
 @Controller('member')
 export class MemberController {
@@ -30,6 +32,18 @@ export class MemberController {
   async create(@Body() createMemberDto: CreateMemberDto) {
     return await this.memberService.create(createMemberDto);
   }
+  @Post('/addBody')
+  async addBody(@Body() createBody: CreateBodydto) {
+    return await this.memberService.addbodyParameters(createBody);
+  }
+  
+  @Get('bodylist/:id')
+
+ findBodyParameterbyMemberId(@Param('id') userId: string) {
+
+return this.memberService.findBodyParameterbyMemberId(userId);
+
+ }
 
   @Get('/all')
   async findAll() {
@@ -39,6 +53,14 @@ export class MemberController {
   @Get(':id')
   findOne(@Param('id') id: any) {
     return this.memberService.findmemberbygymID(id);
+  }
+  @Patch('body/:id')
+  async updateBody(
+    @Param('id') id: string,
+
+    @Body() updateBodyParameter: updateBodyparameter,
+  ) {
+    return await this.memberService.updateBody(id, updateBodyParameter);
   }
 
   @Patch(':id')

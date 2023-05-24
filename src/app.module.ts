@@ -45,6 +45,7 @@ AURA_INSTANCENAME=unacademy-db
       password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
       options: {
         disableLosslessIntegers: true,
+        
       },
     }),
     ServicesModule,
@@ -55,7 +56,7 @@ AURA_INSTANCENAME=unacademy-db
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: ThrottlerGuard,                    
     },
     {
       provide: APP_GUARD,
