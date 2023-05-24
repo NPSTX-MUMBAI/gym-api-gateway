@@ -11,8 +11,8 @@ import { imageFileFilter } from './file-helper';
 
 import { Express } from 'express';
  
-// const getStream = require('into-stream')
 
+// const getStream = require('into-stream')
 @Controller('kyc')
 export class KycController {
   constructor(private readonly kycService: KycService) {}
@@ -31,30 +31,30 @@ export class KycController {
   // )
     
 
-  //Here
-    // @Post('/upload')
+  Here
+    @Post('/upload')
     
-    // @UseInterceptors(
-    //   FileInterceptor('image',{
+    @UseInterceptors(
+      FileInterceptor('image',{
 
-    //     fileFilter:imageFileFilter
-    //   }),
-    // )
+        fileFilter:imageFileFilter
+      }),
+    )
 
-  // public uploadFile(
-  //   @Req() req:any,
-  //   @UploadedFile() file:Express.Multer.File) {
+  public uploadFile(
+    @Req() req:any,
+    @UploadedFile() file:Express.Multer.File) {
     
-  //   if(file || req.fileValidationError ) {
-  //     throw new BadRequestException('Invalid File Provided,[image file allowed]')
-  //   }
+    if(file || req.fileValidationError ) {
+      throw new BadRequestException('Invalid File Provided,[image file allowed]')
+    }
     
-  //   const buffer = file.buffer;
-  //   const stream = getStream(file.buffer);
+    const buffer = file.buffer;
+    // const stream = getStream(file.buffer);
 
 
 
-  // } 
+  } 
 
 
   

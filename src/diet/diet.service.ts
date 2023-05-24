@@ -13,7 +13,7 @@ export class DietService {
 
   constructor(private neo:Neo4jService) {}
 
-  //1
+
     // async addDefaultDiet(dto:AddDietDTO) {
     //   try {
     //     console.log('Creating Diet');
@@ -49,7 +49,7 @@ export class DietService {
     //   }
     // }
 
-    //2
+    
     async addDefaultDiet(dto:AddDietDTO) {
       try {
         console.log('Creating Diet');
@@ -96,15 +96,44 @@ export class DietService {
       }
     }
 
+    async addCustomDiet(dto:AddDietDTO) {
+      try {
+        //Take UserID & DietID
+        const check = await this.neo.read(`
+        MATCH p = (u:User {userId:"${dto.userId}"}) - [:HAS_DIET] - (d:Diet {dietId:"${dto.dietId}"})
+        RETURN p     
+        `)
+        if(check.length > 0) {
+          console.log('Already Diet is Present with this User!');
+          
+        } else {
+          let dietId:string
+          const add = this.neo.write(`
+          MATCH p=(u:User {userId:"${dto.userId}"}),(d:Diet {dietId:"${dto.dietId}"}) 
+          CREATE (u) - [:HAS_DIET] -> (d)
+          RETURN p
+          
+          `)
+
+        }
+      
+      } catch (error) {
+        
+      }
+    }
+
     async addMeal(dto:AddMeallDTO) {
       
+      //1 Create Meal first with mealType
+
+
       try {
         let mealId:string  
 
         const createMill = await this.neo.write(`
         CREATE (m:Meal {
           mealId:apoc.create.uuid(),
-          mealType:"${dto.millType}",
+          mealType:"${dto.mealType}",
           createdOn:"${Date.now()}",
           userId:"${dto.userId}"
         })
@@ -115,10 +144,12 @@ export class DietService {
           
           createMill.map((res) => {
             mealId = res.m.mealId;
-            console.log("Mill ID - ",mealId);
+            console.log("Meal ID - ",mealId);
             
           })
 
+
+          // 2 Dont Use this for single mapping purpose
           const addMemberDiet = this.neo.write(`
           MATCH (u:User {userId:"${dto.userId}"}),(m:Meal {mealId:"${dto.mealId}"})
           CREATE (u) - [r:HAS_DIET] -> (m)
@@ -137,7 +168,64 @@ export class DietService {
       }
     }
 
- 
+    attachFoodToMeal() {
+      try {
+        
+      } catch (error) {
+        
+      }
+    }
+
+    // foodType:"${dto.foodType}",
+    // async addFood(dto:AddFoodDTO) {
+    //   try {
+    //     let foodId:string
+
+    //     const createFood = await this.neo.write(`
+    //     CREATE (f:Food {
+    //       foodId:apoc.create.uuid(),
+    //       foodName:"${dto.foodName}",
+    //       description:"${dto.description}",
+
+    //       calories:"${dto.calories}",
+    //       serving_size_g:"${dto.serving_size_g}",
+    //       fat_total_g:"${dto.fat_total_g}",
+    //       fat_saturated_g:"${dto.fat_saturated_g}",
+    //       protein_g:"${dto.protein_g}",
+    //       sodium_mg:"${dto.sodium_mg}",
+    //       potassium_mg:"${dto.potassium_mg}",
+    //       cholesterol_mg:"${dto.cholesterol_mg}",
+    //       carbohydrates_total_g:"${dto.carbohydrates_total_g}",
+    //       fiber_g:"${dto.fiber_g}",
+    //       sugar_g:"${dto.sugar_g}"
+
+    //     })
+    //     return f;
+    //     `)
+
+    //     if(createFood) {
+    //       createFood.map((res) => {
+    //         foodId = res.f.foodId;
+    //         console.log('Food Id is ',foodId);
+            
+    //       })
+
+    //      const addMealFood = this.neo.write(`
+    //      MATCH (m:Meal {mealId:"${dto.mealId}"}),(f:Food {foodId:"${foodId}"})
+    //      CREATE (m) - [:CONSIST_OF] -> (f)
+    //      RETURN m
+    //      `) 
+    //       return addMealFood;
+    //     }
+
+    //     return true;
+
+    //   } catch (error) {
+    //     console.log('Error',error);
+        
+    //   }
+    // }
+
     async addFood(dto:AddFoodDTO) {
       try {
         let foodId:string
@@ -146,20 +234,7 @@ export class DietService {
         CREATE (f:Food {
           foodId:apoc.create.uuid(),
           foodType:"${dto.foodType}",
-          foodName:"${dto.foodName}",
-          description:"${dto.description}",
-
-          calories:"${dto.calories}",
-          serving_size_g:"${dto.serving_size_g}",
-          fat_total_g:"${dto.fat_total_g}",
-          fat_saturated_g:"${dto.fat_saturated_g}",
-          protein_g:"${dto.protein_g}",
-          sodium_mg:"${dto.sodium_mg}",
-          potassium_mg:"${dto.potassium_mg}",
-          cholesterol_mg:"${dto.cholesterol_mg}",
-          carbohydrates_total_g:"${dto.carbohydrates_total_g}",
-          fiber_g:"${dto.fiber_g}",
-          sugar_g:"${dto.sugar_g}"
+          foodName:"${dto.foodName}"
 
         })
         return f;
@@ -190,30 +265,48 @@ export class DietService {
 
 
 
+    //Wrong
+    // async updateMealItems(dto:updatemealItemsDTO) {
+    //   try {
 
-    async updateMealItems(dto:updatemealItemsDTO) {
-      try {
-
-      const updateFood =this.neo.write(`
-      MATCH (m:Meal {mealId:"${dto.mealId}"}) - [:CONSIST_OF] -> (f:Food {foodId:"${dto.foodId}")
-      SET f.foodType = "${dto.foodType}", 
-          f.foodName = "${dto.foodName}"
-      RETURN f
-
-      `)
-    return updateFood;      
-      } catch (error) {
+    //   const updateFood = this.neo.write(`
+    //   MATCH (m:Meal {mealId:"${dto.mealId}"}) - 
+    //   [:CONSIST_OF] - 
+    //   (f:Food {foodId:"${dto.foodId}"}) 
+    //   SET f.foodType="${dto.foodType}",
+    //       f.foodName = "${dto.foodName}"
+    //   RETURN f
+    //   `)
+    // return updateFood;      
+    //   } catch (error) {
         
-        throw new NotFoundException('Error')
-      }
-    }
+    //     throw new NotFoundException('Error')
+    //   }
+    // }
 
 
-  findAll() {
-    return `This action returns all diet`;
+  findMeal(id:string) {
+    const r1 =  this.neo.read(`
+    MATCH (m:Meal {mealId:"${id}"})
+    RETURN m
+    `)
+    
+
   }
 
-  findOne(id: number) {
+
+  findMealFoodItem(id:string) {
+    const r1 = this.neo.read(`
+    MATCH (f:Food {foodId:"${id}"})
+    RETURN f
+    `)
+    
+
+  }
+
+
+
+  findFoodItems(id: string) {
     return `This action returns a #${id} diet`;
   }
 
@@ -221,10 +314,34 @@ export class DietService {
     return `This action updates a #${id} diet`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} diet`;
-  }
+  // remove(id: string) {
 
+  //   try {
+  //     console.log('Removing...');
+      
+  //     const w1 = this.neo.write(`
+  //     MATCH (f:Food {foodId:"${id}"})
+  //     DETACH DELETE f;
+  //     `)
+  //     return w1;
+  //   } catch (error) {
+  //     throw new NotFoundException('');
+  //   }
+  // }
+
+  remove(id:string) {
+    try {
+      console.log('......');
+      
+      const r1 = this.neo.read(`
+      MATCH (f:Food {foodId:"${id}"})
+      return f
+      `)
+      return r1;
+    } catch (error) {
+      
+    }
+  }
   
 }
 

@@ -1,7 +1,7 @@
 export class AddMeallDTO {
     
     mealId:string;
-    millType:millType;
+    mealType?:millType;
     createdOn:string;
     createdBy:string;       //Gym name
     

@@ -1,8 +1,12 @@
 export interface updatemealItemsDTO {
    
-    foodType:string,
+    foodType?:string,
     foodName?:string,
     
-    mealId:string
-    foodId:string
+    mealId:string,
+    foodId?:string
+
+
+
+
 }
