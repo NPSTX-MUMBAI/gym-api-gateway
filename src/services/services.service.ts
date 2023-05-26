@@ -13,12 +13,13 @@ import {
   ServicesDTO,
   serviceType,
 } from 'src/package/dto/service.dto';
+import { updateService } from 'src/package/dto/updateservice.dto';
 
 @Injectable()
 export class ServicesService {
   constructor(private neo: Neo4jService) {}
 
-  async createDefaultservice(dto: ServiceDTO) {
+  async createDefaultservice() {
     try {
       console.log('inside package service');
 
@@ -131,22 +132,22 @@ export class ServicesService {
       defaultSvcs.forEach(async (svc) => {
         const query = `CREATE (s:Service { svcId:"${svc.svcId}",
   
-        name:"${svc.name}",
+  name:"${svc.name}",
   
-        imgUrl:"${svc.imgUrl}",
+  imgUrl:"${svc.imgUrl}",
   
-        rate:"${svc.rate}",
+  rate:"${svc.rate}",
   
-        createdOn:"${svc.createdOn}",
+  createdOn:"${svc.createdOn}",
   
-        serviceType:"${svc.serviceType}",
+  serviceType:"${svc.serviceType}",
   
-        noOfOccurrence:"${svc.noOfOccurrence}",
+  noOfOccurrence:"${svc.noOfOccurrence}",
   
-        isDefault:"${svc.isDefault}"}) return s`;
+  isDefault:"${svc.isDefault}"}) return s`;
 
         console.log(query);
-
+        console.log(defaultSvcs);
         const res = await this.neo.write(query);
 
         console.log(res);
@@ -154,7 +155,7 @@ export class ServicesService {
 
       console.log('outside loop');
 
-      return true;
+      return defaultSvcs;
     } catch (error) {
       console.log(error);
 
@@ -165,11 +166,11 @@ export class ServicesService {
   async fetchServiceList() {
     const r1 = await this.neo.read(`
   
-      MATCH (s:Service)
+  MATCH (s:Service)
   
-      RETURN s ;
+  RETURN s ;
   
-      `);
+  `);
 
     const array = [];
 
@@ -186,19 +187,19 @@ export class ServicesService {
     try {
       const r1 = this.neo.read(`
     
-        MATCH (s:Service {svcId:"${id}"})
+   MATCH (s:Service {svcId:"${id}"})
     
-        SET
+   SET
     
-        a1 : "${svcDto.name}",
+   a1 : "${svcDto.name}",
     
-        a2 : "${svcDto.rate}",
+   a2 : "${svcDto.rate}",
     
-        a3: "${svcDto.isDefault}"
+   a3: "${svcDto.isDefault}"
     
-        RETURN s
+   RETURN s
     
-        `);
+   `);
 
       return r1;
     } catch (error) {
@@ -212,13 +213,13 @@ export class ServicesService {
 
       const w1 = this.neo.write(`
     
-          MATCH (s:Service)
+    MATCH (s:Service)
     
-          WHERE s.svcId = "${id}"
+    WHERE s.svcId = "${id}"
     
-          DETACH DELETE s
+    DETACH DELETE s
     
-          `);
+    `);
 
       console.log('Service Deleted Succesfully!');
 
@@ -248,7 +249,7 @@ export class ServicesService {
         const res = await this.neo
           .write(`match (g:Gym {id:"${gymId}"}), (s:Service{svcId:"${svcId}"})
       
-                CREATE (g)-[r:HAS_SERVICE {rate:"${rate}", createdOn:"${currentDate}"}]->(s) return r`);
+       CREATE (g)-[r:HAS_SERVICE {rate:"${rate}", createdOn:"${currentDate}"}]->(s) return r`);
 
         console.log(res);
 
@@ -276,7 +277,7 @@ export class ServicesService {
   async createCustomService(dto: ServiceDTO) {
     try {
       const res = await this.neo.read(
-        `match (g:Gym {id:"${dto.gymId}"})-[r:HAS_SERVICE]->(s:Service {name:"${dto.name}"}) RETURN g`,
+        `match (g:Gym {id:"${dto.id}"})-[r:HAS_SERVICE]->(s:Service {name:"${dto.name}",rate:"${dto.rate}"}) RETURN g`,
       );
 
       console.log(res);
@@ -337,13 +338,21 @@ export class ServicesService {
       console.log('id=>', id);
 
       const query = await this.neo.read(
-        `MATCH (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service) RETURN s, r.rate`,
+        `MATCH (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service)  RETURN s, r.rate`,
       );
 
       console.log(query);
 
       if (query.length > 0) {
-        return { data: query, msg: 'Services Found', status: true };
+        const array = [];
+
+        for (let i = 0; i < query.length; i++) {
+          array.push({ ...query[i].s, rate: query[i]['r.rate'] });
+
+          console.log('SERVICES', array);
+        }
+
+        return { data: array, msg: 'Services Found', status: true };
       } else {
         return { data: null, msg: 'Error Service Not Found', status: false };
       }
@@ -373,6 +382,28 @@ export class ServicesService {
       }
     } catch (error) {
       return { status: false, msg: 'failed' };
+    }
+  }
+  async updateService(id: string, dto: updateService) {
+    try {
+      console.log('SERVICESSSSS', id);
+
+      const res = await this.neo
+        .write(`MATCH (g:Gym {id:"${dto.id}"})-[r:HAS_SERVICE]->(s:Service{svcId:"${id}"})
+    
+    SET s.name="${dto.name}"
+    
+    SET r.rate="${dto.rate}"
+    
+    return g,s
+    
+     `);
+
+      console.log(res);
+
+      return 'Service updated successfully';
+    } catch (error) {
+      throw new HttpException('error updating Services', error);
     }
   }
 }
