@@ -37,7 +37,6 @@ export class ServicesService {
 
           rate: 1000,
         },
-
         {
           svcId: crypto.randomUUID(),
 

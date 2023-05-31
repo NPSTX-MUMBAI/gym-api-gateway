@@ -62,17 +62,17 @@ export class ServicesController {
   }
   @Patch('service/:id')
 
-  async updateService(
+ async updateService(
 
-    @Param('id') id: string,
+ @Param('id') id: string,
 
-    @Body() updateservice: updateService,
+@Body() updateservice: updateService,
 
-  ) {
+) {
 
-    return await this.defSvc.updateService(id, updateservice);
+return await this.defSvc.updateService(id, updateservice);
 
-  }
+ }
 
   @Patch('update/:id')
   update(@Param('id') id: string, @Body() svcDto: ServiceDTO) {
