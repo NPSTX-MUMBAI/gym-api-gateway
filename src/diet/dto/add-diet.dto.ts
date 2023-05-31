@@ -1,10 +1,8 @@
 export class AddDietDTO {
+    
     dietId:string;
     dietType:string;
 
-    
-    userId?:string;
-    mealId?:string;
-    foodId:string;
+    userId:string;
+    mealId:string;
 }
-

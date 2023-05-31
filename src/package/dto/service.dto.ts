@@ -1,12 +1,13 @@
 export class ServiceDTO {
 
   name: string;
-  imgUrl?: string;
-  createdOn?: string;
-  isDefault: boolean;
+  isDefault: IS_DEFAULT;
+  isActive: IS_ACTIVE;
   rate: number;
   svcId: string;
-  //   userid?: string;
+
+  imgUrl?: string;
+  createdOn?: string;
   gymId?: string;
   memeberId?: string;
   serviceType?: SERVICE_TYPE[];
@@ -17,4 +18,14 @@ export class ServiceDTO {
 export enum SERVICE_TYPE {
   INSTANCE = 'INSTANCE',
   RECURRING = 'RECURRING',
+}
+
+export enum IS_DEFAULT {
+  default = 'DEFAULT',
+  custom =  'CUSTOM'
+}
+
+export enum IS_ACTIVE {
+  true = "TRUE",
+  false = "FALSE"
 }

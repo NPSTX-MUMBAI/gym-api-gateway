@@ -11,7 +11,7 @@ import { AssociateSvcDto } from './dto/associateService.dto';
 export class ServicesService {
   constructor(private neo: Neo4jService) {}
 
-  //old
+  // old
   // async createDefaultservice() {
   //   try {
   //     console.log('inside package service');
@@ -57,6 +57,7 @@ export class ServicesService {
   //         isDefault: true,
   //         name: 'Yoga',
   //         imgUrl: '../assets/Yoga1.jpg',
+          
   //       },
 
   //     ];
@@ -79,119 +80,127 @@ export class ServicesService {
   //   }
   // }
 
-  // async createDefaultservice(dto: ServiceDTO) {
-  //   try {
-  //     console.log('inside package service');
-  //     const defaultSvcs: ServiceDTO[] = [
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Lockers',
-  //         imgUrl: '../assets/lockers.jpg',
-  //         rate: 1000,
-  //         svcType:"recurring"
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Yoga',
-  //         imgUrl: '../assets/Yoga1.jpg',
-  //         rate: 1000,
-  //         svcType:"recurring"
+  async createDefaultservice(dto: ServiceDTO) {
+    try {
+      console.log('inside package service');
+      const defaultSvcs: ServiceDTO[] = [
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Lockers',
+          imgUrl: '../assets/lockers.jpg',
+          rate: 1000,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Yoga',
+          imgUrl: '../assets/Yoga1.jpg',
+          rate: 1000,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
 
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Cardio',
-  //         imgUrl: '../assets/cardio1.jpg',
-  //         rate: 1000,
-  //         svcType:"recurring"
 
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Personal Training',
-  //         imgUrl: '../assets/Trainer1.jpg',
-  //         rate: 2000,
-  //         svcType:"recurring"
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Cardio',
+          imgUrl: '../assets/cardio1.jpg',
+          rate: 1000,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
 
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Strength Training',
-  //         imgUrl: '../assets/Strengthtraining.jpg',
-  //         rate: 2500,
-  //         svcType:"recurring"
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Personal Training',
+          imgUrl: '../assets/Trainer1.jpg',
+          rate: 2000,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
 
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Swimming',
-  //         imgUrl: '../assets/swimpool1.jpg',
-  //         rate: 2000,
-  //         svcType:"recurring"
 
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Sauna',
-  //         imgUrl: '../assets/sauna.jpg',
-  //         rate: 3000,
-  //         svcType:"recurring"
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Strength Training',
+          imgUrl: '../assets/Strengthtraining.jpg',
+          rate: 2500,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
 
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'HIT Service',
-  //         imgUrl: '../assets/sauna.jpg',
-  //         rate: 3000,
-  //         svcType:"instance"
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Diet',
-  //         imgUrl: '../assets/sauna.jpg',
-  //         rate: 3000,
-  //         svcType:"instance"
-  //       },
-  //       {
-  //         svcId: crypto.randomUUID(),
-  //         isDefault: true,
-  //         name: 'Nutrition',
-  //         imgUrl: '../assets/sauna.jpg',
-  //         rate: 3000,
-  //         svcType:"instance"
-  //       },
 
-  //     ];
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Swimming',
+          imgUrl: '../assets/swimpool1.jpg',
+          rate: 2000,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
 
-  //     defaultSvcs.forEach(async (svc) => {
 
-  //       const query = `CREATE (s:Service { svcId:"${svc.svcId}",
-  //     name:"${svc.name}",
-  //     imgUrl:"${svc.imgUrl}",
-  //     rate:"${svc.rate}",
-  //     createdOn:"${svc.createdOn}",
-  //     isDefault:"${svc.isDefault}"}) return s`;
-  //       console.log(query);
-  //       const res = await this.neo.write(query);
-  //       console.log(res);
-  //     });
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'Sauna',
+          imgUrl: '../assets/sauna.jpg',
+          rate: 3000,
+          svcType:"recurring",
+          isActive:'True',
+          createdOn:`${new Date()}`
 
-  //     console.log('outside loop');
-  //     return true;
-  //   } catch (error) {
-  //     console.log(error);
-  //     throw new HttpException(error, 402);
-  //   }
-  // }
+
+        },
+        {
+          svcId: crypto.randomUUID(),
+          isDefault: true,
+          name: 'HIT Service',
+          imgUrl: '../assets/sauna.jpg',
+          rate: 3000,
+          svcType:"instance",
+          isActive:'yes',
+          createdOn:`${new Date()}`
+
+        },
+        
+      ];
+
+      defaultSvcs.forEach(async (svc) => {
+
+        const query = `CREATE (s:Service { svcId:"${svc.svcId}",
+        isDefault:"${svc.isDefault}",
+        isActive:"${svc.isActive}",
+        name:"${svc.name}",
+        imgUrl:"${svc.imgUrl}",
+        rate:"${svc.rate}",
+        createdOn:"${svc.createdOn}",
+        isDefault:"${svc.isDefault}"}) return s`;
+        console.log(query);
+        const res = await this.neo.write(query);
+        console.log(res);
+      });
+
+      console.log('outside loop');
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 402);
+    }
+  }
 
   async findServiceList() {
     const r1 = await this.neo.read(`
@@ -224,12 +233,12 @@ export class ServicesService {
     }
   }
 
-  update(id: string, svcDto: ServiceDTO) {
+  updateRate(dto: ServiceDTO) {
     try {
       const w1 = this.neo.write(`
-    MATCH (s:Service {svcId:"${id}"})
+    MATCH (s:Service {svcId:"${dto.svcId}"})
     SET 
-    s.rate = "${svcDto.rate}"
+    s.rate = "${dto.rate}"
     RETURN s
     `);
       return w1;
@@ -237,6 +246,8 @@ export class ServicesService {
       throw new HttpException({}, 404);
     }
   }
+
+  
 
   findActiveServices() {}
 
@@ -279,7 +290,7 @@ export class ServicesService {
 
   //   }
 
-  async addCustomService(id: string, svcDto: ServiceDTO) {
+  async addCustomService(svcDto: ServiceDTO) {
     let svcId: string;
 
     const createSvc = await this.neo.write(`
@@ -294,27 +305,29 @@ export class ServicesService {
         })
         return s
         `);
+        console.log(createSvc);
+        
     createSvc.map((res) => {
       svcId = res.s.svcId;
 
       console.log('Service Created with Service ID ', svcId);
     });
 
-    if (createSvc) {
-      const linkWithGym = this.neo.write(`
-      MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
-      MERGE (g) - [:HAS_SERVICE] -> (s)
-      RETURN g
-      `);
-      console.log('Service is added with Gym ID ', id);
+    // if (createSvc) {
+    //   const linkWithGym = this.neo.write(`
+    //   MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
+    //   MERGE (g) - [:HAS_SERVICE] -> (s)
+    //   RETURN g
+    //   `);
+    //   console.log('Service is added with Gym ID ', id);
 
-      return linkWithGym;
-    } else {
-      console.log('Something went Wrong! Service Error ');
-    }
+    //   return linkWithGym;
+    // } else {
+    //   console.log('Something went Wrong! Service Error ');
+    // }
   }
 
-         
+        
 
     //By Chandan Sir
     // async associateSvcWithMember(dto:AssociateSvcDto) {
@@ -345,8 +358,10 @@ export class ServicesService {
   async associateSvc(dto:AssociateSvcDto) {
       try {
 
+        
+
         dto.services.map(async (service)=>{
-          const res = await this.neo.write(`MATCH (u:User {userId:"${dto.memberId}"}),
+          const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
           (s:Service {svcId:"${service.svcId}"}) 
           MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
           rate:"${service.rate}"}]->(s) return r
@@ -364,10 +379,6 @@ export class ServicesService {
         
       }
     }
-
-    
-
- 
 
     deassociateSvcWithMember(dto:AssociateSvcDto) {
       console.log('Deassociation starts...');
@@ -393,6 +404,26 @@ export class ServicesService {
       }
     }
 
+    //Working in progress
+    // updateSubscriptionRate(dto:ServiceDTO) {
+    //   try {
+    //     const check = this.neo.read(`
+    //     MATCH (u:User {userId:"${dto.userId}") - [:SUBSCRIBED_TO] - (s:Service {svcId:"${dto.svcId}"})
+    //     RETURN u
+    //     `)
+
+    //     if(check) {
+    //       console.log('Member Has Acquired This Service!');
+    //       return 'Member Has Acquired This Service!'
+          
+    //     } else {
+    //       return '----------------'
+    //     }
+ 
+    //   } catch (error) {
+        
+    //   }  
+    // }
 
   // getServiceByGymId(id: string) {
   //   const service = this.neo.read(`
@@ -403,17 +434,13 @@ export class ServicesService {
   //   return service;
   // }
 
-
-
-
-
     getServiceByMember(dto:AssociateSvcDto) {
       try {
       
         console.log('id=>', dto.userId)
 
           const findService = this.neo.read(`
-          MATCH (u:User {userId:"${dto.memberId}"})
+          MATCH (u:User {userId:"${dto.userId}"})
           
           return u;
           `)

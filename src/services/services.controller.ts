@@ -13,16 +13,25 @@ export class ServicesController {
 
   constructor(private readonly defSvc: ServicesService) { }
     
-  //#1  
   @Post('/generate/default/service') //Running
 
   async generateDefaultservice(dto:ServiceDTO) {
     console.log('inside generate default service');
-    // return await this.defSvc.createDefaultservice(dto);
+    return await this.defSvc.createDefaultservice(dto);
 
   }
 
-  //#2
+  @Post('addcustomservice/')       
+  create(
+    @Body() 
+    createServiceDto:ServiceDTO) {
+    // return 'This action adds a new owner';
+
+      return this.defSvc.addCustomService(createServiceDto)
+    
+  }
+
+
   @Get('getlist')   //Running
   findAll() {
     // return `This action returns all owner`;
@@ -55,18 +64,7 @@ export class ServicesController {
 
   
 
-  @Post('addservice/:id')       
-  create(
-    @Param('id') id:string,
-    @Body() 
-    createServiceDto:ServiceDTO,
-    gymDto:CreateGymDto
-    ) {
-    // return 'This action adds a new owner';
 
-      this.defSvc.addCustomService(id,createServiceDto)
-    
-  }
 
   @Post('/associatesvc')
   async associateServiceWithMember(
@@ -90,15 +88,22 @@ export class ServicesController {
   
   
 
-  //Running
-  @Patch('update/:id')
+  //update1
+  @Patch('updatesvcrate')
   update(
-    @Param ('id') id:string,
     @Body() svcDto:ServiceDTO
   ) {
-    return this.defSvc.update(id,svcDto);
+    return this.defSvc.updateRate(svcDto);
   }
 
+
+  //update2 WOP
+  // @Patch('updatesbscrate')
+  // updateSubscriptionrate(
+  //   @Body() svcDto:ServiceDTO
+  // ) {
+  //   return this.defSvc.updateSubscriptionRate(svcDto)
+  // }
 
   //Running
   // @Delete('remove/service/:id')

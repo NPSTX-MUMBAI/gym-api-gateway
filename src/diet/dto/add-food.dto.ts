@@ -17,7 +17,7 @@ export class AddFoodDTO {
     // fiber_g: number;
     // sugar_g: number;
 
-
+    dietId:string;
     mealId?:string;
 
 }

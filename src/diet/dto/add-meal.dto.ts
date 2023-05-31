@@ -1,15 +1,16 @@
-export class AddMeallDTO {
+export class AddMealDTO {
     
     mealId:string;
-    mealType?:millType;
+    mealType?:mealType;
     createdOn:string;
     createdBy:string;       //Gym name
     
     gymId?:string;
     userId?:string;
+    dietId:string;
 }
 
-export enum millType {
+export enum mealType {
     
     earlymorning = 'EARLYMORNING',
     breakfast = 'BREAKFAST',
