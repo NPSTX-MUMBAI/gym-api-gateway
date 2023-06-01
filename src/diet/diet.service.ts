@@ -127,7 +127,7 @@ export class DietService {
         let dietId: string;
         const add = this.neo.write(`
         MATCH p=(u:User {userId:"${dto.userId}"}),(d:Diet {dietId:"${dto.dietId}"}) 
-        CREATE (u) - [:HAS_DIET] -> (d)
+        CREATE (u) - [:FOLLOWS] -> (d)
         RETURN p
         
         `);

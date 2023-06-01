@@ -37,22 +37,10 @@ export class BankController {
   create(
     @Param('id') id:string,
     @Body() 
-      // bankDto:CreateBankDto,
-      linkedDTO:linkGymidToBank
+      bankDto:CreateBankDto,
     ) {
-      this.bankSvc.create(linkedDTO)
+      return this.bankSvc.create(bankDto)
     }
-
-
-    //Running
-    @Post('linkgymid/:id')
-    f1(
-      @Param('id') id:string,
-      @Body() 
-        bankDto:CreateBankDto
-      ) {
-        this.bankSvc.linkGymId(id,bankDto);
-      }
 
   @Get('list') //Running
   findAll() {

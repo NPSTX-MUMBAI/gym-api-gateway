@@ -15,5 +15,6 @@ export class CreateBankDto {
 
   id?: string;
   userid:string;
+  gymId:string;
   // gymId?:string;
 }

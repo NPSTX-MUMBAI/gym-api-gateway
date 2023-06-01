@@ -202,6 +202,33 @@ export class GymService {
     } catch (error) {}
   }
 
+  async addBank(dto:CreateBankDto) {
+    try {
+      const check = await this.neo.read(`
+      MATCH p = (g:Gym {gymId:"${dto.gymId}"}),(b:Bank {bankId:"${dto.bankId}"})
+      RETURN p
+      `)
+
+      if(check.length > 0) {
+        console.log('Already Bank is Linked With This Gym');
+        return 'Already Bank is Linked With This Gym'
+      } else {
+        const linkGym = this.neo.write(`
+        MATCH p = (g:Gym {gymId:"${dto.gymId}"}),(b:Bank {bankId:"${dto.bankId}"})
+        CREATE (g) - [:HAS_ACCOUNT] -> (b)
+        RETURN p
+        `)
+        return linkGym;
+      }
+
+    } catch (error) {
+      
+    }
+  }
+
+
+
+
   async findAll() {
     try {
       const res = await this.neo.read(`MATCH (g:Gym) return g`);
@@ -338,7 +365,7 @@ export class GymService {
         name : "${svcDto.name}",
         rate: "${svcDto.rate}",
          isDefault: "${svcDto.isDefault}",
-         svcType: "${svcDto.svcType}",
+         svcType: "${svcDto.serviceType}",
          isActive:"${svcDto.isActive}",
          createdOn: "${new Date()}"
         })

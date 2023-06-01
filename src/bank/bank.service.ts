@@ -14,6 +14,8 @@ import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
 import { UpdateGymDto } from 'src/gym/dto/update-gym.dto';
 import { linkGymidToBank } from './dto/map-bankwithgym.dto';
 import { create } from 'domain';
+import { stringify } from 'querystring';
+import { LoginDTO } from 'src/auth/dtos/login.dto';
 
 
 
@@ -74,95 +76,139 @@ export class BankService {
 
 
   // Constraints on AccountHolderName and AccountNo
-  async create(dto:linkGymidToBank) {
- try {
-  let createBank = await this.neo.write(`
-  merge
-  (b:Bank  { 
-    bankId:apoc.create.uuid(),
-    accountHolderName:"${dto.accountHolderName}",
-    accountNo:"${dto.accountNo}",
-    accountType:"${dto.accountType}",
-     bankName:"${dto.bankName}",
-     branchName:"${dto.branchName}",
-     ifsc:"${dto.ifsc}",
-     mid:"${dto.mid}" }
-     )
-    return b;`)
+//   async create(dto:CreateBankDto) {
+//  try {
+//   let createBank = await this.neo.write(`
+//   merge
+//   (b:Bank  { 
+//     bankId:apoc.create.uuid(),
+//     accountHolderName:"${dto.accountHolderName}",
+//     accountNo:"${dto.accountNo}",
+//     accountType:"${dto.accountType}",
+//     bankName:"${dto.bankName}",
+//     branchName:"${dto.branchName}",
+//     ifsc:"${dto.ifsc}",
+//     mid:"${dto.mid}" }
+//     )
+//     return b;`)
      
-    if (createBank.length > 0) {
-      const linkGymWithBank = createBank.map((link) => {
-        const bankId = link.b.bankId;
-        console.log(bankId);
+//     if (createBank.length > 0) {
+//       const linkGymWithBank = createBank.map((link) => {
+//         const bankId = link.b.bankId;
+//         console.log(bankId);
         
-        const  linkGymId = this.neo.write(`MATCH (g:Gym {id:"${dto.id}"}), (b:Bank {bankId:"${bankId}"})
-          MERGE (g)-[r:HAS_ACCOUNT]->(b)
-          RETURN b.bankId`);
+//         const  linkGymId = this.neo.write(`MATCH (g:Gym {id:"${dto.id}"}), (b:Bank {bankId:"${bankId}"})
+//           MERGE (g)-[r:HAS_ACCOUNT]->(b)
+//           RETURN b.bankId`);
         
-        return {data:linkGymId, msg:'Bank Linked with Gym Id'}
+//         return {data:linkGymId, msg:'Bank Linked with Gym Id'}
 
-        });
-    } else {
-      return 'Bank Error Mapping with Gym ID' ;
-    } 
+//         });
+//     } else {
+//       return 'Bank Error Mapping with Gym ID' ;
+//     } 
    
   
- } catch (error) {
-   return error
- }
-  }
+//  } catch (error) {
+//    return error
+//  }
+//   }
 
+  async create(dto:CreateBankDto) {
+    try {
+
+      const check = await this.neo.read(`
+      MATCH (g:Gym {gymId:"${dto.gymId}"}) - [:HAS_ACCOUNT] - (b:Bank {bankId:"${dto.bankId}"})
+      RETURN b;
+      `)
+
+      if(check.length > 0) {
+        console.log('Already This Gym has Account in bank');
+        
+      } else {
+        let bankId :string;
+        const addBank = await this.neo.write(`
+        CREATE (b:Bank {
+          bankId: apoc.create.uuid(),
+          accountHolderName: "${dto.accountHolderName}",
+          accountNo: "${dto.accountNo}",
+          accountType: "${dto.accountType}",
+          bankName: "${dto.bankName}",
+          branchName: "${dto.branchName}",
+          ifsc: "${dto.ifsc}",
+          vpa: "${dto.vpa}"
+          
+        })
+        `)
+
+
+        //Dont use for Single Mapping
+        if(addBank) {
+          addBank.map((res) => {
+            bankId = res.b.bankId;
+            console.log("BankId - ",bankId);
+            
+          })
+        }
+
+      }
+
+    } catch (error) {
+      throw new NotFoundException('');
+    }
+  }
 
   gymList: CreateGymDto[] = [];
   selectedGym: CreateGymDto[] = [];
 
-  linkGymId(id: string, bankDto: CreateBankDto) {
-    console.log('Gym ID - ', id);
+  //Trial
+  // linkGymId(id: string, bankDto: CreateBankDto) {
+  //   console.log('Gym ID - ', id);
 
-    const r1 = this.neo
-      .read(
-        `
-    MATCH (g:Gym) WHERE g.id = "${id}"
-    RETURN g;
-    `,
-      )
-      .then((r1res) => {
-        console.log('Gym ID Wise Bank Details', r1res);
+  //   const r1 = this.neo
+  //     .read(
+  //       `
+  //   MATCH (g:Gym) WHERE g.gymId = "${id}"
+  //   RETURN g;
+  //   `,
+  //     )
+  //     .then((r1res) => {
+  //       console.log('Gym ID Wise Bank Details', r1res);
 
-        const r2 = this.neo
-          .read(
-            `
-      MATCH (b:Bank) WHERE b.bankId = "${bankDto.bankId}"
-      RETURN b;
-      `,
-          )
-          .then((r2res) => {
-            console.log('Bank ID Wise Bank Details', r2res);
-            //
-            const w1 = this.neo
-              .write(
-                `
-        MATCH (g:Gym),(b:Bank) WHERE g.id = "${id}" 
-        AND b.bankId = "${bankDto.bankId}"
-        CREATE (g) - [r:HAS_ACCOUNT] -> (b) 
-        RETURN g,b
-        `,
-              )
-              .then((r3res) => {
-                console.log('Setting Gym ID to the Bank', r3res);
-              });
-          });
-      });
+  //       const r2 = this.neo
+  //         .read(
+  //           `
+  //     MATCH (b:Bank) WHERE b.bankId = "${bankDto.bankId}"
+  //     RETURN b;
+  //     `,
+  //         )
+  //         .then((r2res) => {
+  //           console.log('Bank ID Wise Bank Details', r2res);
+  //           //
+  //           const w1 = this.neo
+  //             .write(
+  //               `
+  //       MATCH (g:Gym),(b:Bank) WHERE g.id = "${id}" 
+  //       AND b.bankId = "${bankDto.bankId}"
+  //       CREATE (g) - [r:HAS_ACCOUNT] -> (b) 
+  //       RETURN g,b
+  //       `,
+  //             )
+  //             .then((r3res) => {
+  //               console.log('Setting Gym ID to the Bank', r3res);
+  //             });
+  //         });
+  //     });
 
-    if (r1) {
-      console.log('======');
-    }
+  //   if (r1) {
+  //     console.log('======');
+  //   }
 
-    return r1;
-  }
+  //   return r1;
+  // }
+
 
   //  #BS1  Not Running
-
   async getBankDetailsFromGymId(gymId: string) {
     console.log('Gym ID ->', gymId);
 

@@ -4,14 +4,43 @@ import { Neo4jService } from '@brakebein/nest-neo4j';
 import * as crypto from 'crypto';
 import { identity, NotFoundError } from 'rxjs';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
-import { ServiceDTO } from 'src/services/dto/service.dto';
+import { ServiceDTO, serviceType } from 'src/services/dto/service.dto';
 import { AssociateSvcDto } from './dto/associateService.dto';
+import { updateServiceDto } from './dto/updateService.dto';
 
 @Injectable()
 export class ServicesService {
   constructor(private neo: Neo4jService) {}
 
-  // old
+        
+
+    //By Chandan Sir
+    // async associateSvcWithMember(dto:AssociateSvcDto) {
+    //   try {
+
+    //     dto.services.map(async (service)=>{
+    //       const res = await this.neo.write(`MATCH (u:User {userId:"${dto.memberId}"}),
+    //       (s:Service {svcId:"${service.svcId}"}) 
+    //       MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
+    //       rate:"${service.rate}"}]->(s) return r
+    //      `).then((res) => {
+    //       console.log("=====",res);
+          
+    //      })
+    //     })
+
+    //     return {status:true, data:null, msg:'all association done successfully'}
+        
+    //   } catch (error) {
+    //     console.log(error);
+    //     return {status:false, data:error, msg:'failed due to technical error'}
+        
+    //   }
+    // }
+
+
+
+  // 0.1
   // async createDefaultservice() {
   //   try {
   //     console.log('inside package service');
@@ -80,6 +109,10 @@ export class ServicesService {
   //   }
   // }
 
+  
+  //1
+  
+  
   async createDefaultservice(dto: ServiceDTO) {
     try {
       console.log('inside package service');
@@ -90,7 +123,7 @@ export class ServicesService {
           name: 'Lockers',
           imgUrl: '../assets/lockers.jpg',
           rate: 1000,
-          svcType:"recurring",
+          serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
         },
@@ -100,7 +133,7 @@ export class ServicesService {
           name: 'Yoga',
           imgUrl: '../assets/Yoga1.jpg',
           rate: 1000,
-          svcType:"recurring",
+          serviceType: [serviceType.INSTANCE],
           isActive:'True',
           createdOn:`${new Date()}`
 
@@ -112,7 +145,7 @@ export class ServicesService {
           name: 'Cardio',
           imgUrl: '../assets/cardio1.jpg',
           rate: 1000,
-          svcType:"recurring",
+          serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
 
@@ -123,7 +156,7 @@ export class ServicesService {
           name: 'Personal Training',
           imgUrl: '../assets/Trainer1.jpg',
           rate: 2000,
-          svcType:"recurring",
+          serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
 
@@ -135,7 +168,7 @@ export class ServicesService {
           name: 'Strength Training',
           imgUrl: '../assets/Strengthtraining.jpg',
           rate: 2500,
-          svcType:"recurring",
+          serviceType: [serviceType.INSTANCE],
           isActive:'True',
           createdOn:`${new Date()}`
 
@@ -147,7 +180,7 @@ export class ServicesService {
           name: 'Swimming',
           imgUrl: '../assets/swimpool1.jpg',
           rate: 2000,
-          svcType:"recurring",
+          serviceType: [serviceType.INSTANCE],
           isActive:'True',
           createdOn:`${new Date()}`
 
@@ -159,7 +192,7 @@ export class ServicesService {
           name: 'Sauna',
           imgUrl: '../assets/sauna.jpg',
           rate: 3000,
-          svcType:"recurring",
+          serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
 
@@ -171,7 +204,7 @@ export class ServicesService {
           name: 'HIT Service',
           imgUrl: '../assets/sauna.jpg',
           rate: 3000,
-          svcType:"instance",
+          serviceType: [serviceType.INSTANCE],
           isActive:'yes',
           createdOn:`${new Date()}`
 
@@ -202,6 +235,115 @@ export class ServicesService {
     }
   }
 
+  //2
+  async addCustomService(svcDto: ServiceDTO) {
+    let svcId: string;
+
+    const createSvc = await this.neo.write(`
+      CREATE (s:Service {
+        svcId:apoc.create.uuid(),
+        name : "${svcDto.name}",
+        rate: "${svcDto.rate}",
+         isDefault: "${svcDto.isDefault}",
+         svcType: "${svcDto.serviceType}",
+         isActive:"${svcDto.isActive}",
+         createdOn: "${new Date()}"
+        })
+        return s
+        `);
+        console.log(createSvc);
+        
+    createSvc.map((res) => {
+      svcId = res.s.svcId;
+
+      console.log('Service Created with Service ID ', svcId);
+    });
+
+  }
+
+
+      //3
+      async associateSvc(dto:AssociateSvcDto) {
+        try {
+          dto.services.map(async (service)=>{
+            const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
+            (s:Service {svcId:"${service.svcId}"}) 
+            MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
+            rate:"${service.rate}"}]->(s) return r
+           `).then((res) => {
+            console.log("=====",res);
+           })
+          })
+          return {status:true, data:null, msg:'all association done successfully'}
+        } catch (error) {
+          console.log(error);
+          return {status:false, data:error, msg:'failed due to technical error'}
+        }
+      }
+
+         //4
+     async deassociateSvc(dto:AssociateSvcDto) {
+      console.log('Deassociation starts...');
+      
+      try {
+        const selectService = this.neo.read(`
+        MATCH (u:User {userId:"${dto.memberId}"})
+        RETURN u
+        `)
+
+        const r2 = this.neo.write(`
+        MATCH (u:User {userId:"${dto.memberId}"}) - [r:SUBSCRIBED_TO] - (s:Service {svcId:"${dto.services[0].svcId}"})
+        DETACH DELETE r
+        
+        `)
+        return r2
+
+      } catch (error) {
+        console.log('',error);
+        
+      }
+    }
+
+     //5
+  //Use GymID,SvcId & UserId
+  async updateGymSvcRate(dto:updateServiceDto) {
+    try {
+      const updateRate = await this.neo.write(`
+      MATCH p = (g:Gym {gymId:"${dto.gymId}"}) - [r:HAS_SERVICE] - (s:Service {svcId:"${dto.svcId}"}) 
+      SET r.rate = "${dto.rate}" 
+      RETURN r
+      `)
+      if(updateRate) {
+        console.log('Updating...');
+        const w1 = this.neo.write(`
+        MATCH p = (u:User {userId:"${dto.userId}"}) - [r:SUBSCRIBED_TO] - (s:Service {svcId:"${dto.svcId}"}) 
+        SET r.rate = "${dto.rate}" 
+        `)
+      } 
+      return updateRate;
+    } catch (error) {
+      throw new NotFoundException('')
+    }
+  }
+
+  //6
+  getServiceByMember(dto:AssociateSvcDto) {
+    try {
+    
+      console.log('id=>', dto.userId)
+
+        const findService = this.neo.read(`
+        MATCH (u:User {userId:"${dto.userId}"})
+        return u;
+        `)
+
+        return findService;
+    } catch (error) {
+      
+    }
+  }
+
+  //7
   async findServiceList() {
     const r1 = await this.neo.read(`
     MATCH (s:Service) 
@@ -216,6 +358,7 @@ export class ServicesService {
     return array;
   }
 
+  //8
   async findServiceById(id: string) {
     try {
       console.log('Service ID - ', id);
@@ -233,259 +376,18 @@ export class ServicesService {
     }
   }
 
-  updateRate(dto: ServiceDTO) {
-    try {
-      const w1 = this.neo.write(`
-    MATCH (s:Service {svcId:"${dto.svcId}"})
-    SET 
-    s.rate = "${dto.rate}"
-    RETURN s
-    `);
-      return w1;
-    } catch (error) {
-      throw new HttpException({}, 404);
-    }
-  }
-
-  
-
-  findActiveServices() {}
-
-  // async addService(id, svcDto:ServiceDTO, gymDto:CreateGymDto) {
-  //   try {
-  //     let svcId : string
-
-  //    const createSvc = await this.neo.write(`
-  //     CREATE (s:Service {
-  //       svcId:apoc.create.uuid(),
-  //       name : "${svcDto.name}",
-  //       rate: "${svcDto.rate}",
-  //        isDefault: "${svcDto.isDefault}",
-  //        svcType: "${svcDto.svcType}",
-  //        createdOn: "${new Date()}"
-  //       })
-  //       return s
-  //       `)
-  //       createSvc.map((res) => {
-  //         svcId = res.s.svcId;
-
-  //         console.log("Service ID ",svcId);
-
-  //   })
-  //       if(createSvc) {
-  //         const w1 = this.neo.write(`
-  //         MATCH (g:Gym {id:"${gymDto.id}"}), (s:Service {svcId:${svcId}})
-  //         CREATE (g) - [r:HAS_SERVICE] -> (s)
-  //         RETURN s
-  //         `)
-  //       }
-
-  //       return createSvc;
-
-  //     }
-  //     catch(error) {
-  //       console.log('',error);
-
-  //     }
-
-  //   }
-
-  async addCustomService(svcDto: ServiceDTO) {
-    let svcId: string;
-
-    const createSvc = await this.neo.write(`
-      CREATE (s:Service {
-        svcId:apoc.create.uuid(),
-        name : "${svcDto.name}",
-        rate: "${svcDto.rate}",
-         isDefault: "${svcDto.isDefault}",
-         svcType: "${svcDto.svcType}",
-         isActive:"${svcDto.isActive}",
-         createdOn: "${new Date()}"
-        })
-        return s
-        `);
-        console.log(createSvc);
-        
-    createSvc.map((res) => {
-      svcId = res.s.svcId;
-
-      console.log('Service Created with Service ID ', svcId);
-    });
-
-    // if (createSvc) {
-    //   const linkWithGym = this.neo.write(`
-    //   MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
-    //   MERGE (g) - [:HAS_SERVICE] -> (s)
-    //   RETURN g
-    //   `);
-    //   console.log('Service is added with Gym ID ', id);
-
-    //   return linkWithGym;
-    // } else {
-    //   console.log('Something went Wrong! Service Error ');
-    // }
-  }
-
-        
-
-    //By Chandan Sir
-    // async associateSvcWithMember(dto:AssociateSvcDto) {
-    //   try {
-
-    //     dto.services.map(async (service)=>{
-    //       const res = await this.neo.write(`MATCH (u:User {userId:"${dto.memberId}"}),
-    //       (s:Service {svcId:"${service.svcId}"}) 
-    //       MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
-    //       rate:"${service.rate}"}]->(s) return r
-    //      `).then((res) => {
-    //       console.log("=====",res);
-          
-    //      })
-    //     })
-
-    //     return {status:true, data:null, msg:'all association done successfully'}
-        
-    //   } catch (error) {
-    //     console.log(error);
-    //     return {status:false, data:error, msg:'failed due to technical error'}
-        
-    //   }
-    // }
-
-
-
-  async associateSvc(dto:AssociateSvcDto) {
-      try {
-
-        
-
-        dto.services.map(async (service)=>{
-          const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
-          (s:Service {svcId:"${service.svcId}"}) 
-          MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
-          rate:"${service.rate}"}]->(s) return r
-         `).then((res) => {
-          console.log("=====",res);
-          
-         })
-        })
-
-        return {status:true, data:null, msg:'all association done successfully'}
-        
-      } catch (error) {
-        console.log(error);
-        return {status:false, data:error, msg:'failed due to technical error'}
-        
-      }
-    }
-
-    deassociateSvcWithMember(dto:AssociateSvcDto) {
-      console.log('Deassociation starts...');
-      
-      try {
-        //1
-        const selectService = this.neo.read(`
-        MATCH (u:User {userId:"${dto.memberId}"})
-        RETURN u
-        `)
-
-        //2
-        const r2 = this.neo.write(`
-        MATCH (u:User {userId:"${dto.memberId}"}) - [r:SUBSCRIBED_TO] - (s:Service {svcId:"${dto.services[0].svcId}"})
-        DETACH DELETE r
-        
-        `)
-        return r2
-
-      } catch (error) {
-        console.log('',error);
-        
-      }
-    }
-
-    //Working in progress
-    // updateSubscriptionRate(dto:ServiceDTO) {
-    //   try {
-    //     const check = this.neo.read(`
-    //     MATCH (u:User {userId:"${dto.userId}") - [:SUBSCRIBED_TO] - (s:Service {svcId:"${dto.svcId}"})
-    //     RETURN u
-    //     `)
-
-    //     if(check) {
-    //       console.log('Member Has Acquired This Service!');
-    //       return 'Member Has Acquired This Service!'
-          
-    //     } else {
-    //       return '----------------'
-    //     }
- 
-    //   } catch (error) {
-        
-    //   }  
-    // }
-
-  // getServiceByGymId(id: string) {
-  //   const service = this.neo.read(`
-  //     MATCH (s:Service {svcId:"${id}"})
-  //     RETURN s
-  //     `);
-
-  //   return service;
-  // }
-
-    getServiceByMember(dto:AssociateSvcDto) {
-      try {
-      
-        console.log('id=>', dto.userId)
-
-          const findService = this.neo.read(`
-          MATCH (u:User {userId:"${dto.userId}"})
-          
-          return u;
-          `)
-
-          return findService;
-      } catch (error) {
-        
-      }
-    }
-
-
-
-  // remove(id:string) {
-
-  //   try {
-
-  //   console.log('Deleting the Service ID - ',id);
-
-  //   const w1 = this.neo.write
-  //   (`
-  //   MATCH (s:Service {svcId:"${id}"})
-  //   DETACH DELETE s
-  //   `);
-
-  //   console.log('Service Deleted Succesfully!');
-  //   return "Service Deleted Succesfully!"
-
-  // } catch (error) {
-
-  // }
-  // }
-  //}
-
+  //9
   remove(id: string) {
     try {
       console.log('Deleting the Service ID - ', id);
-
       const w1 = this.neo.write(`
       MATCH (s:Service {svcId:"${id}"}) 
-      
       DETACH DELETE s
       `);
-
       console.log('Service Deleted Succesfully!');
       return 'Service Deleted Succesfully!';
     } catch (error) {}
   }
+
+
 }

@@ -1,117 +1,97 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
 import { ConstraintMetadata } from 'class-validator/types/metadata/ConstraintMetadata';
 import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
-import { ServiceDTO } from 'src/services/dto/service.dto';
+import { ServiceDTO, serviceType } from 'src/services/dto/service.dto';
 import { AssociateSvcDto } from './dto/associateService.dto';
+import { updateServiceDto } from './dto/updateService.dto';
 import { ServicesService } from './services.service';
 
 @Controller('services')
-
-
 export class ServicesController {
+  constructor(private readonly defSvc: ServicesService) {}
 
-  constructor(private readonly defSvc: ServicesService) { }
-    
+  //1
   @Post('/generate/default/service') //Running
-
-  async generateDefaultservice(dto:ServiceDTO) {
+  async generateDefaultservice(dto: ServiceDTO) {
     console.log('inside generate default service');
     return await this.defSvc.createDefaultservice(dto);
-
   }
 
-  @Post('addcustomservice/')       
+  //2
+  @Post('addcustomservice/')
   create(
-    @Body() 
-    createServiceDto:ServiceDTO) {
+    @Body()
+    createServiceDto: ServiceDTO,
+  ) {
     // return 'This action adds a new owner';
 
-      return this.defSvc.addCustomService(createServiceDto)
-    
+    return this.defSvc.addCustomService(createServiceDto);
   }
 
-
-  @Get('getlist')   //Running
-  findAll() {
-    // return `This action returns all owner`;
-
-   return this.defSvc.findServiceList();
-  }
-
-  @Get(':id')     //Running
-  findOne(
-    @Param('id') id: string
-    
-    ) { 
-   return this.defSvc.findServiceById(id);
-  }
-
-  @Post('service/:id')     //Running
-  async findTwo(@Param('userId') memberId:any) {
-  //  return this.defSvc.getServiceByGymId(id); 
-  return await this.defSvc.getServiceByMember(memberId);
-  }
-
-  @Post('findservice')
-  async findService(
-    @Body() dto:AssociateSvcDto) {
-   return this.defSvc.getServiceByMember(dto)
-  }
-  
-  
-
-
-  
-
-
-
+  //3
   @Post('/associatesvc')
   async associateServiceWithMember(
-    
     @Body()
-    dto:AssociateSvcDto) {
-      console.log(dto);
+    dto: AssociateSvcDto,
+  ) {
+    console.log(dto);
     //  return await this.defSvc.associateSvcWithMember(dto);
-     return await this.defSvc.associateSvc(dto);
+    return await this.defSvc.associateSvc(dto);
   }
 
-
+  //4
   @Post('deassociatesvc')
   deassociateServiceWithMember(
     @Body()
-    dto:AssociateSvcDto
+    dto: AssociateSvcDto,
   ) {
-    return this.defSvc.deassociateSvcWithMember(dto);
-
-  }
-  
-  
-
-  //update1
-  @Patch('updatesvcrate')
-  update(
-    @Body() svcDto:ServiceDTO
-  ) {
-    return this.defSvc.updateRate(svcDto);
+    return this.defSvc.deassociateSvc(dto);
   }
 
+  //5
+  @Patch()
+  updateGymServiceRate(@Body() updateSvcDto: updateServiceDto) {
+    return this.defSvc.updateGymSvcRate(updateSvcDto);
+  }
 
-  //update2 WOP
-  // @Patch('updatesbscrate')
-  // updateSubscriptionrate(
-  //   @Body() svcDto:ServiceDTO
-  // ) {
-  //   return this.defSvc.updateSubscriptionRate(svcDto)
-  // }
-
-  //Running
-  // @Delete('remove/service/:id')
-  // remove(
-  //   @Param('id') id: string) 
-  //   {
-  //   return this.defSvc.remove(id);
-  //   }
+   //6 
+   @Get('findservice')
+   async findService(@Body() dto: AssociateSvcDto) {
+     return this.defSvc.getServiceByMember(dto);
+   }
 
 
+  //7 
+  @Get('getlist') //Running
+  findAll() {
+    // return `This action returns all owner`;
+
+    return this.defSvc.findServiceList();
+  }
+
+  //8
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.defSvc.findServiceById(id);
+  }
+
+  
+  //9
+  //Removing the Total Service Node
+  @Delete('remove/service/:id')
+  remove(@Param('id') id: string) {
+    return this.defSvc.remove(id);
+  }
+
+  // findActiveServices() {}
 }

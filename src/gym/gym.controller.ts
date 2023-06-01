@@ -17,6 +17,7 @@ import { HasRoles } from 'src/auth/has-role.decorator';
 import { BankService } from 'src/bank/bank.service';
 import { AssociateSvcDto } from 'src/services/dto/associateService.dto';
 import { ServiceDTO } from 'src/services/dto/service.dto';
+import { CreateBankDto } from 'src/bank/dto/create-bank.dto';
 
 @Controller('gym')
 export class GymController {
@@ -50,7 +51,7 @@ export class GymController {
     return this.gymSvc.detachSvc(gymDto);
   }
 
-  @Post('addservice')       
+  @Post('addcustomservice')       
   addService(
     @Body() 
     createServiceDto:ServiceDTO,
@@ -68,6 +69,13 @@ export class GymController {
   ) {
     return this.gymSvc.addOwner(gymDto);
   }
+
+  @Post('addbank')
+  addBank(@Body() addBankDto:CreateBankDto) {
+    return this.gymSvc.addBank(addBankDto)
+  }
+
+
 
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
