@@ -20,6 +20,7 @@ import { log } from 'console';
 
 @Controller('gym')
 export class GymController {
+  gymService: any;
   constructor(private readonly gymSvc: GymService) { }
 
   // @UseGuards(AuthGuard('jwt'))
@@ -30,6 +31,20 @@ export class GymController {
 
     return await this.gymSvc.create(createGymDto);
   }
+  @Post('attachsvc')
+
+  attachService(
+
+    @Body()
+
+    gymDto: CreateGymDto,
+
+  ) {
+
+    return this.gymService.attachSvc(gymDto);
+
+  }
+
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))
 
@@ -72,10 +87,10 @@ export class GymController {
 
 
   //Running
-  @Delete('account/details/delete/:id')
-  remove(@Param('id') id: string) {
-    return this.gymSvc.remove(id);
-  }
+  // @Delete('account/details/delete/:id')
+  // remove(@Param('id') id: string) {
+  //   return this.gymSvc.remove(id);
+  // }
 
 
 
@@ -111,5 +126,8 @@ export class GymController {
     return await this.gymSvc.updateAddress(id, updateGymDto);
   }
 
-
+  @Delete('account/details/delete/:id')
+  remove(@Param('id') id: string) {
+    return this.gymService.remove(id);
+  }
 }

@@ -1,4 +1,3 @@
-
 import {
   Body,
   Controller,
@@ -9,110 +8,115 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+
 import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
+
 import { ConstraintMetadata } from 'class-validator/types/metadata/ConstraintMetadata';
-import { CreateGymDto } from 'src/gym/dto/create-gym.dto';
-import { ServiceDTO } from 'src/services/dto/service.dto';
-import { AssociateSvcDto } from './dto/associateService.dto';
+
+import { ServiceDTO } from 'src/package/dto/service.dto';
+
 import { ServicesService } from './services.service';
+
 import { log } from 'console';
+import { updateService } from 'src/package/dto/updateservice.dto';
+import { AssociateSvcDto } from 'src/package/dto/associateService.dto';
 
 @Controller('services')
 export class ServicesController {
-  constructor(private readonly defSvc: ServicesService) { }
+  constructor(private readonly defSvc: ServicesService) {} //#1
 
-
-
-  //#1  
-  @Post('/generate/default/service') //Running
+  @Get('/generate/default/service') //Running
   async generateDefaultservice(dto: ServiceDTO) {
     console.log('inside generate default service');
-    // return await this.defSvc.createDefaultservice(dto);
 
-  }
+    return await this.defSvc.createDefaultservice(dto);
+  } // #2
 
-  //#2
-  @Get('getlist')   //Running
-  findAll() {
+  @Get('getlist') //Running
+  fetchserviceList() {
     // return `This action returns all owner`;
 
-    // @Get(':id') //Service Id Getting null
-    // findOne(id: string) {
-    //   // return `This action returns a #${id} owner`;
-    //   return this.defSvc.findServiceById(id);
+    return this.defSvc.fetchServiceList();
   }
 
+  @Post('/add')
+  async create(@Body() createServiceDto: ServiceDTO) {
+    // console.log('createServiceDTO=>', createServiceDto);
 
-  @Get(':id')     //Running
-  findOne(
-    @Param('id') id: string
+    return await this.defSvc.createCustomService(createServiceDto);
+  }
 
+  @Post('/selectedService')
+  async selectServices(@Body() createServiceDto: ServiceDTO) {
+    console.log('createServiceDTO=>', createServiceDto);
+
+    return await this.defSvc.selectedServices(createServiceDto);
+  }
+
+  @Get(':id')
+  async getserviceById(@Param('id') id: any) {
+    // return `This action returns a #${id} owner`;
+
+    console.log(`findserviceById ${id}`);
+
+    return await this.defSvc.getServiceByGymId(id);
+  }
+  @Patch('service/:id')
+
+ async updateService(
+
+ @Param('id') id: string,
+
+@Body() updateservice: updateService,
+
+) {
+
+return await this.defSvc.updateService(id, updateservice);
+
+ }
+
+  @Patch('update/:id')
+  update(@Param('id') id: string, @Body() svcDto: ServiceDTO) {
+    return this.defSvc.update(id, svcDto);
+  } //Service Id Getting null
+
+  @Delete('remove/service/:id')
+  remove(id: string) {
+    return this.defSvc.remove(id);
+  }
+
+  @Delete('remove')
+  async deleteServiceByGymId(@Body() dto: ServiceDTO) {
+    return await this.defSvc.deleteServiceByGymId(dto);
+  }
+
+  @Post('/associateService')
+  async associateServiceWithGym(
+    @Body() body: { gymId: string; svcId: string; rate: number; name: string },
   ) {
-    return this.defSvc.findServiceById(id);
+    return await this.defSvc.associateServiceWithGym(
+      body.gymId,
+
+      body.svcId,
+
+      body.rate,
+    );
   }
-
-  @Get(':id')     //Running
-  findTwo(
-    @Param('id') id: string,
-  ) {
-    return this.defSvc.getServiceByGymId(id);
-  }
-
-  //Not Running
-  //Service Id Getting null
-
-
-  @Post('addservice/:id')
-  create(
-    @Param('id') id: string,
-    @Body()
-    createServiceDto: ServiceDTO,
-    gymDto: CreateGymDto
-  ) {
-    // return 'This action adds a new owner';
-
-    this.defSvc.addCustomService(id, createServiceDto)
-
-  }
-
   @Post('/associatesvc')
+
   async associateServiceWithMember(
 
     @Body()
-    dto: AssociateSvcDto) {
+
+    dto: AssociateSvcDto,
+
+  ) {
+
     console.log(dto);
-    return await this.defSvc.associateSvcWithMember(dto);
-  }
 
+    //  return await this.defSvc.associateSvcWithMember(dto);
 
-  @Post('deassociatesvc')
-  deassociateServiceWithMember(
-    @Body()
-    dto: AssociateSvcDto
-  ) {
-    return this.defSvc.deassociateSvcWithMember(dto);
+    return await this.defSvc.associateSvc(dto);
 
   }
-
-
-
-  //Running
-  @Patch('update/:id')
-  update(
-    @Param('id') id: string,
-    @Body() svcDto: ServiceDTO
-  ) {
-    return this.defSvc.update(id, svcDto);
-  }
-
-
-  //Running
-  // @Delete('remove/service/:id')
-  // remove(
-  //   @Param('id') id: string) 
-  //   {
-  //   return this.defSvc.remove(id);
-  //   }
-
-
 }

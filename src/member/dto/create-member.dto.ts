@@ -14,7 +14,7 @@ export class CreateMemberDto {
   rateType: RATE_TYPE;
   serviceallocatedCount: number;
   serviceUsageCount: number;
-
+  
   // gstNo: any;
   // aadhar: any;
   // serviceId: any;

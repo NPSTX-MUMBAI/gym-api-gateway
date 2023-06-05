@@ -18,48 +18,151 @@ import { log } from 'console';
 
 @Injectable()
 export class GymService {
-  constructor(private neo: Neo4jService) { }
+  constructor(private neo: Neo4jService) {}
+  // async create(dto: CreateGymDto) {
+  //   try {
+  //     //step1: first check if the gym exists
+  //     const gymExists = await this.neo.read(`MATCH (u:User {email:"${dto.createdBy}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
+  //     AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
+
+  //     console.log("gym=>", gymExists);
+  //     if (gymExists.length > 0) {
+  //       throw new ConflictException("gym exists with the same name for the same user");
+  //     } else {
+  //       let id: string;
+  //       const res = await this.neo.write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
+  //     email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}"})
+  //     MERGE (a:Address {line1:"${dto.address.line1}",
+  //       line2:"${dto.address.line2}", locality:"${dto.address.locality}",
+  //       city:"${dto.address.city}",state:"${dto.address.state}",
+  //       country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
+  //       MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+  //    `)
+  //       res.map((r) => {
+  //         id = r.g.gymId;
+  //         console.log("ID->",id);
+  //       })
+  //       if (res) {
+  //         const r = await this.neo.write(`MATCH (u:User{id:"${dto.id}"}),(g:Gym {gymId:"${id}"})
+  //         merge (u)-[o:OWNS]->(g) return o`);
+  //         console.log("gym created successfully", r);
+  //         return "gym created successfully"
+
+  //       } else {
+  //         return "failed to create gym due to invalid request"
+  //       }
+  //     }
+
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new HttpException(error, 501);
+  //   }
+
+  // }
+
+  // async create(dto: CreateGymDto) {
+  //   try {
+  //     //step1: first check if the gym exists
+  //     const gymExists = await this.neo
+  //       .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
+  //     AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
+
+  //     console.log('gym=>', gymExists);
+  //     if (gymExists.length > 0) {
+  //       throw new ConflictException(
+  //         'gym exists with the same name for the same user',
+  //       );
+  //     } else {
+  //       let id: string;
+  //       const res = await this.neo
+  //         .write(`CREATE (g:Gym { id: apoc.create.uuid() ,name:"${dto.name}",
+  //     email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
+  //     MERGE (a:Address {line1:"${dto.address.line1}",
+  //       line2:"${dto.address.line2}", locality:"${dto.address.locality}",
+  //       city:"${dto.address.city}",state:"${dto.address.state}",
+  //       country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
+  //       MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+  //    `);
+  //       console.log(res, 'my gymm');
+
+  //       res.map((r) => (id = r.g.id));
+  //       console.log('ID->', id);
+  //       if (res) {
+  //         const r = await this.neo.write(`MATCH (u:User{userId:"${
+  //           dto.userId
+  //         }"}),(g:Gym {id:"${id}"})
+  //         merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
+  //         console.log('gym created successfully', r);
+  //         return 'gym created successfully';
+  //       } else {
+  //         return 'failed to create gym due to invalid request';
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new HttpException(error, 501);
+  //   }
+  // }
 
   async create(dto: CreateGymDto) {
     try {
       //step1: first check if the gym exists
+
       const gymExists = await this.neo
-        .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}" 
-      AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
+        .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
+    
+    AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
       console.log('gym=>', gymExists);
+
       if (gymExists.length > 0) {
         throw new ConflictException(
           'gym exists with the same name for the same user',
         );
       } else {
-        let id: string;
+        let gymId: string;
+
         const res = await this.neo
-          .write(`CREATE (g:Gym { id: apoc.create.uuid() ,name:"${dto.name}",
-      email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
-      MERGE (a:Address {line1:"${dto.address.line1}", 
-        line2:"${dto.address.line2}", locality:"${dto.address.locality}", 
-        city:"${dto.address.city}",state:"${dto.address.state}",
-        country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"}) 
-        MERGE (g)-[r:LOCATED_IN]->(a) return a,g
-     `);
+          .write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
+    
+  email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
+    
+  MERGE (a:Address {line1:"${dto.address.line1}",
+    
+  line2:"${dto.address.line2}", locality:"${dto.address.locality}",
+    
+  city:"${dto.address.city}",state:"${dto.address.state}",
+    
+  country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
+    
+  MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+    
+  `);
+
         console.log(res, 'my gymm');
 
-        res.map((r) => (id = r.g.id));
-        console.log('ID->', id);
+        res.map((r) => (gymId = r.g.gymId));
+
+        console.log('ID->', gymId);
+
         if (res) {
-          const r = await this.neo.write(`MATCH (u:User{userId:"${dto.userId
-            }"}),(g:Gym {id:"${id}"}) 
-          merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
+          const r = await this.neo.write(`MATCH (u:User
+    
+  {userId:"${dto.userId}"}),(g:Gym {gymId:"${gymId}"})
+    
+  merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
+
           console.log('gym created successfully', r);
+
           return 'gym created successfully';
         } else {
           return 'failed to create gym due to invalid request';
         }
       }
     } catch (error) {
-      console.log('', error);
+      console.log(error);
 
+      throw new HttpException(error, 501);
     }
   }
 
@@ -140,11 +243,11 @@ export class GymService {
 
     let getDetails = this.neo.read(`
 
-    MATCH (b:Bank {bankId:"${bankId}"}) - [a:HAS_ACCOUNT] - (g:Gym )
+ MATCH (b:Bank {bankId:"${bankId}"}) - [a:HAS_ACCOUNT] - (g:Gym )
 
-    RETURN g
+ RETURN g
 
-    `);
+ `);
     return getDetails;
   }
 
@@ -314,12 +417,32 @@ export class GymService {
       const w1 = this.neo.write(
         `MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `,
       );
-
-      return w1;
+   return w1;
     } catch (error) {
       console.log('Cannot Be Delete as Gym ID Not Found!', error);
-
       throw new NotFoundException();
     }
+  }
+  attachSvc(dto: CreateGymDto) {
+
+    console.log('Attaching Service start...');
+
+
+
+
+    const w1 = this.neo.write(`
+
+        MATCH (g:Gym {gymId:"${dto.id}"}),(s:Service {svcId:"${dto.svcId}"})
+
+        CREATE (g) - [:HAS_SERVICE] -> (s)
+
+        RETURN g;
+
+        `);
+
+        console.log('Attaching Service Successfully!');
+
+    return 'Attaching Service Successfully!'
+
   }
 }

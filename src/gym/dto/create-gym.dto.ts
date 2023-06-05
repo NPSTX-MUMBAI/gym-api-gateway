@@ -10,5 +10,5 @@ export class CreateGymDto {
   aadhar?: string;
   address: Address;
   userId: string;
-  svcId: string;
+  svcId:string
 }

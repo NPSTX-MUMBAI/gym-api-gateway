@@ -15,6 +15,8 @@ import { AuthService } from 'src/auth/auth.service';
 import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { Address } from 'cluster';
 import { log } from 'console';
+import { CreateBodydto } from './dto/body-parameter.dto';
+import { updateBodyparameter } from './dto/updateBody-parameter.dto';
 import { Member } from './entities/member.entity';
 
 @Injectable()
@@ -103,6 +105,7 @@ export class MemberService {
 
 
   async create(dto: CreateMemberDto) {
+    console.log(dto);
 
     try {
 
@@ -145,11 +148,13 @@ export class MemberService {
   }
   async findAll() {
     try {
-      const res = await this.neo.read(`MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `)
+      const res = await this.neo.read(
+        `MATCH (u:User) where ANY (x in u.roles WHERE x= 'MEMBER') return u `,
+      );
       // const res = await this.neo.read(`MATCH (u:Member)  return u `);
       const res1 = await this.neo.read(`
       MATCH (u:User) RETURN u;
-      `)
+      `);
 
       res.map((r) => {
         console.log(r);
@@ -205,18 +210,100 @@ return u,a `,
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<{ status: boolean; msg: string }> {
     try {
-
       console.log('Deleting Member ID - ', id);
 
       const res = await this.neo.write(
         `MATCH (u:User {userId:"${id}"}) DETACH DELETE u`,
       );
-      return 'member deleted successfully';
+      return { status: true, msg: 'member deleted successfully' };
     } catch (error) {
       throw new HttpException('error', error);
     }
+  }
 
+  async addbodyParameters(dto: CreateBodydto) {
+    try {
+      const res = await this.neo.write(
+        // `MATCH (u:User {userId: "${dto.userId}"})-[p:BODY_PARAMETERS]-> (b:body {height:"${dto.height}", weight:"${dto.weight}"})  return u`,
+
+        `CREATE(b:Body {
+    
+    bodyId:apoc.create.uuid(), height:"${dto.height}",weight:"${dto.weight}",neck:"${dto.neck}",chest:"${dto.chest}",shoulder: "${dto.shoulder}",biceps: "${dto.biceps}",waist: "${dto.waist}",hips: "${dto.hips}",
+    thighs: "${dto.thighs}",
+    rightarmFLex:  "${dto.rightarmFlex}",
+    leftarmFlex:  "${dto.leftarmFlex}",
+    calves:   "${dto.calves}"})
+    
+    with b
+    
+     MATCH (u:User {userId:"${dto.userId}"})
+    
+     merge (u)-[:HAS_BODYPARAMETER]-> (b)
+    
+    return u, b`,
+      );
+
+      console.log(res);
+
+      return 'BodyParameters Added Successfully';
+    } catch (error) {
+      throw new HttpException('error', error);
+    }
+  }
+
+  async updateBody(id: any, dto: updateBodyparameter) {
+    try {
+      console.log('BOOODYY', id);
+
+      const res = await this.neo
+        .write(`MATCH (u:User {userId: "${dto.memberId}"})-[:HAS_BODYPARAMETER]->(b:Body{bodyId:"${id}"})
+    
+    SET b.chest="${dto.chest}"
+    
+    SET b.height="${dto.height}"
+    
+    SET b.weight="${dto.weight}"
+    
+    SET b.neck= "${dto.neck}"
+    SET b.shoulder= "${dto.shoulder}"
+    SET b.biceps= "${dto.biceps}"
+    SET b.waist= "${dto.waist}"
+    SET b.hips= "${dto.hips}"
+    SET b.thighs= "${dto.thighs}"
+    SET b.rightarmFLex = "${dto.rightarmFlex}"
+    SET b.leftarmFlex = "${dto.leftarmFlex}"
+    SET b.calves =  "${dto.calves}"
+     return b,u
+    `);
+
+      console.log(res);
+
+      return 'updated successfully';
+    } catch (error) {
+      throw new HttpException('error updating BodyParameters', error);
+    }
+  }
+  async findBodyParameterbyMemberId(userId: any) {
+    console.log(userId);
+
+    try {
+      const res = await this.neo.read(
+        ` MATCH (u:User {userId: "${userId}"})-[:HAS_BODYPARAMETER]->(b: Body) return b`,
+      ); // const hey = res.data.map((res) => res.get('m').properties);\
+
+      const array = [];
+
+      for (let i = 0; i < res.length; i++) {
+        array.push(res[i].b);
+
+        console.log('bodddyParameter', array);
+      }
+
+      return array;
+    } catch (error) {
+      throw new HttpException('error encountered', error);
+    }
   }
 }

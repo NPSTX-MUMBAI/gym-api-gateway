@@ -29,7 +29,7 @@ AURA_INSTANCENAME=unacademy-db
       limit: 10,
     }),
     AuthModule,
-
+  
     OwnerModule,
     MemberModule,
     CollectionModule,
@@ -44,11 +44,24 @@ AURA_INSTANCENAME=unacademy-db
       password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
       options: {
         disableLosslessIntegers: true,
+        
       },
     }),
-    ServicesModule, OwnerModule, MemberModule, CollectionModule, ReportsModule, GymModule, BankModule],
+    ServicesModule,
+    
+  ],
   controllers: [AppController],
-  providers: [AppService,],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,                    
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 
 export class AppModule { }
