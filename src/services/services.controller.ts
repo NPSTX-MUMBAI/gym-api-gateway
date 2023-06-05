@@ -19,6 +19,7 @@ import { ServicesService } from './services.service';
 
 import { log } from 'console';
 import { updateService } from 'src/package/dto/updateservice.dto';
+import { AssociateSvcDto } from 'src/package/dto/associateService.dto';
 
 @Controller('services')
 export class ServicesController {
@@ -100,5 +101,22 @@ return await this.defSvc.updateService(id, updateservice);
 
       body.rate,
     );
+  }
+  @Post('/associatesvc')
+
+  async associateServiceWithMember(
+
+    @Body()
+
+    dto: AssociateSvcDto,
+
+  ) {
+
+    console.log(dto);
+
+    //  return await this.defSvc.associateSvcWithMember(dto);
+
+    return await this.defSvc.associateSvc(dto);
+
   }
 }

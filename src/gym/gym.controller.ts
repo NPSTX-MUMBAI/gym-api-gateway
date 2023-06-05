@@ -29,6 +29,19 @@ export class GymController {
 
     return await this.gymService.create(createGymDto);
   }
+  @Post('attachsvc')
+
+  attachService(
+
+    @Body()
+
+    gymDto: CreateGymDto,
+
+  ) {
+
+    return this.gymService.attachSvc(gymDto);
+
+  }
 
   // @HasRoles(USER_ROLE.ADMIN)
   // @UseGuards(AuthGuard('jwt'))

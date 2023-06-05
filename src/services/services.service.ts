@@ -7,6 +7,7 @@ import { log } from 'console';
 import * as crypto from 'crypto';
 
 import { NotFoundError } from 'rxjs';
+import { AssociateSvcDto } from 'src/package/dto/associateService.dto';
 
 import {
   ServiceDTO,
@@ -404,5 +405,38 @@ export class ServicesService {
     } catch (error) {
       throw new HttpException('error updating Services', error);
     }
+  }
+  async associateSvc(dto:AssociateSvcDto) {
+
+    try {
+
+      dto.services.map(async (service)=>{
+
+        const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
+
+        (s:Service {svcId:"${service.svcId}"})
+
+        MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}",
+
+        rate:"${service.rate}"}]->(s) return r
+
+       `).then((res) => {
+
+        console.log("=====",res);
+
+       })
+
+      })
+
+      return {status:true, data:null, msg:'all association done successfully'}
+
+    } catch (error) {
+
+      console.log(error);
+
+      return {status:false, data:error, msg:'failed due to technical error'}
+
+    }
+
   }
 }

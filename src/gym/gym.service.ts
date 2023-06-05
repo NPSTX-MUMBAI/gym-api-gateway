@@ -111,7 +111,7 @@ export class GymService {
       const gymExists = await this.neo
         .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
     
-         AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
+    AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
       console.log('gym=>', gymExists);
 
@@ -323,5 +323,27 @@ export class GymService {
       console.log('Cannot Be Delete as Gym ID Not Found!', error);
       throw new NotFoundException();
     }
+  }
+  attachSvc(dto: CreateGymDto) {
+
+    console.log('Attaching Service start...');
+
+
+
+
+    const w1 = this.neo.write(`
+
+        MATCH (g:Gym {gymId:"${dto.id}"}),(s:Service {svcId:"${dto.svcId}"})
+
+        CREATE (g) - [:HAS_SERVICE] -> (s)
+
+        RETURN g;
+
+        `);
+
+        console.log('Attaching Service Successfully!');
+
+    return 'Attaching Service Successfully!'
+
   }
 }
