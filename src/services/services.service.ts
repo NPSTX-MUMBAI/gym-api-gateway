@@ -122,7 +122,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Lockers',
           imgUrl: '../assets/lockers.jpg',
-          rate: 1000,
           serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -132,7 +131,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Yoga',
           imgUrl: '../assets/Yoga1.jpg',
-          rate: 1000,
           serviceType: [serviceType.INSTANCE],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -144,7 +142,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Cardio',
           imgUrl: '../assets/cardio1.jpg',
-          rate: 1000,
           serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -155,7 +152,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Personal Training',
           imgUrl: '../assets/Trainer1.jpg',
-          rate: 2000,
           serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -167,7 +163,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Strength Training',
           imgUrl: '../assets/Strengthtraining.jpg',
-          rate: 2500,
           serviceType: [serviceType.INSTANCE],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -179,7 +174,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Swimming',
           imgUrl: '../assets/swimpool1.jpg',
-          rate: 2000,
           serviceType: [serviceType.INSTANCE],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -191,7 +185,6 @@ export class ServicesService {
           isDefault: true,
           name: 'Sauna',
           imgUrl: '../assets/sauna.jpg',
-          rate: 3000,
           serviceType: [serviceType.RECURRING],
           isActive:'True',
           createdOn:`${new Date()}`
@@ -203,7 +196,6 @@ export class ServicesService {
           isDefault: true,
           name: 'HIT Service',
           imgUrl: '../assets/sauna.jpg',
-          rate: 3000,
           serviceType: [serviceType.INSTANCE],
           isActive:'yes',
           createdOn:`${new Date()}`
@@ -219,7 +211,6 @@ export class ServicesService {
         isActive:"${svc.isActive}",
         name:"${svc.name}",
         imgUrl:"${svc.imgUrl}",
-        rate:"${svc.rate}",
         createdOn:"${svc.createdOn}",
         isDefault:"${svc.isDefault}"}) return s`;
         console.log(query);
@@ -243,7 +234,6 @@ export class ServicesService {
       CREATE (s:Service {
         svcId:apoc.create.uuid(),
         name : "${svcDto.name}",
-        rate: "${svcDto.rate}",
          isDefault: "${svcDto.isDefault}",
          svcType: "${svcDto.serviceType}",
          isActive:"${svcDto.isActive}",
@@ -263,23 +253,59 @@ export class ServicesService {
 
 
       //3
-      async associateSvc(dto:AssociateSvcDto) {
-        try {
-          dto.services.map(async (service)=>{
-            const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
-            (s:Service {svcId:"${service.svcId}"}) 
-            MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
-            rate:"${service.rate}"}]->(s) return r
-           `).then((res) => {
-            console.log("=====",res);
-           })
-          })
-          return {status:true, data:null, msg:'all association done successfully'}
-        } catch (error) {
-          console.log(error);
-          return {status:false, data:error, msg:'failed due to technical error'}
+      // async associateSvc(dto:AssociateSvcDto) {
+      //   try {
+      //     dto.services.map(async (service)=>{
+      //       const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
+      //       (s:Service {svcId:"${service.svcId}"}) 
+      //       MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
+      //       rate:"${service.rate}"}]->(s) return r
+      //      `).then((res) => {
+      //       console.log("=====",res);
+      //      })
+      //     })
+      //     return {status:true, data:null, msg:'all association done successfully'}
+      //   } catch (error) {
+      //     console.log(error);
+      //     return {status:false, data:error, msg:'failed due to technical error'}
+      //   }
+      // }
+
+        //3.1
+        async associateSvc(dto:AssociateSvcDto) {
+          try {
+
+
+            const check = await this.neo.read(`
+            MATCH (g:Gym {gymId:"${dto.gymId}"}) - [:HAS_SERVICE] - (s:Service {svcId:"${dto.svcId}"})
+            RETURN s;
+            `)
+
+            if(check.length > 0) {
+              console.log('Service Is Available');
+              
+              dto.services.map(async (service)=>{
+                const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
+                (s:Service {svcId:"${service.svcId}"}) 
+                MERGE (u)-[r:SUBSCRIBED_TO {subscriptionDate:"${Date.now()}", 
+                rate:"${service.rate}"}]->(s) return r
+                `).then((res) => {
+                  console.log("=====",res);
+                })
+              })
+              return {status:true, data:null, msg:'all association done successfully'}
+            } 
+              else {
+                console.log('Gym Does Not Provide Required Service');
+                return 'Gym Does Not Provide Required Service'
+              }
+            } catch (error) {
+              console.log(error);
+              return {status:false, data:error, msg:'failed due to technical error'}
+            }
+            
+
         }
-      }
 
          //4
      async deassociateSvc(dto:AssociateSvcDto) {
@@ -375,7 +401,7 @@ export class ServicesService {
       console.log('Service Not Found', error);
     }
   }
-
+  
   //9
   remove(id: string) {
     try {

@@ -59,7 +59,7 @@ export class ServicesController {
   }
 
   //5
-  @Patch()
+  @Patch('updatesvcrate')
   updateGymServiceRate(@Body() updateSvcDto: updateServiceDto) {
     return this.defSvc.updateGymSvcRate(updateSvcDto);
   }

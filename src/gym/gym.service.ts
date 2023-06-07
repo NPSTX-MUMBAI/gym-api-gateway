@@ -202,6 +202,32 @@ export class GymService {
     } catch (error) {}
   }
 
+  async addMember(dto:CreateGymDto) {
+    try {
+      const check = await this.neo.read(`
+      MATCH p = (g:Gym {gymId:"${dto.gymId}"}) - [:HAS_MEMBER] - (u:User {userId:"${dto.userId}"})
+      RETURN p
+      `)
+
+      if(check.length > 0) {
+        console.log('This member is Already Present in Gym');
+        return 'This member is Already Present in Gym';
+      } else {
+        
+        const addMember = this.neo.write(`
+        MATCH p = (g:Gym {gymId:"${dto.gymId}"}),(u:User {userId:"${dto.userId}"})
+        CREATE (g) - [:HAS_MEMBER] -> (u)
+        RETURN p
+        `)
+        return 'This Member Added Successfully!'
+      }'Attaching Service Successfully!'
+
+    } catch (error) {
+      throw new NotFoundException('');
+    }
+  }
+
+
   async addBank(dto:CreateBankDto) {
     try {
       const check = await this.neo.read(`
@@ -225,7 +251,7 @@ export class GymService {
       
     }
   }
-
+  
 
 
 
@@ -322,7 +348,7 @@ export class GymService {
 
     const w1 = this.neo.write(`
         MATCH (g:Gym {gymId:"${dto.gymId}"}),(s:Service {svcId:"${dto.svcId}"})
-        CREATE (g) - [:HAS_SERVICE] -> (s)
+        CREATE (g) - [:HAS_SERVICE {rate:"${dto.rate}"}] -> (s)
         RETURN g;
         `);
         console.log('Attaching Service Successfully!');
@@ -363,7 +389,6 @@ export class GymService {
       CREATE (s:Service {
         svcId:apoc.create.uuid(),
         name : "${svcDto.name}",
-        rate: "${svcDto.rate}",
          isDefault: "${svcDto.isDefault}",
          svcType: "${svcDto.serviceType}",
          isActive:"${svcDto.isActive}",

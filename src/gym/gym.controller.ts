@@ -70,10 +70,19 @@ export class GymController {
     return this.gymSvc.addOwner(gymDto);
   }
 
+  @Post('addmember')
+  addMember(
+    @Body() gymDto:CreateGymDto
+  ) {
+    return this.gymSvc.addMember(gymDto);
+  }
+
   @Post('addbank')
   addBank(@Body() addBankDto:CreateBankDto) {
     return this.gymSvc.addBank(addBankDto)
   }
+
+
 
 
 

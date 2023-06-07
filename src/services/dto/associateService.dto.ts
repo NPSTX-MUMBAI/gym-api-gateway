@@ -10,7 +10,3 @@ export class AssociateSvcDto {
     gymId?:string;
     svcId?:string;
 }
-
-
-
-

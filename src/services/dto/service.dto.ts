@@ -5,7 +5,7 @@ export class ServiceDTO {
   imgUrl?: string;
   createdOn?: string;
   isDefault: boolean;
-  rate: number;
+  // rate: number;
   serviceType?: serviceType[];
   noOfOccurrence?: number;
   isActive: any;

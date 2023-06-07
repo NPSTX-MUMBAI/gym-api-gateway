@@ -116,7 +116,7 @@ export class DietService {
     try {
       //Take UserID & DietID
       const check = await this.neo.read(`
-      MATCH p = (u:User {userId:"${dto.userId}"}) - [:HAS_DIET] - (d:Diet {dietId:"${dto.dietId}"})
+      MATCH p = (u:User {userId:"${dto.userId}"}) - [:FOLLOWS] - (d:Diet {dietId:"${dto.dietId}"})
       RETURN p     
       `);
       if (check.length > 0) {
@@ -144,7 +144,7 @@ export class DietService {
       const check = await this.neo.read(`
       MATCH p = (d:Diet {dietId:"${dto.dietId}"}) - [:PROVIDES] - (m:Meal {mealId:"${dto.mealId}"})
       RETURN p     
-      `);
+      `); 
       if (check.length > 0) {
         console.log('Already Diet is Present with this User!');
       } else {

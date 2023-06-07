@@ -11,7 +11,7 @@ export class CreateGymDto {
     id: any;
     createdOn:string;
     createdTime:string;
-
+    rate:string;
     gymId?: string;
     // memberId?:String;
     userId?:string;

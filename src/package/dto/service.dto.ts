@@ -3,7 +3,7 @@ export class ServiceDTO {
   name: string;
   isDefault: IS_DEFAULT;
   isActive: IS_ACTIVE;
-  rate: number;
+  // rate: number;
   svcId: string;
 
   imgUrl?: string;
