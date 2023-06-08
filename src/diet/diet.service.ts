@@ -208,4 +208,49 @@ export class DietService {
     RETURN f
     `);
   }
+
+
+  async findMemberiet(dto:AddDietDTO) {
+    try {
+      console.log('Finding The Member Diet Plan');
+      
+
+      const gymMember = await this.neo.read(`
+      MATCH p = (g:Gym {gymId:"${dto.gymId}"}) - [:HAS_MEMBER] - (u:User {userId:"${dto.userId}"})
+      RETURN p
+      `)
+
+      if(gymMember.length > 0) {
+        const memberDiet = await this.neo.read(`
+        MATCH p = (u:User {userId:"${dto.userId}"}) - 
+        [:FOLLOWS] - (d:Diet {dietId:"${dto.dietId}"})
+        RETURN p
+        `)
+
+          if(memberDiet.length > 0) {
+            const dietMeal = await this.neo.read(`
+            MATCH p = (d:Diet {dietId:"${dto.dietId}"}) - 
+            [PROVIDES] - (m:Meal (mealId:"${dto.mealId}"))
+            RETURN p
+            `)
+
+            if(dietMeal.length > 0) {
+              const mealFood = this.neo.read(`
+              MATCH p = (m:Meal (mealId:"${dto.mealId}")) - 
+              [:CONSIST_OF] - (f:Food (foodId:"${dto.foodId}"))
+              RETURN p
+              `)
+            }
+
+          }
+
+      } 
+
+
+      
+    } catch (error) {
+      throw new NotFoundException('')
+    }
+  }
+
 }

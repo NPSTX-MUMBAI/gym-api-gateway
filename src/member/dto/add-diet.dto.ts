@@ -4,7 +4,8 @@ export class AddDietDTO {
 
     
     userId?:string;
+    gymId?:string;
     mealId?:string;
-    foodId:string;
+    foodId?:string;
 }
 

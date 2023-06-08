@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, HttpException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import { AddDietDTO } from 'src/member/dto/add-diet.dto';
 import { DietService } from './diet.service';
@@ -76,6 +76,11 @@ export class DietController {
 
   }
 
+
+  @Get('findmemberdiet')
+  findMemberDiet(@Body() addDietDto:AddDietDTO) {
+    return this.dietSvc.findMemberiet(addDietDto);
+  }
 
 
 }
