@@ -15,6 +15,7 @@ import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { Gym } from './entities/gym.entity';
 import { log } from 'console';
+import { ServiceDTO } from 'src/package/dto/service.dto';
 
 @Injectable()
 export class GymService {
@@ -110,8 +111,8 @@ export class GymService {
 
       const gymExists = await this.neo
         .read(`MATCH (u:User {userId:"${dto.userId}"})-[o:OWNS]->(g:Gym ) WHERE g.name="${dto.name}" AND g.email="${dto.email}"
-    
-    AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
+
+      AND g.gstNo="${dto.gstNo}" AND g.aadhar="${dto.aadhar}" return g `);
 
       console.log('gym=>', gymExists);
 
@@ -120,37 +121,37 @@ export class GymService {
           'gym exists with the same name for the same user',
         );
       } else {
-        let gymId: string;
+        let id: string;
 
         const res = await this.neo
-          .write(`CREATE (g:Gym { gymId: apoc.create.uuid() ,name:"${dto.name}",
-    
-  email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
-    
-  MERGE (a:Address {line1:"${dto.address.line1}",
-    
-  line2:"${dto.address.line2}", locality:"${dto.address.locality}",
-    
-  city:"${dto.address.city}",state:"${dto.address.state}",
-    
-  country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
-    
-  MERGE (g)-[r:LOCATED_IN]->(a) return a,g
-    
-  `);
+          .write(`CREATE (g:Gym { id: apoc.create.uuid() ,name:"${dto.name}",
+
+      email:"${dto.email}",panNo:"${dto.panNo}",gstNo:"${dto.gstNo}",aadhar:"${dto.aadhar}",userId:"${dto.userId}"})
+
+      MERGE (a:Address {line1:"${dto.address.line1}",
+
+        line2:"${dto.address.line2}", locality:"${dto.address.locality}",
+
+        city:"${dto.address.city}",state:"${dto.address.state}",
+
+        country:"${dto.address.country}",pinCode:"${dto.address.pinCode}"})
+
+        MERGE (g)-[r:LOCATED_IN]->(a) return a,g
+
+     `);
 
         console.log(res, 'my gymm');
 
-        res.map((r) => (gymId = r.g.gymId));
+        res.map((r) => (id = r.g.id));
 
-        console.log('ID->', gymId);
+        console.log('ID->', id);
 
         if (res) {
-          const r = await this.neo.write(`MATCH (u:User
-    
-     {userId:"${dto.userId}"}),(g:Gym {gymId:"${gymId}"})
-    
-     merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
+          const r = await this.neo.write(`MATCH (u:User{userId:"${
+            dto.userId
+          }"}),(g:Gym {id:"${id}"})
+
+          merge (u)-[o:OWNS {createdOn:"${Date.now()}"}]->(g) return o`);
 
           console.log('gym created successfully', r);
 
@@ -165,7 +166,6 @@ export class GymService {
       throw new HttpException(error, 501);
     }
   }
-
   // async findAll() {
   //   try {
   //     const res = await this.neo.read(`MATCH (g:Gym) return g`);
@@ -318,32 +318,42 @@ export class GymService {
       const w1 = this.neo.write(
         `MATCH (g:Gym {gymId:"${gymId}"}) DETACH DELETE g `,
       );
-   return w1;
+      return w1;
     } catch (error) {
       console.log('Cannot Be Delete as Gym ID Not Found!', error);
       throw new NotFoundException();
     }
   }
-  attachSvc(dto: CreateGymDto) {
 
-    console.log('Attaching Service start...');
+  async attachSvc(dto: ServiceDTO) {
+    try {
+      const serviceCheck = await this.neo.read(
+        `MATCH (g:Gym {id:"${dto.id}"}) - [r: HAS_SERVICE] -> (s:Service) WHERE s.svcId="${dto.svcId}"  return g,s`,
+      );
 
+      console.log('Service  Found :', serviceCheck);
 
+      if (serviceCheck.length > 0) {
+        throw new ConflictException('Service already exists in gym');
+      } else {
+        const res = await this.neo.write(
+          ` MATCH (g:Gym {id:"${dto.id}"}),(s:Service {svcId:"${dto.svcId}"})
 
+        
 
-    const w1 = this.neo.write(`
+          MERGE (g) - [:HAS_SERVICE {rate:'${dto.rate}'}] -> (s)
 
-        MATCH (g:Gym {gymId:"${dto.id}"}),(s:Service {svcId:"${dto.svcId}"})
+           return g; `,
+        );
 
-        CREATE (g) - [:HAS_SERVICE] -> (s)
+        console.log(res, 'Servicesss11');
 
-        RETURN g;
+        return 'Added updated successfully';
+      }
+    } catch (error) {
+      console.log(error);
 
-        `);
-
-        console.log('Attaching Service Successfully!');
-
-    return 'Attaching Service Successfully!'
-
+      throw new HttpException(error, 501);
+    }
   }
 }

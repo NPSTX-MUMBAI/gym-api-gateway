@@ -46,7 +46,7 @@ AURA_INSTANCENAME=unacademy-db
       options: {
         disableLosslessIntegers: true,
         
-      },
+  },
     }),
     ServicesModule,
     

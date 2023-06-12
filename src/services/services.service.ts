@@ -406,13 +406,12 @@ export class ServicesService {
       throw new HttpException('error updating Services', error);
     }
   }
-  async associateSvc(dto:AssociateSvcDto) {
-
+  async associateSvc(dto: AssociateSvcDto) {
     try {
-
-      dto.services.map(async (service)=>{
-
-        const res = await this.neo.write(`MATCH (u:User {userId:"${dto.userId}"}),
+      dto.services.map(async (service) => {
+        const res = await this.neo
+          .write(
+            `MATCH (u:User {userId:"${dto.userId}"}),
 
         (s:Service {svcId:"${service.svcId}"})
 
@@ -420,23 +419,26 @@ export class ServicesService {
 
         rate:"${service.rate}"}]->(s) return r
 
-       `).then((res) => {
+       `,
+          )
+          .then((res) => {
+            console.log('=====', res);
+          });
+      });
 
-        console.log("=====",res);
-
-       })
-
-      })
-
-      return {status:true, data:null, msg:'all association done successfully'}
-
+      return {
+        status: true,
+        data: null,
+        msg: 'all association done successfully',
+      };
     } catch (error) {
-
       console.log(error);
 
-      return {status:false, data:error, msg:'failed due to technical error'}
-
+      return {
+        status: false,
+        data: error,
+        msg: 'failed due to technical error',
+      };
     }
-
   }
 }

@@ -16,6 +16,7 @@ import { USER_ROLE } from 'src/auth/dtos/signup.dto';
 import { HasRoles } from 'src/auth/has-role.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { log } from 'console';
+import { ServiceDTO } from 'src/package/dto/service.dto';
 
 @Controller('gym')
 export class GymController {
@@ -29,17 +30,13 @@ export class GymController {
 
     return await this.gymService.create(createGymDto);
   }
-  @Post('attachsvc')
+ 
 
-  attachService(
+  @Post('/attachsvc')
 
-    @Body()
+  attachService(@Body() servicedto: ServiceDTO) {
 
-    gymDto: CreateGymDto,
-
-  ) {
-
-    return this.gymService.attachSvc(gymDto);
+    return this.gymService.attachSvc(servicedto);
 
   }
 
