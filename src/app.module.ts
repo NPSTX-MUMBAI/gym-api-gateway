@@ -13,6 +13,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { BankModule } from './bank/bank.module';
 import { ServicesModule } from './services/services.module';
+import { ExercisesModule } from './exercises/exercises.module';
+
 
 /**
  * NEO4J_URI=neo4j+s://29959c44.databases.neo4j.io
@@ -49,6 +51,8 @@ AURA_INSTANCENAME=unacademy-db
   },
     }),
     ServicesModule,
+    ExercisesModule,
+   
     
   ],
   controllers: [AppController],
