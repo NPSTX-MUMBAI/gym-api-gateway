@@ -79,7 +79,7 @@ export class DietController {
 
   @Get('findmemberdiet')
   findMemberDiet(@Body() addDietDto:AddDietDTO) {
-    return this.dietSvc.findMemberiet(addDietDto);
+    return this.dietSvc.checkMemberietPlan(addDietDto);
   }
 
 

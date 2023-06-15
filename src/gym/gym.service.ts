@@ -12,9 +12,10 @@ import { Neo4jTypeInterceptor } from 'nest-neo4j/dist';
 import { stringify } from 'querystring';
 import { SignUpDTO } from 'src/auth/dtos/signup.dto';
 import { CreateBankDto } from 'src/bank/dto/create-bank.dto';
-import { AssociateSvcDto } from 'src/services/dto/associateService.dto';
-import { ServiceDTO } from 'src/services/dto/service.dto';
+// import { AssociateSvcDto } from 'src/services/dto/associateService.dto';
+// import { ServiceDTO } from 'src/services/dto/service.dto';
 import { CreateGymDto } from './dto/create-gym.dto';
+import { serviceCardDTO } from './dto/servicecard.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { Gym } from './entities/gym.entity';
 
@@ -343,6 +344,8 @@ export class GymService {
     return getDetails;
   }
 
+  // Gym <-> Service
+
   attachSvc(dto: CreateGymDto) {
     console.log('Attaching Service start...');
 
@@ -382,40 +385,40 @@ export class GymService {
     }
   }
 
-  async addCustomService(svcDto: ServiceDTO) {
-    let svcId: string;
+  // async addCustomService(svcDto: ServiceDTO) {
+  //   let svcId: string;
 
-    const createSvc = await this.neo.write(`
-      CREATE (s:Service {
-        svcId:apoc.create.uuid(),
-        name : "${svcDto.name}",
-         isDefault: "${svcDto.isDefault}",
-         svcType: "${svcDto.serviceType}",
-         isActive:"${svcDto.isActive}",
-         createdOn: "${new Date()}"
-        })
-        return s
-        `);
-    createSvc.map((res) => {
-      svcId = res.s.svcId;
+  //   const createSvc = await this.neo.write(`
+  //     CREATE (s:Service {
+  //       svcId:apoc.create.uuid(),
+  //       name : "${svcDto.name}",
+  //        isDefault: "${svcDto.isDefault}",
+  //        svcType: "${svcDto.serviceType}",
+  //        isActive:"${svcDto.isActive}",
+  //        createdOn: "${new Date()}"
+  //       })
+  //       return s
+  //       `);
+  //   createSvc.map((res) => {
+  //     svcId = res.s.svcId;
 
-      console.log('Service Created with Service ID ', svcId);
-      return 'Service Created with Service ID! ';
-    });
+  //     console.log('Service Created with Service ID ', svcId);
+  //     return 'Service Created with Service ID! ';
+  //   });
 
-    // if (createSvc) {
-    //   const linkWithGym = this.neo.write(`
-    //   MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
-    //   MERGE (g) - [:HAS_SERVICE] -> (s)
-    //   RETURN g
-    //   `);
-    //   console.log('Service is added with Gym ID ', id);
+  //   // if (createSvc) {
+  //   //   const linkWithGym = this.neo.write(`
+  //   //   MATCH (g:Gym {id:"${id}"}),(s:Service {svcId:"${svcId}"})
+  //   //   MERGE (g) - [:HAS_SERVICE] -> (s)
+  //   //   RETURN g
+  //   //   `);
+  //   //   console.log('Service is added with Gym ID ', id);
 
-    //   return linkWithGym;
-    // } else {
-    //   console.log('Something went Wrong! Service Error ');
-    // }
-  }
+  //   //   return linkWithGym;
+  //   // } else {
+  //   //   console.log('Something went Wrong! Service Error ');
+  //   // }
+  // }
 
 
   // async update(id: string, dto: UpdateGymDto) {
@@ -525,4 +528,141 @@ export class GymService {
       throw new HttpException('error encountered', error);
     }
   }
+
+
+  // async createServiceCard(dto:serviceCardDTO) {
+  //   try {
+      
+  //     //Get Gym Service List
+  //     const getGymSvcList = await this.neo.read(`
+  //     MATCH p = g:Gym {gymId:"${dto.gymId}"} - (s:Service {svcId:"${dto.svcId}"})
+  //     RETURN p
+  //     `)
+
+  //     if(getGymSvcList.length > 0) {
+  //       this.neo.write(`
+  //       CREATE (u:User {userId:"${dto.userId}"}) - [] - ()
+  //       `)
+  //     }
+
+
+  //   } catch (error) {
+      
+  //   }
+  // }
+
+
+
+
+
+
+
+
+
+  // async createServiceCard(dto:serviceCardDTO) {
+  //   try {
+      
+  //         //Get Gym Service List
+  //     const getGymSvcList = await this.neo.read(`
+  //     MATCH g:Gym {gymId:"${dto.gymId}"} - (s:Service {svcId:"${dto.svcId}"})
+  //     RETURN s
+  //     `)
+
+
+  //     if(getGymSvcList.length > 0) {
+  //       this.neo.write(`
+  //       MATCH (u:User {userId:"${dto.userId}"}),(sc:serviceCard:"${dto.svcCardID}")
+  //       CREATE (u) - [] - (sc)
+  //       `)
+  //     }
+
+
+  //   } catch (error) {
+      
+  //   }
+  // }
+
+
+  //1
+  async createServiceCard(dto:serviceCardDTO) {
+    try {
+
+      let svcCardId : string;
+
+      const createSvcCard = await this.neo.write(`
+      CREATE (sc:ServiceCard {
+        svcCardId:apoc.create.uuid(),
+        svcName:"${dto.svcName}",
+        svcStartDate:"${dto.svcStartDate}",
+        svcEndDate::"${dto.svcEndDate}"
+      })
+      return sc
+      `)
+
+
+      createSvcCard.map((res) => {
+        svcCardId = res.sc.svcCardID;
+        console.log("Svc Card Is ",svcCardId);
+        
+      })
+
+
+      //Attaching Service card to the the Member
+
+      const attachSvcCard = this.neo.read(`
+      MATCH p = u:User {userId:"${dto.userId}"} - [:HAS_SERVICECARD] - (s:serviceCard:${svcCardId})
+      RETURN p
+
+      `)
+      
+
+      //Check If User has Servic Card
+
+      // const getGymSvcList = await this.neo.read(`
+      // MATCH u:User {userId:"${dto.userId}"} - (s:serviceCard {svcId:"${dto.svcCardID}"})
+      // RETURN s
+      // `)
+
+
+    } catch (error) {
+      
+    }
+  }
+
+
+
+  assignServiceCardToMember(dto:serviceCardDTO) {
+    try {
+
+      let svcCardId:string;
+
+      const attachSvcCard = this.neo.read(`
+      MATCH p = u:User {userId:"${dto.userId}"} - [:HAS_SERVICECARD] - (s:serviceCard:${dto.svcCardID})
+      RETURN p
+
+      `)
+      
+
+    } catch (error) {
+      throw new HttpException('User or ServiceCard Not Found',404);
+    }
+  }
+
+  // getServiceCard() {
+  //   //Get from Gym  
+
+  //   try {
+  //     this.neo.read(`
+  //     MATCH (sc:serviceCard {svcCardId:"${}"})
+  //     return sc
+  //     `)
+  //   } catch (error) {
+      
+  //   }
+
+  // }
+
+
+
+
 }

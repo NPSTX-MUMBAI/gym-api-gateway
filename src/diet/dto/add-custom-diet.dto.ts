@@ -1,21 +1,16 @@
 export class AddCustomDietDTO {
 
       dietId:string;
-      isVeg:IsVeg;
-      dietType:string;
-  
-      breakfast?:boolean;
-      lunch:boolean;
-      salad:boolean;
-      shakes:boolean;    
+      dietType:string;          //Light, Medium, Heavy
       
-      fruits:string;
       userId?:string;
       mealId?:string;
   }
   
-  export enum IsVeg {
-      veg = 'VEG',
-      nonveg = 'NONVEG'
-  }
+  export enum dietType {
+    
+    light = 'LIGHT',
+    medium = 'MEDIUM',
+    heavy = 'HEAVY'
+}
   

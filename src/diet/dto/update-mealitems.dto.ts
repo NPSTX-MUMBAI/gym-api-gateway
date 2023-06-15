@@ -6,7 +6,4 @@ export interface updatemealItemsDTO {
     mealId:string,
     foodId?:string
 
-
-
-
 }

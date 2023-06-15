@@ -14,6 +14,7 @@ import { BankModule } from './bank/bank.module';
 import { ServicesModule } from './services/services.module';
 import { DietModule } from './diet/diet.module';
 import { KycModule } from './kyc/kyc.module';
+import { ServicecardModule } from './servicecard/servicecard.module';
 
 /**
  * NEO4J_URI=neo4j+s://29959c44.databases.neo4j.io
@@ -32,7 +33,7 @@ AURA_INSTANCENAME=unacademy-db
       username: 'neo4j',
       password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
     }),
-    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule, DietModule, KycModule],
+    ServicesModule, OwnerModule, MemberModule, PackageModule, CollectionModule, ReportsModule, GymModule, BankModule, DietModule, KycModule, ServicecardModule],
   controllers: [AppController],
   providers: [AppService,],
 })

@@ -210,7 +210,7 @@ export class DietService {
   }
 
 
-  async findMemberiet(dto:AddDietDTO) {
+  async checkMemberietPlan(dto:AddDietDTO) {
     try {
       console.log('Finding The Member Diet Plan');
       

@@ -1,9 +1,10 @@
 export class AddFoodDTO {
 
     foodId:string;
-    foodType:string;
+    foodType:FoodType;
     foodName:string;
-    // description?:string;
+
+    vegetarian:isVegetarian;
 
     // calories:number;
     // serving_size_g:number;
@@ -22,12 +23,18 @@ export class AddFoodDTO {
 
 }
 
-// export enum FoodType {
+export enum FoodType {
     
-//     veg = 'VEG',
-//     nonveg = 'NONVEG',
-//     salad = 'SALAD',
-//     juice = 'JUICE',
-//     drinks = 'DRINKS',
-//     soup = 'SOUP'
-// }
+    veg = 'VEG',
+    nonveg = 'NONVEG',
+    salad = 'SALAD',
+    juice = 'JUICE',
+    drinks = 'DRINKS',
+    soup = 'SOUP'
+}
+
+export enum isVegetarian {
+    
+    true = 'TRUE',
+    false = 'FALSE'
+}
