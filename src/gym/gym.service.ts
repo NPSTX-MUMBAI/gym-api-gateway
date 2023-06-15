@@ -384,6 +384,7 @@ export class GymService {
       return 'Detach unsuccessful! Try Again';
     }
   }
+  
 
   // async addCustomService(svcDto: ServiceDTO) {
   //   let svcId: string;
