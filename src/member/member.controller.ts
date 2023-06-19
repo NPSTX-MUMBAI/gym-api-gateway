@@ -23,6 +23,7 @@ import { FileHeaderValidator } from './validators/fileheader.validator';
 import { log } from 'console';
 import { CreateBodydto } from './dto/body-parameter.dto';
 import { updateBodyparameter } from './dto/updateBody-parameter.dto';
+import { CreatePlandto } from './dto/plan.dto';
 
 @Controller('member')
 export class MemberController {
@@ -76,7 +77,20 @@ return this.memberService.findBodyParameterbyMemberId(userId);
   async remove(@Param('id') id: string) {
     return await this.memberService.remove(id);
   }
+  @Post('/attachservicetomember')
 
+  async attacsvc(@Body() createBody: CreateMemberDto) {
+
+    return await this.memberService.attachserivcetomember(createBody);
+
+  }
+  @Post('/createDurationplan')
+
+  async createDuration(@Body() createPlan: CreatePlandto) {
+
+    return await this.memberService.createdurationPlan(createPlan);
+
+  }
   // @Post('/imageupload')
   // @UseInterceptors(FileInterceptor('image', {
   //   dest: '/images'

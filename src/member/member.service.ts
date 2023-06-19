@@ -4,7 +4,7 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 // import * as bcrypt from 'bcrypt';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import { User } from 'src/models/user.model';
-import { NotFoundException } from '@nestjs/common/exceptions';
+import { ConflictException, NotFoundException } from '@nestjs/common/exceptions';
 import { mergeScan } from 'rxjs';
 import { Gym } from 'src/gym/entities/gym.entity';
 import { Member } from './entities/member.entity';
@@ -15,6 +15,7 @@ import { Address } from 'cluster';
 import { log } from 'console';
 import { CreateBodydto } from './dto/body-parameter.dto';
 import { updateBodyparameter } from './dto/updateBody-parameter.dto';
+import { CreatePlandto } from './dto/plan.dto';
 
 @Injectable()
 export class MemberService {
@@ -311,5 +312,91 @@ return u,a `,
     } catch (error) {
       throw new HttpException('error encountered', error);
     }
+  }
+  async attachserivcetomember(dto: CreateMemberDto) {
+
+    try {
+
+      const serviceCheck = await this.neo.read(
+
+        `MATCH (u:User {userId:"${dto.userId}"}) - [r: SUBSCRIBED_TO] -> (s:Service) WHERE s.svcId="${dto.svcId}"  return u,s`,
+
+      );
+
+
+
+
+      console.log('Service  Found :', serviceCheck);
+
+
+
+
+      if (serviceCheck.length > 0) {
+
+        throw new ConflictException('Service  already attached To Member');
+
+      } else {
+
+        const res = await this.neo.write(
+
+          ` MATCH (u:User),(s:Service)
+
+          WHERE u.userId='${dto.userId}' AND s.svcId='${dto.svcId}'
+
+          MERGE (u) - [:SUBSCRIBED_TO {createdOn:'${Date.now()}'}] -> (s)
+
+         return u; `,
+
+        );
+
+        return 'service associated with MEMBER successfully';
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+
+
+
+      throw new HttpException(error, 501);
+
+    }
+
+  }
+
+  async createdurationPlan(dto: CreatePlandto) {
+
+    try {
+
+      const res = await this.neo.write(
+
+        // `MATCH (u:User {userId: "${dto.userId}"})-[p:BODY_PARAMETERS]-> (b:body {height:"${dto.height}", weight:"${dto.weight}"})  return u`,
+
+        `CREATE(p:Plan {  
+
+          planId:apoc.create.uuid(), planName:"${dto.planName}" })
+
+          with p
+
+         MATCH (u:User {userId:"${dto.userId}"})
+
+          merge (p)-[:PLAN_DURATION {totalAmount:'${dto.totalAmount}',discount:'${dto.discount}', createdOn: datetime({ epochMillis: timestamp }), startDate:'${Date.now}', endDate:'${Date.now}'}]-> (u)
+
+         return p, u`,
+
+      );
+
+      console.log(res);
+
+      return 'plan Duration Added Successfully';
+
+    } catch (error) {
+
+      throw new HttpException('error', error);
+
+    }
+
   }
 }
