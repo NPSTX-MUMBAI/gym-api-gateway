@@ -24,6 +24,7 @@ import { log } from 'console';
 import { CreateBodydto } from './dto/body-parameter.dto';
 import { updateBodyparameter } from './dto/updateBody-parameter.dto';
 import { CreatePlandto } from './dto/plan.dto';
+import { ServiceDTO } from 'src/package/dto/service.dto';
 
 @Controller('member')
 export class MemberController {
@@ -50,6 +51,10 @@ return this.memberService.findBodyParameterbyMemberId(userId);
   async findAll() {
     return await this.memberService.findAll();
   }
+  @Get('/alldurationplan')
+  async getAllduration() {
+ return await this.memberService.getAllduration();
+}
 
   @Get(':id')
   findOne(@Param('id') id: any) {
@@ -84,11 +89,25 @@ return this.memberService.findBodyParameterbyMemberId(userId);
     return await this.memberService.attachserivcetomember(createBody);
 
   }
-  @Post('/createDurationplan')
+  @Post('/createplanduration')
 
-  async createDuration(@Body() createPlan: CreatePlandto) {
+  async addPlan(@Body() createPlan: CreatePlandto) {
 
-    return await this.memberService.createdurationPlan(createPlan);
+    return await this.memberService.adddurationPlan(createPlan);
+
+  }
+  @Post('/attachservicemem')
+
+  async attacsvcmem(@Body() createBody: ServiceDTO) {
+
+    return await this.memberService.attachServicesMEM(createBody);
+
+  }
+  @Post('/attachplantomember')
+
+  async attachplan(@Body() createPlan: CreatePlandto) {
+
+    return await this.memberService.attachplantomember(createPlan);
 
   }
   // @Post('/imageupload')

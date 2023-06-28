@@ -20,6 +20,7 @@ export class ServiceDTO {
   noOfOccurrence?: number;
 
   id?: string;
+  exId?: any;
 }
 
 export class ServicesDTO {

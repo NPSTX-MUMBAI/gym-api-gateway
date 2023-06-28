@@ -52,6 +52,13 @@ export class ServicesController {
 
     return await this.defSvc.selectedServices(createServiceDto);
   }
+  @Post('/attachservicemem')
+
+  async attacsvcmem(@Body() createBody: ServiceDTO) {
+
+    return await this.defSvc.attachServicesMEM(createBody);
+
+  }
 
   @Get(':id')
   async getserviceById(@Param('id') id: any) {

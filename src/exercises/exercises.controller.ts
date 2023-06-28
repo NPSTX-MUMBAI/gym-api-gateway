@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
+import { ServiceDTO } from 'src/package/dto/service.dto';
 
 @Controller('exercises')
 export class ExercisesController {
@@ -13,6 +14,13 @@ export class ExercisesController {
   create(@Body() createExerciseDto: CreateExerciseDto) {
 
     return this.exercisesService.createDefaultexercise(createExerciseDto);
+
+  }
+  @Post('/attachexercisemem')
+
+  async attacsvcmem(@Body() createBody: CreateExerciseDto) {
+
+    return await this.exercisesService.attachExerciseSVC(createBody);
 
   }
 

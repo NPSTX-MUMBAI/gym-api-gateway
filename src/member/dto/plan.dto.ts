@@ -12,4 +12,5 @@ export class CreatePlandto {
   userId: string;
 
   createdOn: Date;
+  planId: any;
 }

@@ -3,6 +3,7 @@ import { CreateExerciseDto, exerciseType } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { Neo4jService } from '@brakebein/nest-neo4j';
 import * as crypto from 'crypto';
+import { ServiceDTO } from 'src/package/dto/service.dto';
 
 @Injectable()
 export class ExercisesService {
@@ -141,7 +142,7 @@ export class ExercisesService {
       ];
 
       defaultExe.forEach(async (exe) => {
-        const query = `CREATE (x:Excercise { exId:"${exe.exId}",
+        const query = `CREATE (x:Exercise { exId:"${exe.exId}",
 
       name:"${exe.name}",
 
@@ -165,11 +166,42 @@ export class ExercisesService {
 
       console.log('outside loop');
 
-      return {status:true,data:defaultExe };
+      return { status: true, data: defaultExe };
     } catch (error) {
       console.log(error);
 
       throw new HttpException(error, 402);
     }
   }
+
+  async attachExerciseSVC(dto: any) {
+    try {
+      let query;
+      let i;
+      for (i = 0; i < dto.exercises.length; i++) {
+        query = await this.neo.write(
+          `MATCH (s:Service {svcId: "${dto.svcId}"}), (x:Exercise {exId: "${dto.exercises[i].exId}"})
+          MERGE (s)-[r:HAS_EXERCISES]->(x)
+          return  s,x,r`,
+        );
+        console.log('EXEERR', query);
+      }
+
+ 
+
+      if (i == dto.exercises.length) {
+        return { data: query, msg: 'Exercises', status: true };
+      } else {
+        return { data: null, msg: 'Error  Not created', status: false };
+      }
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+  
+
+
+
+  
 }

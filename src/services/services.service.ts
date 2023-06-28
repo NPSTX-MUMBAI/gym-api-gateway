@@ -338,7 +338,7 @@ export class ServicesService {
       console.log('id=>', id);
 
       const query = await this.neo.read(
-        `MATCH (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service)  RETURN s, r.rate`,
+        `MATCH (g:Gym {id:"${id}"})-[r:HAS_SERVICE]->(s:Service) RETURN s, r.rate`,
       );
 
       console.log(query);
@@ -440,5 +440,63 @@ export class ServicesService {
         msg: 'failed due to technical error',
       };
     }
+  }
+  
+
+  async attachServicesMEM(dto: any) {
+
+    try {
+
+      let query;
+
+      let i;
+
+      for (i = 0; i < dto.services.length; i++) {
+
+        query = await this.neo.write(
+
+          `MATCH (u:User {userId: "${dto.userId}"}), (s:Service {svcId: "${dto.services[i].svcId}"})
+
+MERGE (u)-[r:SUBSCRIBED_TO {rate: "${dto.services[i].rate}"}]->(s)
+
+SET u.amount = '${dto.amount}',
+
+    u.discount = "${dto.discount}",
+
+    u.totalAmount = "${dto.totalAmount}"
+
+WITH u, s, r  
+
+   MATCH (u:User {userId: "${dto.userId}"}), (p:Plan {planName: "${dto.duration.planName}"}  )
+
+MERGE (u)-[t:SELECTED_PLAN]->( p) SET p.planName = '${dto.duration.planName}'
+
+RETURN u, s, r, t`,
+
+        );
+
+      }
+
+
+
+
+      if (query.length > 0) {
+
+        return { data: query, msg: 'Services', status: true };
+
+      } else {
+
+        return { data: null, msg: 'Error Service Not Found', status: false };
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+      return error;
+
+    }
+
   }
 }
