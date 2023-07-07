@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@brakebein/nest-neo4j": "^1.0.2",
+    "@brakebein/threeoctree": "^2.0.1",
     "@nestjs/common": "^9.4.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.2",

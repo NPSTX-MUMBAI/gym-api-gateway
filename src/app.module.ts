@@ -41,10 +41,10 @@ AURA_INSTANCENAME=unacademy-db
     BankModule,
     Neo4jModule.forRoot({
       scheme: 'neo4j+s',
-      host: '6b9f3275.databases.neo4j.io',
+      host: '04160c01.databases.neo4j.io ',
       port: 7687,
       username: 'neo4j',
-      password: 'RlnhJzn1tZBuTEOIi1uZ9XCwymc_ZVX3j_XzuSrM1eQ',
+      password: 'eVkK7MCqIUOzEN_tcBdonWiYbbXIruZwXrz0Trz_vbU',
       options: {
         disableLosslessIntegers: true,
         
